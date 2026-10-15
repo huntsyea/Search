@@ -23,3 +23,13 @@ _Avoid_: ask (that's the question put to the person), query, print
 **Fake pi**:
 A small script that stands in for pi in tests, so pi can be started, talked to and stopped without the person's pi or their tokens.
 _Avoid_: mock pi, stub
+
+## The chat
+
+**Scripted pi**:
+The chat's pi as tests give it: it answers the chat's commands from a table and says only what the test tells it to, replaying lines a real pi once said, so a chat's asks, pauses, stops and lines are checked without pi or a provider. It stands where the chat's pi stands; a fake pi stands where pi itself does.
+_Avoid_: mock chat, stub agent
+
+**Settled**:
+pi has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on.
+_Avoid_: done, idle, finished (a step finishes; a message settles)

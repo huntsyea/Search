@@ -555,3 +555,5 @@ final class PiProcess: @unchecked Sendable {
         child?.signal(SIGTERM)
     }
 }
+
+extension PiProcess: PiLink {}

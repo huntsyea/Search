@@ -79,17 +79,23 @@ final class Chat: ObservableObject, Identifiable {
     @Published private(set) var thinking: String?
     @Published private(set) var levels: [String] = []
 
-    private var pi: PiProcess?
+    private let pi: ChatPi
+    private var link: PiLink?
+    /// The start whose pi the chat is listening to.
+    private var current: UUID?
+    /// Why a pi ended before it was held, for whoever sent to report.
+    private var endedStarting: String?
     private var opened = false
     /// Content blocks of the assistant message streaming now, by index.
     private var streaming: [Int: String] = [:]
     private var messageCount = 0
 
-    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask) {
+    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask, pi: ChatPi? = nil) {
         self.id = id
         self.title = title
         self.session = session
         self.updated = updated
+        self.pi = pi ?? .rpc
         // The stored value itself: through the setter, a chat loaded in act
         // mode would save the list while the list is still being loaded.
         self._mode = Published(initialValue: mode)
@@ -105,11 +111,11 @@ final class Chat: ObservableObject, Identifiable {
             title = String(words.prefix(60))
             let page = browser?.active.flatMap { $0.pageAddress == nil ? nil : $0.label }
             Task {
-                guard let named = await PiOnce.title(for: words, on: page) else { return }
+                guard let named = await pi.title(words, page) else { return }
                 title = named
                 Chats.save()
-                if session != nil, let pi, pi.running {
-                    _ = try? await pi.request(["type": "set_session_name", "name": named])
+                if session != nil, let link {
+                    _ = try? await link.request(["type": "set_session_name", "name": named])
                 }
             }
         }
@@ -119,12 +125,12 @@ final class Chat: ObservableObject, Identifiable {
         let message = context() + words
         Task {
             do {
-                let pi = try await ready()
-                _ = try await pi.request(["type": "prompt", "message": message])
-                if session == nil, let state = try? await pi.request(["type": "get_state"]),
+                let link = try await ready()
+                _ = try await link.request(["type": "prompt", "message": message])
+                if session == nil, let state = try? await link.request(["type": "get_state"]),
                    let file = state["sessionFile"] as? String {
                     session = file
-                    _ = try? await pi.request(["type": "set_session_name", "name": title])
+                    _ = try? await link.request(["type": "set_session_name", "name": title])
                     Chats.remember(self)
                 }
             } catch {
@@ -138,8 +144,8 @@ final class Chat: ObservableObject, Identifiable {
     func stop() {
         dropAsks()
         release(false)
-        guard busy, let pi else { return }
-        Task { _ = try? await pi.request(["type": "abort"]) }
+        guard busy, let link else { return }
+        Task { _ = try? await link.request(["type": "abort"]) }
     }
 
     // MARK: - permission
@@ -234,26 +240,26 @@ final class Chat: ObservableObject, Identifiable {
     // MARK: - models
 
     /// What pi offers and what it uses now, asked as it starts.
-    private func learnModels(_ pi: PiProcess) async {
-        if let list = try? await pi.request(["type": "get_available_models"]),
+    private func learnModels(_ link: PiLink) async {
+        if let list = try? await link.request(["type": "get_available_models"]),
            let raw = list["models"] as? [[String: Any]] {
             models = raw.compactMap { m in
                 guard let provider = m["provider"] as? String, let id = m["id"] as? String else { return nil }
                 return Model(provider: provider, id: id, name: m["name"] as? String ?? id, reasoning: m["reasoning"] as? Bool ?? false)
             }
         }
-        await learnState(pi)
+        await learnState(link)
     }
 
-    private func learnState(_ pi: PiProcess) async {
-        if let state = try? await pi.request(["type": "get_state"]) {
+    private func learnState(_ link: PiLink) async {
+        if let state = try? await link.request(["type": "get_state"]) {
             if let m = state["model"] as? [String: Any], let provider = m["provider"] as? String, let id = m["id"] as? String {
                 model = models.first { $0.provider == provider && $0.id == id }
                     ?? Model(provider: provider, id: id, name: m["name"] as? String ?? id, reasoning: m["reasoning"] as? Bool ?? false)
             }
             thinking = state["thinkingLevel"] as? String
         }
-        if let data = try? await pi.request(["type": "get_available_thinking_levels"]) {
+        if let data = try? await link.request(["type": "get_available_thinking_levels"]) {
             levels = data["levels"] as? [String] ?? []
         }
     }
@@ -263,9 +269,9 @@ final class Chat: ObservableObject, Identifiable {
     func choose(_ model: Model) {
         Task {
             do {
-                let pi = try await ready()
-                _ = try await pi.request(["type": "set_model", "provider": model.provider, "modelId": model.id])
-                await learnState(pi)
+                let link = try await ready()
+                _ = try await link.request(["type": "set_model", "provider": model.provider, "modelId": model.id])
+                await learnState(link)
             } catch {
                 items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
             }
@@ -274,9 +280,9 @@ final class Chat: ObservableObject, Identifiable {
 
     func choose(thinking level: String) {
         Task {
-            guard let pi = try? await ready() else { return }
-            _ = try? await pi.request(["type": "set_thinking_level", "level": level])
-            await learnState(pi)
+            guard let link = try? await ready() else { return }
+            _ = try? await link.request(["type": "set_thinking_level", "level": level])
+            await learnState(link)
         }
     }
 
@@ -324,8 +330,8 @@ final class Chat: ObservableObject, Identifiable {
         status = "Opening…"
         Task {
             do {
-                let pi = try await ready()
-                let data = try await pi.request(["type": "get_messages"])
+                let link = try await ready()
+                let data = try await link.request(["type": "get_messages"])
                 rebuild(data["messages"] as? [[String: Any]] ?? [])
                 status = nil
             } catch {
@@ -337,8 +343,12 @@ final class Chat: ObservableObject, Identifiable {
 
     /// pi let go of: closed, deleted, or idle.
     func close() {
-        pi?.stop()
-        pi = nil
+        // Let go first: the exit that stopping it brings is then not heard
+        // as pi ending on its own, however soon it comes.
+        let link = self.link
+        self.link = nil
+        current = nil
+        link?.stop()
     }
 
     /// What the person is looking at, said ahead of what they typed: the
@@ -355,8 +365,8 @@ final class Chat: ObservableObject, Identifiable {
 
     // MARK: - pi
 
-    private func ready(quietly: Bool = false) async throws -> PiProcess {
-        if let pi, pi.running { return pi }
+    private func ready(quietly: Bool = false) async throws -> PiLink {
+        if let link { return link }
         if !quietly { status = "Starting pi…" }
         // Asked again while starting (the model menu, then a message): the
         // one pi being started, not a second.
@@ -367,53 +377,66 @@ final class Chat: ObservableObject, Identifiable {
         return try await start.value
     }
 
-    private var starting: Task<PiProcess, Error>?
+    private var starting: Task<PiLink, Error>?
 
-    private func launch() async throws -> PiProcess {
-        let process = PiProcess()
-        process.onEvent = { [weak self] in self?.handle($0) }
-        process.onTool = { [weak self] call, reply in AgentTools.run(call, for: self, reply: reply) }
-        process.onCancel = { [weak self] in self?.dropAsks() }
-        process.onExit = { [weak self, weak process] why in
-            // One let go of already (closed, replaced) has nothing to say.
-            guard let self, let process, self.pi === process else { return }
-            self.pi = nil
-            self.dropAsks()
-            self.release(false)
-            self.unmark()
-            self.acting = false
-            if self.busy {
-                self.busy = false
-                self.items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "pi stopped: \($0)" } ?? "pi stopped."))
+    private func launch() async throws -> PiLink {
+        let start = UUID()
+        current = start
+        let link = try await pi.start(session.flatMap { FileManager.default.fileExists(atPath: $0) ? $0 : nil }) { [weak self] said in
+            if case let .tool(call, reply) = said {
+                // A pi let go of is told no; one the chat holds acts in its window.
+                guard let self, self.current == start else {
+                    return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
+                                  "details": ["summary": "Stopped."]])
+                }
+                return AgentTools.run(call, for: self, reply: reply)
             }
-            self.status = nil
+            self?.hear(said, from: start)
         }
-        let folder = Chats.folder
-        try FileManager.default.createDirectory(at: Chats.sessions, withIntermediateDirectories: true)
-        let tools = folder.appendingPathComponent("search-browser.mjs")
-        try AgentTools.extensionSource.write(to: tools, atomically: true, encoding: .utf8)
-        // The person's own pi — their providers, models and keys, which
-        // can come from their packages — but only the browser's tools:
-        // none of pi's own (no shell, no files), none of their
-        // extensions' or MCP servers', no skills or project files that
-        // would tell it to use them.
-        var arguments = ["--mode", "rpc", "--session-dir", Chats.sessions.path]
-            + Pi.confined(tools: AgentTools.names)
-            + ["--extension", tools.path, "--system-prompt", AgentTools.systemPrompt]
-        if let session, FileManager.default.fileExists(atPath: session) {
-            arguments += ["--session", session]
-        } else {
-            // A new chat starts on the model chosen in Settings › AI (else
-            // pi's own default); an earlier one keeps what its session used.
-            if let chosen = Store.settings.string(forKey: Chats.modelKey), !chosen.isEmpty { arguments += ["--model", chosen] }
+        // pi ended while starting, or the chat let go of it meanwhile: a
+        // start that failed, said once, by whoever sent.
+        guard current == start else {
+            link.stop()
+            defer { endedStarting = nil }
+            throw PiProcess.Failure(why: endedStarting ?? "pi stopped.")
         }
-        try await Task.detached(priority: .userInitiated) {
-            try process.start(arguments: arguments, directory: folder, environment: ["SEARCH_CHAT": "1"])
-        }.value
-        pi = process
+        self.link = link
         status = nil
-        Task { await learnModels(process) }
-        return process
+        Task { await learnModels(link) }
+        return link
+    }
+
+    /// Everything pi says, from the start it belongs to.
+    private func hear(_ said: PiSays, from start: UUID) {
+        switch said {
+        case let .event(event):
+            guard start == current else { return }
+            handle(event)
+        case .cancel:
+            guard start == current else { return }
+            dropAsks()
+        case let .exit(why):
+            guard start == current else { return }
+            current = nil
+            // Ended before it was held: whoever sent reports it, once.
+            guard link != nil else {
+                endedStarting = why.map { "pi stopped: \($0)" } ?? "pi stopped."
+                return
+            }
+            link = nil
+            dropAsks()
+            release(false)
+            unmark()
+            acting = false
+            if busy {
+                busy = false
+                items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "pi stopped: \($0)" } ?? "pi stopped."))
+            }
+            status = nil
+        case .tool:
+            // Answered where pi said it, so it still gets a reply.
+            break
+        }
     }
 
     // MARK: - what pi says
