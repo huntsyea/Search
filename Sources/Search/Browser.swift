@@ -339,6 +339,18 @@ final class Browser: NSObject, ObservableObject {
     @Published var finding = false
     /// The AI panel's conversation about the page, while it is open.
     @Published var assisting: Assistant?
+    /// The chat the sidebar panel shows (see ChatPanel.swift).
+    @Published var chat: Chat?
+    /// What the sidebar panel on the far side shows, while it is open (see
+    /// UtilitySidebar.swift). Nil when it is closed.
+    @Published var utility: UtilityPane? {
+        didSet {
+            // An extension's panel left for something else goes, as in Chrome.
+            if case .panel(let id) = oldValue, oldValue != utility, #available(macOS 15.4, *) {
+                SidePanels.left(id, in: self)
+            }
+        }
+    }
     /// The Settings page it opens on next.
     var settingsPage: SettingsPanel.Page {
         get {
@@ -1381,6 +1393,8 @@ final class Browser: NSObject, ObservableObject {
     /// The file a "Saved …" line is about: clicked, the line shows it in
     /// the Finder, and it stays long enough to be clicked.
     @Published private(set) var announcedFile: URL?
+    /// What Undo on the line puts back (Sort Tabs): it stays a while longer.
+    @Published private(set) var announcedUndo: (() -> Void)?
     /// Downloads while they happen (see Fetching.swift).
     let fetches = Shared.fetches
 
@@ -1407,16 +1421,18 @@ final class Browser: NSObject, ObservableObject {
         announce("Link copied")
     }
 
-    func announce(_ text: String, file: URL? = nil) {
+    func announce(_ text: String, file: URL? = nil, undo: (() -> Void)? = nil) {
         announcement = text
         announcedFile = file
+        announcedUndo = undo
         hush?.cancel()
         let work = DispatchWorkItem { [weak self] in
             self?.announcement = nil
             self?.announcedFile = nil
+            self?.announcedUndo = nil
         }
         hush = work
-        DispatchQueue.main.asyncAfter(deadline: .now() + (file == nil ? 1.7 : 4), execute: work)
+        DispatchQueue.main.asyncAfter(deadline: .now() + (undo != nil ? 8 : file == nil ? 1.7 : 4), execute: work)
     }
 
     /// The names extensions asked their downloads to be saved under.
@@ -3255,6 +3271,24 @@ final class Browser: NSObject, ObservableObject {
         let members = tabs(in: group.id)
         let shown = members.filter(standsInRow)
         return group.collapsed ? shown.filter { $0.id == (activeSplit?.left ?? activeID) } : shown
+    }
+
+    /// The row as Sort Tabs found it (see TabSort.swift): each tab back in
+    /// its group and its place, the groups as they were. Tabs opened since
+    /// keep theirs, after the rest.
+    func restoreGroups(_ before: TabSorter.Snapshot) {
+        for tab in tabs {
+            if let was = before.groupOf[tab.id] { tab.groupID = was }
+        }
+        tabGroups = before.groups
+        let place = Dictionary(uniqueKeysWithValues: before.order.enumerated().map { ($1, $0) })
+        tabs = tabs.enumerated()
+            .sorted { (place[$0.element.id] ?? before.order.count + $0.offset) < (place[$1.element.id] ?? before.order.count + $1.offset) }
+            .map(\.element)
+        // A group of yours whose tabs were all closed since goes, as it would have.
+        for group in before.groups { removeEmptyGroup(group.id) }
+        arrangeGroupedTabs()
+        writeSession(now: true)
     }
 
     /// A group lasts as long as its tabs: the last one gone, it goes too.

@@ -501,6 +501,7 @@ final class Extensions: NSObject, ObservableObject {
     private func unload(_ id: String) {
         guard let context = contexts[id] else { return }
         Browsers.closePopups(of: id)
+        SidePanels.closeAll(of: id)
         try? controller.unload(context)
         // What it kept going outside WebKit goes with it: its offscreen
         // page, and a Mac kept awake on its behalf.
@@ -1312,6 +1313,9 @@ final class Extensions: NSObject, ObservableObject {
     /// A keystroke an extension registered for.
     func take(_ event: NSEvent) -> Bool {
         for context in contexts.values where context.command(for: event) != nil {
+            // A key you pressed for it counts as using it, as its button does
+            // (sidePanel.open, permissions.request).
+            Extensions.clicked[context.uniqueIdentifier] = Date()
             return context.performCommand(for: event)
         }
         return false

@@ -310,6 +310,38 @@ final class Preferences: ObservableObject {
     /// Whether the pinned rows are drawn as rows: asked for, and with the
     /// tabs down the side. Across the top every pin is a square.
     var showsPinRows: Bool { listsPins && sidebar }
+    /// A column on the side away from the tabs, for an extension's side
+    /// panel or the chat (see UtilitySidebar.swift). Off unless asked for.
+    @Published var utilitySidebar: Bool {
+        didSet { store.set(utilitySidebar, forKey: "utility") }
+    }
+    /// How wide that column is. Pulled by its edge, and remembered.
+    @Published var utilityWidth: CGFloat {
+        didSet { store.set(Double(utilityWidth), forKey: "utility.width") }
+    }
+    /// Settings › AI (see Chats.swift): the model new chats start on, the
+    /// models that suggest things to do with the page and name chats —
+    /// empty for pi's own default — and whether to suggest at all.
+    @Published var chatModel: String {
+        didSet { store.set(chatModel, forKey: Chats.modelKey) }
+    }
+    @Published var chatSuggestModel: String {
+        didSet { store.set(chatSuggestModel, forKey: Chats.suggestModelKey) }
+    }
+    @Published var chatTitleModel: String {
+        didSet { store.set(chatTitleModel, forKey: Chats.titleModelKey) }
+    }
+    @Published var chatSuggests: Bool {
+        didSet { store.set(chatSuggests, forKey: Chats.suggestsKey) }
+    }
+    /// Sort Tabs beside the bookmarks (see TabSort.swift), and the model it
+    /// asks. Off unless asked for.
+    @Published var sortsTabs: Bool {
+        didSet { store.set(sortsTabs, forKey: "tabs.sort") }
+    }
+    @Published var sortModel: String {
+        didSet { store.set(sortModel, forKey: Chats.sortModelKey) }
+    }
     /// The AI add-on: summaries of the page and questions about it (see
     /// AIAssist). Off unless asked for; nothing is sent until you ask.
     @Published var ai: Bool {
@@ -430,6 +462,15 @@ final class Preferences: ObservableObject {
         usesSpaces = store.bool(forKey: "spaces")
         usesTabGroups = store.bool(forKey: "tabs.groups")
         listsPins = store.bool(forKey: "pins.list")
+        utilitySidebar = store.bool(forKey: "utility")
+        let utility = store.object(forKey: "utility.width") as? Double ?? Double(Metrics.utility)
+        utilityWidth = min(Metrics.utilityMax, max(Metrics.utilityMin, CGFloat(utility)))
+        chatModel = store.string(forKey: Chats.modelKey) ?? ""
+        chatSuggestModel = store.string(forKey: Chats.suggestModelKey) ?? ""
+        chatTitleModel = store.string(forKey: Chats.titleModelKey) ?? ""
+        chatSuggests = store.object(forKey: Chats.suggestsKey) as? Bool ?? true
+        sortsTabs = store.bool(forKey: "tabs.sort")
+        sortModel = store.string(forKey: Chats.sortModelKey) ?? ""
         splitView = store.bool(forKey: "splitView")
         ai = AI.shipped && store.bool(forKey: "ai")
         aiProvider = store.string(forKey: "ai.provider").flatMap(AIProvider.init(rawValue:))

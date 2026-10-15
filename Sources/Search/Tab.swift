@@ -436,6 +436,9 @@ final class Tab: ObservableObject, Identifiable {
     @Published var muted = false
     /// An extension is recording from this tab's page (see RecordingIndicator).
     @Published var recording = false
+    /// The chat's agent is acting in this tab (see AgentTools): its row
+    /// wears a mark and its page an outline while it does.
+    @Published var agent = false
 
     /// Not `web`: a tab asleep is muted without being woken, and hears of
     /// it when its page is built again.

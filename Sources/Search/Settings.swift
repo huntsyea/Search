@@ -17,12 +17,13 @@ struct SettingsPanel: View {
     @State private var page: Page = Page(rawValue: Store.settings.string(forKey: "settings.page") ?? "") ?? .general
 
     enum Page: String, CaseIterable, Identifiable {
-        case general, tabs, shortcuts, extensions, passwords, downloads, privacy, ai, about
+        case general, tabs, chat, shortcuts, extensions, passwords, downloads, privacy, ai, about
         var id: String { rawValue }
         var title: String {
             switch self {
             case .general: return "General"
             case .tabs: return "Tabs"
+            case .chat: return "AI"
             case .shortcuts: return "Shortcuts"
             case .extensions: return "Extensions"
             case .passwords: return "Passwords"
@@ -36,6 +37,7 @@ struct SettingsPanel: View {
             switch self {
             case .general: return "macwindow"
             case .tabs: return "rectangle.split.3x1"
+            case .chat: return "sparkles"
             case .shortcuts: return "keyboard"
             case .extensions: return "puzzlepiece.extension"
             case .passwords: return "key"
@@ -141,6 +143,7 @@ struct SettingsPanel: View {
                     case .tabs:
                         tabs
                         if !prefs.sidebar { toolbar }
+                    case .chat: ChatSettings(browser: browser, prefs: prefs)
                     case .shortcuts: ShortcutsPage(browser: browser, store: .shared)
                     case .extensions: ExtensionsPage(browser: browser)
                     case .passwords: passwords
@@ -457,6 +460,10 @@ struct SettingsPanel: View {
             Rule()
             Line("Split View", "Show two tabs side by side. Drag a tab onto a page to pair them.") {
                 Switch(on: $prefs.splitView)
+            }
+            Rule()
+            Line("Sidebar panel", "A column on the side away from your tabs, for an extension's side panel or the chat. ⌥⌘B shows or hides it.") {
+                Switch(on: $prefs.utilitySidebar)
             }
         }
     }
@@ -912,5 +919,120 @@ private struct NotificationSites: View {
                 }
             }
         }
+    }
+}
+
+/// Settings › AI: everything pi does here — the chat, where it lives, the
+/// models it uses, the suggestions over its box and the sites it may act on
+/// without asking; and Sort Tabs. (The page's case is still `.chat`, as
+/// Settings remembers it.)
+private struct ChatSettings: View {
+    @ObservedObject var browser: Browser
+    @ObservedObject var prefs: Preferences
+    @ObservedObject private var pi = PiModels.shared
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Card {
+                Line("Sidebar panel", "The chat lives in a column on the side away from your tabs, with extensions' side panels. ⌥⌘B shows or hides it.") {
+                    Switch(on: $prefs.utilitySidebar)
+                }
+            }
+            Card {
+                Line("Model for new chats", "Each chat can change its own from the menu under its box. pi, on this Mac, with your providers") {
+                    picker($prefs.chatModel)
+                }
+                Rule()
+                Line("Model for suggestions", "Reads the page in front and offers things to do with it, over the chat's box") {
+                    picker($prefs.chatSuggestModel)
+                }
+                Rule()
+                Line("Model for titles", "Names each chat in 3 to 5 words from its first message") {
+                    picker($prefs.chatTitleModel)
+                }
+            }
+            Card {
+                Line("Suggest things to do with the page", "Each page you look at with a new chat open is read by the suggestions model, on this Mac's pi, with your provider") {
+                    Switch(on: $prefs.chatSuggests)
+                }
+            }
+            ChatSites(browser: browser)
+            Card {
+                Line("Sort tabs", "A button beside the bookmarks puts your tabs in groups by topic, with Undo. Each tab's title and address go to the model's provider; pins and private tabs stay put.") {
+                    Switch(on: $prefs.sortsTabs)
+                }
+                if prefs.sortsTabs {
+                    Rule()
+                    Line("Model for sorting tabs") {
+                        picker($prefs.sortModel)
+                    }
+                }
+            }
+        }
+        .onAppear { pi.load() }
+    }
+
+    /// pi's models by provider, or pi's own default.
+    private func picker(_ choice: Binding<String>) -> some View {
+        Menu {
+            Button {
+                choice.wrappedValue = ""
+            } label: {
+                if choice.wrappedValue.isEmpty { Label("pi's default", systemImage: "checkmark") } else { Text("pi's default") }
+            }
+            if pi.models.isEmpty {
+                Text(pi.loading ? "Asking pi…" : "pi didn't list any models")
+            }
+            ForEach(pi.providers, id: \.self) { provider in
+                Section(provider) {
+                    ForEach(pi.models.filter { $0.provider == provider }) { model in
+                        Button {
+                            choice.wrappedValue = model.key
+                        } label: {
+                            if model.key == choice.wrappedValue { Label(model.id, systemImage: "checkmark") } else { Text(model.id) }
+                        }
+                    }
+                }
+            }
+        } label: {
+            Text(choice.wrappedValue.isEmpty ? "pi's default" : choice.wrappedValue)
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
+    }
+}
+
+/// The sites the chat may act on without asking, in every chat: those
+/// answered "Always". Each can be taken back, or all of them.
+private struct ChatSites: View {
+    @ObservedObject var browser: Browser
+    @State private var sites = Chat.alwaysSites
+
+    var body: some View {
+        Card {
+            Line("Sites the chat acts on without asking", sites.isEmpty ? "None yet. Answer “Always” when pi asks, and the site is listed here." : "Answered “Always”, in every chat") {
+                if !sites.isEmpty {
+                    Pill("Forget All") {
+                        sites.forEach(Chat.forget)
+                        sites = []
+                        browser.announce("pi asks again on every site")
+                    }
+                }
+            }
+            ForEach(sites, id: \.self) { site in
+                Rule()
+                Line(site) {
+                    Pill("Forget") {
+                        Chat.forget(site)
+                        sites = Chat.alwaysSites
+                    }
+                }
+            }
+        }
+        .onAppear { sites = Chat.alwaysSites }
     }
 }

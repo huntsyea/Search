@@ -165,6 +165,11 @@ enum Metrics {
     static let side: CGFloat = 232
     static let sideMin: CGFloat = 176
     static let sideMax: CGFloat = 440
+    /// The column on the other side, for a side panel or the chat: wide
+    /// enough for an extension's panel, which Chrome gives about 360.
+    static let utility: CGFloat = 380
+    static let utilityMin: CGFloat = 300
+    static let utilityMax: CGFloat = 640
 }
 
 // One spring for anything that moves between two places, one for anything that

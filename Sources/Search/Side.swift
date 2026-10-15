@@ -541,6 +541,7 @@ private struct SideFoot: View {
             if prefs.usesSpaces { SpaceDot(browser: browser) }
             ExtensionSlot(edge: .trailing, room: room)
             BookmarkDoor(browser: browser, arrowEdge: .trailing)
+            if prefs.sortsTabs { SortDoor(browser: browser) }
             // Only while a download is running, and a moment after.
             FetchDoor(browser: browser, fetches: fetches)
             Spacer(minLength: 0)
@@ -554,6 +555,7 @@ private struct SideFoot: View {
     private var room: Int {
         let door: CGFloat = 26 + 2
         var kept = 2  // the puzzle and bookmarks
+        if prefs.sortsTabs { kept += 1 }
         if prefs.usesSpaces { kept += 1 }
         if FetchDoor.shows(fetches, prefs) { kept += 1 }
         let free = prefs.sideWidth - 2 * 10 + 2 - CGFloat(kept) * door
@@ -697,6 +699,13 @@ private struct SideRow: View {
                         .font(.system(size: 10))
                         .foregroundStyle(colour.opacity(0.8))
                         .help("Recording")
+                }
+                if tab.agent {
+                    // The chat's agent at work in this tab (AgentTools).
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Palette.unsafe)
+                        .help("pi is working in this tab")
                 }
                 Text(tab.label)
                     .font(.system(size: 12.5))

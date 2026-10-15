@@ -159,6 +159,7 @@ struct TabBar: View {
                         if !browser.prefs.navigationLeft {
                             Helm(browser: browser).padding(.trailing, 8)
                         }
+                        if browser.prefs.sortsTabs { SortDoor(browser: browser) }
                         BookmarkDoor(browser: browser, arrowEdge: .bottom)
                     }
                     .background {
@@ -638,6 +639,13 @@ private struct TabPill: View {
                         .font(.system(size: 10))
                         .foregroundStyle(colour.opacity(0.8))
                         .help("Recording")
+                }
+                if tab.agent {
+                    // The chat's agent at work in this tab (AgentTools).
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Palette.unsafe)
+                        .help("pi is working in this tab")
                 }
                 Text(tab.label)
                     .font(.system(size: 12.5))

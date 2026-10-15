@@ -59,6 +59,16 @@ struct Page: View {
                     .transition(.opacity)
             }
 
+            if tab.agent {
+                // The chat's agent at work on this page, as Claude in
+                // Chrome outlines the page it acts on: never in the way of a
+                // click, and gone when it settles.
+                RoundedRectangle(cornerRadius: corner, style: .continuous)
+                    .strokeBorder(Palette.unsafe.opacity(0.8), lineWidth: 3)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
+            }
+
             if let pull = tab.pull, pull.stops != nil {
                 // In the disc's place, grown from its own edge: it sits in a
                 // frame as wide as the window, and grown from that frame's

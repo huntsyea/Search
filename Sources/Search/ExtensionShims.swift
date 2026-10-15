@@ -1337,7 +1337,7 @@ enum ExtensionShims {
           pending.then((id) => callback(id), (error) => withLastError(error, callback));
         });
       }
-      define("sidePanel", ["open", "setOptions", "getOptions", "setPanelBehavior", "getPanelBehavior"]);
+      define("sidePanel", ["open", "close", "setOptions", "getOptions", "setPanelBehavior", "getPanelBehavior"]);
       define("offscreen", ["createDocument", "closeDocument", "hasDocument"], [],
         { Reason: new Proxy({}, { get: (_, key) => String(key) }) });
       define("tabGroups", ["get", "query", "update", "move"],
@@ -3573,12 +3573,20 @@ enum ExtensionShims {
         case "downloads.pause", "downloads.resume", "downloads.cancel", "downloads.removeFile", "downloads.getFileIcon":
             throw Unsupported(what: "\(api) isn't available in Search yet")
 
-        // MARK: side panel — a tab of its own, since this window has one column
+        // MARK: side panel — in the sidebar panel, or a tab with that off (SidePanels.swift)
         case "sidePanel.setOptions":
-            if let path = (first as? [String: Any])?["path"] as? String { panelPath[id] = path }
+            let options = first as? [String: Any] ?? [:]
+            if let path = options["path"] as? String, path != panelPath[id] {
+                panelPath[id] = path
+                SidePanels.moved(id)
+            }
+            if let on = options["enabled"] as? Bool {
+                SidePanels.enabled[id] = on ? nil : false
+                if !on { SidePanels.closeAll(of: id) }
+            }
             return nil
         case "sidePanel.getOptions":
-            return ["enabled": true, "path": panelPath[id] ?? defaultPanel(context) ?? ""]
+            return ["enabled": SidePanels.enabled[id] != false, "path": panelPath[id] ?? defaultPanel(context) ?? ""]
         case "sidePanel.setPanelBehavior":
             if let on = (first as? [String: Any])?["openPanelOnActionClick"] as? Bool {
                 if on { panelOnClick.insert(id) } else { panelOnClick.remove(id) }
@@ -3587,7 +3595,15 @@ enum ExtensionShims {
         case "sidePanel.getPanelBehavior":
             return ["openPanelOnActionClick": panelOnClick.contains(id)]
         case "sidePanel.open":
+            // From something you just did, as Chrome insists: the extension's
+            // button, its key, or a click in one of its pages.
+            guard Extensions.justUsed(id) else {
+                throw Unsupported(what: "`sidePanel.open()` may only be called in response to a user gesture.")
+            }
             openPanel(context, owner: owner)
+            return nil
+        case "sidePanel.close":
+            SidePanels.closeAll(of: id)
             return nil
 
         // MARK: offscreen — a page with a DOM for a worker that has none
@@ -4287,8 +4303,8 @@ enum ExtensionShims {
         // Resolved, not appended: a path can carry a query — Claude's names
         // the tab its panel is for, sidepanel.html?tabId=… — which appended
         // would be escaped into the file's name.
-        guard let url = ExtensionShims.page(path, in: context) else { return }
-        owner.browser?.open(url, foreground: true)
+        guard ExtensionShims.page(path, in: context) != nil else { return }
+        SidePanels.open(context, owner: owner)
     }
 
     // MARK: - bookmarks, as Chrome shapes them
