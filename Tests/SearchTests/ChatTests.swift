@@ -11,18 +11,8 @@ import XCTest
 @MainActor
 final class ChatTests: XCTestCase {
     override class func setUp() {
-        setenv("SEARCH_PROBE", "chat-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
-    }
-
-    override class func tearDown() {
-        Disk.drain()
-        if let world = Store.world {
-            let suite = "com.officecommun.search.test.\(world)"
-            UserDefaults.standard.removePersistentDomain(forName: suite)
-            try? FileManager.default.removeItem(at: Store.folder)
-        }
-        super.tearDown()
     }
 
     override func tearDown() async throws {

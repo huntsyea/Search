@@ -15,7 +15,7 @@ final class ExtensionWorkersTests: XCTestCase {
     private var harnesses: [WorkerHarness] = []
 
     override class func setUp() {
-        setenv("SEARCH_PROBE", "extension-workers-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
     }
 

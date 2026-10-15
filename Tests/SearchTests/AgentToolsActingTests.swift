@@ -19,18 +19,8 @@ final class AgentToolsActingTests: XCTestCase {
 
     override class func setUp() {
         // A test world of its own, never the person's profile.
-        setenv("SEARCH_PROBE", "agent-tools-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
-    }
-
-    override class func tearDown() {
-        Disk.drain()
-        if let world = Store.world {
-            let suite = "com.officecommun.search.test.\(world)"
-            UserDefaults.standard.removePersistentDomain(forName: suite)
-            try? FileManager.default.removeItem(at: Store.folder)
-        }
-        super.tearDown()
     }
 
     override func setUp() async throws {

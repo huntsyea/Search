@@ -19,18 +19,8 @@ final class DownloadLifecycleTests: XCTestCase {
     override class func setUp() {
         // Browser settings, history, WebKit data, and files live in this
         // process-specific test world, never in the user's Search profile.
-        setenv("SEARCH_PROBE", "download-ui-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
-    }
-
-    override class func tearDown() {
-        Disk.drain()
-        if let world = Store.world {
-            let suite = "com.officecommun.search.test.\(world)"
-            UserDefaults.standard.removePersistentDomain(forName: suite)
-            try? FileManager.default.removeItem(at: Store.folder)
-        }
-        super.tearDown()
     }
 
     override func setUp() async throws {
