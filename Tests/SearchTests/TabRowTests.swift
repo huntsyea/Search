@@ -411,6 +411,261 @@ final class TabRowTests: XCTestCase {
         XCTAssertNil(row.takeChange())
     }
 
+    // MARK: - dragging, pairs, replacing, pins from another window
+
+    func testDroppingBeforeATabInAnotherGroupTakesThatGroupAndTheOldOneGoesWhenEmptied() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID()
+        row.open(member(a), at: 0)
+        let ga = try XCTUnwrap(row.addGroup(containing: [a]))
+        row.open(member(b), at: row.ids.count)
+        let gb = try XCTUnwrap(row.addGroup(containing: [b]))
+        _ = row.takeChange()
+
+        row.drop(a, before: b)
+        XCTAssertEqual(row.ids, [a, b])
+        XCTAssertEqual(row.group(of: a), gb)          // it took the group it was dropped into
+        XCTAssertFalse(row.groups.contains { $0.id == ga })
+        let change = row.takeChange()
+        XCTAssertEqual(change?.save, .now)            // a group went
+        XCTAssertEqual(change?.goneGroups, [ga])
+    }
+
+    func testDroppingBeforeAPairsPageLandsBeforeThePairAndAPageOnItsPartnerDoesNothing() {
+        var row = TabRow(rules: on)
+        let p1 = UUID(), p2 = UUID(), y = UUID()
+        row.open(member(p1), at: 0)
+        row.open(member(p2), at: 1)
+        row.addPair(TabSplit(tabs: [p1, p2]), keeping: p1)
+        row.open(member(y), at: row.ids.count)
+        XCTAssertEqual(row.ids, [p1, p2, y])
+        _ = row.takeChange()
+
+        row.drop(y, before: p2)
+        XCTAssertEqual(row.ids, [y, p1, p2])          // before the pair, not between its pages
+        XCTAssertEqual(row.pair(of: p1)?.tabs, [p1, p2])
+
+        _ = row.takeChange()
+        row.drop(p1, before: p2)                     // onto its own partner
+        XCTAssertNil(row.takeChange())
+        XCTAssertEqual(row.ids, [y, p1, p2])
+    }
+
+    func testDropWithNoTargetPutsEachKindAtTheEndOfItsOwnAndKeepsPinsApartFromLooseTabs() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), r1 = UUID(), r2 = UUID(), a = UUID(), b = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        row.open(member(r2, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, r1, r2, a, b])
+        _ = row.takeChange()
+
+        row.drop(a, before: nil)                    // a loose tab goes to the end
+        XCTAssertEqual(row.ids, [s1, s2, r1, r2, b, a])
+
+        _ = row.takeChange()
+        row.drop(s1, before: nil)                   // a square to the end of the squares
+        XCTAssertEqual(row.ids, [s2, s1, r1, r2, b, a])
+
+        _ = row.takeChange()
+        row.drop(r1, before: nil)                   // a pinned row to the end of the pins
+        XCTAssertEqual(row.ids, [s2, s1, r2, r1, b, a])
+
+        _ = row.takeChange()
+        row.drop(s1, before: b)                     // a pin can't land among loose tabs
+        XCTAssertNil(row.takeChange())
+        row.drop(b, before: s2)                     // nor a loose tab among pins
+        XCTAssertNil(row.takeChange())
+    }
+
+    func testMoveShownMovesAPairAsOneAndLandsAfterAWholePairWhenMovingRight() {
+        var row = TabRow(rules: on)
+        let p1 = UUID(), p2 = UUID(), a = UUID(), q1 = UUID(), q2 = UUID()
+        row.open(member(p1), at: 0)
+        row.open(member(p2), at: 1)
+        row.addPair(TabSplit(tabs: [p1, p2]), keeping: p1)
+        row.open(member(a), at: row.ids.count)
+        row.open(member(q1), at: row.ids.count)
+        row.open(member(q2), at: row.ids.count)
+        row.addPair(TabSplit(tabs: [q1, q2]), keeping: q1)
+        XCTAssertEqual(row.ids, [p1, p2, a, q1, q2])
+        XCTAssertEqual(row.shown, [p1, a, q1])
+        _ = row.takeChange()
+
+        row.moveShown(p1, to: 2)                    // onto q1's place
+        XCTAssertEqual(row.ids, [a, q1, q2, p1, p2]) // as one block, after the whole pair
+        XCTAssertEqual(row.pair(of: q1)?.tabs, [q1, q2])
+        XCTAssertEqual(row.pair(of: p1)?.tabs, [p1, p2])
+    }
+
+    func testDroppingAPinAcrossTheHiddenLineChangesItsKindAsItLands() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), s3 = UUID(), r1 = UUID(), r2 = UUID()
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(s3, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        row.open(member(r2, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, s3, r1, r2])
+        _ = row.takeChange()
+
+        // A square dropped among the pinned rows lands as one, at the place
+        // the pointer was over, not back at the end of the squares.
+        row.drop(s1, before: r2, as: .listed)
+        XCTAssertEqual(row.ids, [s2, s3, r1, s1, r2])
+        XCTAssertEqual(row.member(s1)?.pin, .listed)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+    }
+
+    func testMoveShownAcrossTheHiddenLineChangesItsKindAsItLands() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), s3 = UUID(), r1 = UUID(), r2 = UUID()
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(s3, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        row.open(member(r2, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, s3, r1, r2])
+        _ = row.takeChange()
+
+        row.moveShown(s1, to: 4, as: .listed)     // onto r2's place
+        XCTAssertEqual(row.ids, [s2, s3, r1, r2, s1])
+        XCTAssertEqual(row.member(s1)?.pin, .listed)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+    }
+
+    func testSetPairSizesClampsAndIgnoresTheSameSizesOrTheWrongCount() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.addPair(TabSplit(tabs: [a, b]), keeping: a)
+        let pair = try XCTUnwrap(row.pair(of: a)?.id)
+        _ = row.takeChange()
+
+        row.setPairSizes(pair, [0.95, 0.05])
+        let sizes = try XCTUnwrap(row.pair(of: a)?.sizes)
+        XCTAssertEqual(sizes[0], 0.8, accuracy: 0.000_001)
+        XCTAssertEqual(sizes[1], 0.2, accuracy: 0.000_001)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+
+        row.setPairSizes(pair, sizes)               // the sizes it already has
+        XCTAssertNil(row.takeChange())
+        row.setPairSizes(pair, [0.4])                // wrong count
+        XCTAssertNil(row.takeChange())
+        row.setPairSizes(UUID(), [0.4, 0.6])         // unknown pair
+        XCTAssertNil(row.takeChange())
+    }
+
+    func testFocusPageSetsThePairsFocusAndRecordsNothingTheSecondTime() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.addPair(TabSplit(tabs: [a, b]), keeping: a)
+        XCTAssertNil(row.pair(of: a)?.focused)
+        _ = row.takeChange()
+
+        row.focusPage(b)
+        XCTAssertEqual(row.pair(of: a)?.focused, b)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+
+        row.focusPage(b)
+        XCTAssertNil(row.takeChange())
+        row.focusPage(UUID())                       // in no pair
+        XCTAssertNil(row.takeChange())
+    }
+
+    func testSwapPairReversesPagesSizesAndTheRowSoThePairStillHolds() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID(), c = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.addPair(TabSplit(tabs: [a, b], sizes: [0.25, 0.75]), keeping: a)
+        row.open(member(c), at: row.ids.count)
+        let pair = try XCTUnwrap(row.pair(of: a)?.id)
+        _ = row.takeChange()
+
+        row.swapPair(pair)
+        XCTAssertEqual(row.pair(of: b)?.tabs, [b, a])
+        XCTAssertEqual(row.pair(of: b)?.sizes, [0.75, 0.25])
+        XCTAssertEqual(row.ids, [b, a, c])          // the pair's place, with its pages swapped
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+
+        row.swapPair(UUID())                        // no such pair
+        XCTAssertNil(row.takeChange())
+    }
+
+    func testReplaceWithAFreshMemberKeepsItsPlaceGroupAndPairAndMovesFocus() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID(), x = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.addPair(TabSplit(tabs: [a, b]), keeping: a)
+        let g = try XCTUnwrap(row.addGroup(containing: [a]))   // takes both pages
+        row.focusPage(b)
+        row.open(member(x), at: row.ids.count)
+        _ = row.takeChange()
+
+        let fresh = UUID()
+        row.replace(b, with: member(fresh))
+        XCTAssertEqual(row.ids, [a, fresh, x])      // the old page's place
+        XCTAssertEqual(row.group(of: fresh), g)     // and its group
+        XCTAssertEqual(row.pair(of: a)?.tabs, [a, fresh])
+        XCTAssertEqual(row.pair(of: a)?.focused, fresh)   // focus moved off the old page
+        XCTAssertFalse(row.contains(b))
+    }
+
+    func testReplaceWithAMemberAlreadyInTheRowFillsThePageAndItsOldGroupGoesWhenEmptied() throws {
+        var row = TabRow(rules: on)
+        let a = UUID(), b = UUID(), moving = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.addPair(TabSplit(tabs: [a, b]), keeping: a)
+        let ga = try XCTUnwrap(row.addGroup(containing: [a]))   // a and b
+        row.open(member(moving), at: row.ids.count)
+        let gb = try XCTUnwrap(row.addGroup(containing: [moving]))
+        _ = row.takeChange()
+
+        row.replace(b, with: member(moving))        // the open tab fills the page
+        XCTAssertEqual(row.ids, [a, moving])
+        XCTAssertEqual(row.group(of: moving), ga)   // it takes the page's group
+        XCTAssertEqual(row.pair(of: a)?.tabs, [a, moving])
+        XCTAssertFalse(row.groups.contains { $0.id == gb })
+        let change = row.takeChange()
+        XCTAssertEqual(change?.save, .now)
+        XCTAssertEqual(change?.goneGroups, [gb])
+    }
+
+    func testSetPinsRemovesAnUnlistedPinAddsANewOneAndMovesAChangedSquareAfterTheSquares() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), r1 = UUID(), rNew = UUID(), a = UUID(), b = UUID()
+        row.open(member(a), at: 0)
+        row.open(member(b), at: 1)
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, r1, a, b])
+        _ = row.takeChange()
+
+        // s1 made a row, r1 left out, rNew brought in.
+        row.setPins([member(s1, pin: .listed), member(s2, pin: .square), member(rNew, pin: .listed)])
+        XCTAssertEqual(row.ids, [s2, s1, rNew, a, b])   // squares first, then the rows in order
+        XCTAssertFalse(row.contains(r1))
+        XCTAssertTrue(row.contains(rNew))
+
+        _ = row.takeChange()
+        row.setPins([member(s1, pin: .listed), member(s2, pin: .square), member(rNew, pin: .listed)])
+        XCTAssertNil(row.takeChange())                 // the same list again changes nothing
+
+        // A member with no pin, and a shy one, are ignored; unlisted pins go.
+        row.setPins([member(s2, pin: .square), member(a), member(s1, pin: .square, shy: true)])
+        XCTAssertEqual(row.ids, [s2, a, b])
+    }
+
     // MARK: - every rule, after every action
 
     /// SplitMix64: a small deterministic generator, so a failure names a seed
@@ -484,7 +739,7 @@ final class TabRowTests: XCTestCase {
             return ids[Int(rng.next() % UInt64(ids.count))]
         }
 
-        switch Int(rng.next() % 14) {
+        switch Int(rng.next() % 21) {
         case 0:
             let fresh = TabRow.Member(
                 id: UUID(), shy: rng.next() % 6 == 0, bench: rng.next() % 8 == 0,
@@ -565,6 +820,53 @@ final class TabRowTests: XCTestCase {
         case 12:
             row.removePair(containing: maybeID() ?? UUID())
             return "removePair"
+
+        case 13:
+            row.drop(maybeID() ?? UUID(), before: rng.next() % 3 == 0 ? nil : maybeID(),
+                     as: rng.next() % 4 == 0 ? aPin() : nil)
+            return "drop"
+
+        case 14:
+            row.moveShown(maybeID() ?? UUID(), to: Int(rng.next() % UInt64(max(1, row.shown.count))),
+                          as: rng.next() % 4 == 0 ? aPin() : nil)
+            return "moveShown"
+
+        case 15:
+            let count = Int(rng.next() % 4)
+            let sizes = (0..<count).map { _ in Double(rng.next() % 120) / 100 }
+            row.setPairSizes(row.pairs.first?.id ?? UUID(), sizes)
+            return "setPairSizes"
+
+        case 16:
+            row.focusPage(maybeID() ?? UUID())
+            return "focusPage"
+
+        case 17:
+            row.swapPair(row.pairs.first?.id ?? UUID())
+            return "swapPair"
+
+        case 18:
+            let old = maybeID() ?? UUID()
+            let newID = (!ids.isEmpty && rng.next() % 2 == 0)
+                ? ids[Int(rng.next() % UInt64(ids.count))] : UUID()
+            let replacing = TabRow.Member(
+                id: newID, shy: rng.next() % 8 == 0, bench: rng.next() % 10 == 0,
+                pin: rng.next() % 3 == 0 ? aPin() : nil
+            )
+            row.replace(old, with: replacing)
+            return "replace"
+
+        case 19:
+            var list: [TabRow.Member] = []
+            for pin in row.members where pin.pin != nil && !pin.shy {
+                if rng.next() % 3 != 0 { list.append(pin) }
+            }
+            if rng.next() % 2 == 0 {
+                list.append(TabRow.Member(id: UUID(), pin: aPin() ?? .square))
+            }
+            if rng.next() % 2 == 0 { list.reverse() }
+            row.setPins(list)
+            return "setPins"
 
         default:
             row.setRules(TabRow.Rules(groups: rng.next() % 2 == 0, pairs: rng.next() % 2 == 0))

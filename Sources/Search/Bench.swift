@@ -3059,7 +3059,7 @@ final class Bench {
             "visibleIDs": browser.tabs.filter { browser.visibleTabIDs.contains($0.id) }.map { Bench.short($0) },
             "shownIDs": browser.shownTabs.map { Bench.short($0) },
             "groups": browser.tabGroups.map { ["id": $0.id.uuidString, "collapsed": $0.collapsed] as [String: Any] },
-            "groupIDs": browser.tabs.map { $0.groupID?.uuidString ?? "" },
+            "groupIDs": browser.tabs.map { browser.row.member($0.id)?.group?.uuidString ?? "" },
             "enabled": browser.prefs.splitView,
             "finding": browser.finding,
             "needle": browser.needle,
