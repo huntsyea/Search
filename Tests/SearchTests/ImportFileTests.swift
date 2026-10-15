@@ -565,7 +565,13 @@ private func runDitto(arguments: [String]) throws {
     XCTAssertEqual(process.terminationStatus, 0)
 }
 
+/// The scratch folders this test process's imports made in the temp folder.
+/// That folder is shared with every other process of this user, other test
+/// runs included, so another copy's `office-import-<its pid>-<uuid>` folder
+/// can appear or disappear between two looks. Only this process's folders are
+/// the ones the import under test makes.
 private func officeImportFolders() -> Set<String> {
+    let prefix = "office-import-\(getpid())-"
     let items = (try? FileManager.default.contentsOfDirectory(at: FileManager.default.temporaryDirectory, includingPropertiesForKeys: nil)) ?? []
-    return Set(items.filter { $0.lastPathComponent.hasPrefix("office-import-") }.map(\.lastPathComponent))
+    return Set(items.map(\.lastPathComponent).filter { $0.hasPrefix(prefix) })
 }

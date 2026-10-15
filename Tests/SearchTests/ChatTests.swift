@@ -293,8 +293,8 @@ final class ChatTests: XCTestCase {
 
         chat.pause()
         let tabs = script.call("browser_tabs")
-        // A moment for the paused step to reach its wait.
-        try? await Task.sleep(for: .milliseconds(200))
+        // The paused step has reached its wait.
+        await until { chat.waitingSteps == 1 }
 
         chat.stop()
 

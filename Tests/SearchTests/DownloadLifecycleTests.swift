@@ -237,8 +237,7 @@ final class DownloadLifecycleTests: XCTestCase {
         try await waitUntil { tab.committed == fixture.url("/page") && !tab.loading }
         try await waitUntil { fixture.completed("/page") == 1 }
 
-        let download = try await requestDownload("/private.bin", from: tab.web)
-        browser.keep(download, from: tab.web)
+        _ = await keptDownload("/private.bin", from: tab.web)
         XCTAssertTrue(browser.fetches.entries.isEmpty)
 
         try await waitUntil {
@@ -261,15 +260,18 @@ final class DownloadLifecycleTests: XCTestCase {
     }
 
     private func startDownload(_ path: String, in tab: BrowserTab) async throws -> FetchEntry {
-        let download = try await requestDownload(path, from: tab.web)
-        browser.keep(download, from: tab.web)
+        let download = await keptDownload(path, from: tab.web)
         return try XCTUnwrap(browser.fetches.entry(for: download))
     }
 
-    private func requestDownload(_ path: String, from webView: WKWebView) async throws -> WKDownload {
+    /// Kept inside WebKit's handler, so the download's delegate is there before
+    /// WebKit asks where the file goes. Kept one main-actor hop later, a busy
+    /// machine let WebKit ask first, find no delegate, and cancel.
+    private func keptDownload(_ path: String, from webView: WKWebView) async -> WKDownload {
         let request = URLRequest(url: fixture.url(path))
         return await withCheckedContinuation { continuation in
             webView.startDownload(using: request) { download in
+                MainActor.assumeIsolated { self.browser.keep(download, from: webView) }
                 continuation.resume(returning: download)
             }
         }
@@ -323,8 +325,17 @@ final class DownloadLifecycleTests: XCTestCase {
             if condition() { return }
             try await Task.sleep(nanoseconds: 20_000_000)
         }
-        XCTFail("Timed out waiting for the download state", file: file, line: line)
+        XCTFail("Timed out waiting for the download state: \(downloadsNow())", file: file, line: line)
         throw WaitError.timedOut
+    }
+
+    /// What every download row and WebKit download was doing at a timeout, so
+    /// a real failure isn't a mystery.
+    private func downloadsNow() -> String {
+        let entries = browser.fetches.entries.map { entry in
+            "\(entry.state) \(entry.completedBytes)/\(entry.totalBytes)\(entry.errorDescription.map { " (\($0))" } ?? "")"
+        }
+        return "entries: \(entries); downloading: \(browser.downloading.count); kept: \(browser.loot.kept.map(\.name))"
     }
 
     private static func rangeOffset(_ header: String?) -> Int {

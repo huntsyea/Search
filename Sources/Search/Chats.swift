@@ -65,6 +65,9 @@ final class Chat: ObservableObject, Identifiable {
     @Published private(set) var paused = false
     private var held: [CheckedContinuation<Bool, Never>] = []
 
+    /// Steps waiting for Resume now: what a test waits for before it stops a paused chat.
+    var waitingSteps: Int { held.count }
+
     /// A model pi can use, as its list names it.
     struct Model: Hashable, Identifiable {
         let provider: String
