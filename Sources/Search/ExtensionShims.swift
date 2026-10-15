@@ -422,6 +422,9 @@ enum ExtensionShims {
       const manifest = (() => { try { return runtime.getManifest(); } catch (e) { return {}; } })();
       const backgroundPage = manifest.background || {};
       const hasWorker = !!(backgroundPage.service_worker || backgroundPage.scripts || backgroundPage.page);
+      // The browser is told each time the worker or background page starts:
+      // that is how it knows WebKit started it (see ExtensionWorkers).
+      if (background) native("background.started", []).catch(() => {});
       const offscreenCapable = [...(manifest.permissions || []), ...(manifest.optional_permissions || [])].includes("offscreen");
       // A script a worker imports that isn't there: Chrome throws at once.
       // WebKit goes looking for it first, and while it does, runs the
@@ -3743,12 +3746,16 @@ enum ExtensionShims {
                         "remote": false, "eventTypes": ["start", "end"]]
             }
 
-        // MARK: the worker, up before a page talks to it
+        // MARK: the worker
+        // The worker's shim, each time it starts (see ExtensionWorkers).
+        case "background.started":
+            owner.workers.started(id)
+            return nil
         case "background.wake":
             guard context.webExtension.hasBackgroundContent else { return nil }
             // WebKit sometimes fails to start a worker again after unloading
             // it, and then never tries again: every message waits for ever.
-            // Tried twice more, then the extension is taken up afresh.
+            // Tried twice more; one that still won't start is ExtensionWorkers' to bring back.
             for attempt in 0..<3 {
                 // WebKit never calls back after some failed starts; eight
                 // seconds without an answer counts as a failure.
@@ -3765,16 +3772,14 @@ enum ExtensionShims {
                 guard error != nil else { return nil }
                 if attempt < 2 { try? await Task.sleep(for: .milliseconds(400)) }
             }
-            owner.revive(id, because: "its worker wouldn't start")
             return nil
         // Whether this extension was loaded before in this run of the
         // browser — an "install" then is really a restart (see the shim).
         case "background.loadedBefore":
-            return owner.loadedBefore.contains(id)
-        // A page found the worker gone though WebKit believes it runs (see
-        // the shim's ping).
+            return owner.workers.loadedBefore(id)
+        // A page's own check, which no longer decides anything: ExtensionWorkers
+        // finds dead workers itself. The page's check and this go next.
         case "background.revive":
-            owner.revive(id, because: "its worker stopped answering")
             return nil
 
         // MARK: what went wrong inside
