@@ -392,19 +392,14 @@ final class Chat: ObservableObject, Identifiable {
         try FileManager.default.createDirectory(at: Chats.sessions, withIntermediateDirectories: true)
         let tools = folder.appendingPathComponent("search-browser.mjs")
         try AgentTools.extensionSource.write(to: tools, atomically: true, encoding: .utf8)
-        var arguments = [
-            "--mode", "rpc",
-            "--session-dir", Chats.sessions.path,
-            // The person's own pi — their providers, models and keys, which
-            // can come from their packages — but only the browser's tools:
-            // none of pi's own (no shell, no files), none of their
-            // extensions' or MCP servers', no skills or project files that
-            // would tell it to use them.
-            "--tools", AgentTools.names.joined(separator: ","),
-            "--no-mcp", "--no-skills", "--no-prompt-templates", "--no-context-files", "--no-themes",
-            "--extension", tools.path,
-            "--system-prompt", AgentTools.systemPrompt,
-        ]
+        // The person's own pi — their providers, models and keys, which
+        // can come from their packages — but only the browser's tools:
+        // none of pi's own (no shell, no files), none of their
+        // extensions' or MCP servers', no skills or project files that
+        // would tell it to use them.
+        var arguments = ["--mode", "rpc", "--session-dir", Chats.sessions.path]
+            + Pi.confined(tools: AgentTools.names)
+            + ["--extension", tools.path, "--system-prompt", AgentTools.systemPrompt]
         if let session, FileManager.default.fileExists(atPath: session) {
             arguments += ["--session", session]
         } else {
