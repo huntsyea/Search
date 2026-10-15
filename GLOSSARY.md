@@ -33,3 +33,29 @@ _Avoid_: mock chat, stub agent
 **Settled**:
 pi has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on.
 _Avoid_: done, idle, finished (a step finishes; a message settles)
+
+## The chat's browser tools
+
+**Browser tool**:
+One thing the chat's agent can do in the browser — list the tabs, read a page, click, type, open a tab — declared once with its name, its kind and what it does.
+_Avoid_: agent tool, action, command
+
+**Catalogue**:
+The full set of browser tools the agent is given; nothing outside it can be called.
+_Avoid_: registry, tool list
+
+**Kind**:
+Whether a browser tool reads (changes nothing), shows (changes only what the person sees — the tab in front, the scroll) or acts (changes a page or the tabs).
+
+**Act**:
+What an acting browser tool would do, worded for the person ("click “Sign in” on example.com"), before it is done.
+
+**Ask**:
+The question put to the person before an act, which they can allow once, for the chat, always for the site, or deny. Skipped when the chat acts without asking or the site is already allowed.
+_Avoid_: permission prompt, confirm
+
+**Mark**:
+The sign on a tab's row and page that the agent is acting in it, until the agent settles.
+
+**Gather**:
+Putting a tab the agent opened into the chat's own tab group, when tab groups are on.
