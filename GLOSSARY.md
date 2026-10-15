@@ -93,3 +93,9 @@ An extension worker that WebKit believes it has, but that doesn't run. `Extensio
 
 **Revive**:
 What brings a dead worker back. Every registration is cleared, since WebKit can't clear one extension's alone, and every extension with a worker is unloaded and loaded again, its popup and side panels reopened. At most once a minute.
+
+## Testing
+
+**Test world**:
+A copy of Search's settings and files kept apart from the person's, under a name of its own: `Search (<name>)` and the settings `com.officecommun.search.test.<name>`. A run started with `SEARCH_PROBE=<name>`, or straight from the build folder, lives in one. A run of the XCTest suite lives in one world, `tests-<pid>`, taken away when its last test has run. Named worlds (`arch4`, `aieval`) are kept from run to run on purpose.
+_Avoid_: probe, sandbox, test profile
