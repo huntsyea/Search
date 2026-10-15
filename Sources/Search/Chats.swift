@@ -583,25 +583,7 @@ final class Chat: ObservableObject, Identifiable {
     }
 
     /// A step as the chat says it before it has finished.
-    static func label(_ tool: String, _ args: [String: Any]) -> String {
-        switch tool {
-        case "browser_tabs": return "Looking at your tabs"
-        case "browser_read": return "Reading the page"
-        case "browser_screenshot": return "Taking a picture of the page"
-        case "browser_find": return "Looking over the page"
-        case "browser_open": return "Opening \(args["url"] as? String ?? "a page")"
-        case "browser_navigate":
-            if let action = args["action"] as? String, !action.isEmpty { return "Going \(action)" }
-            return "Going to \(args["url"] as? String ?? "a page")"
-        case "browser_select": return "Bringing a tab forward"
-        case "browser_close": return "Closing a tab"
-        case "browser_click": return "Clicking"
-        case "browser_type": return "Typing"
-        case "browser_press": return "Pressing \(args["key"] as? String ?? "a key")"
-        case "browser_scroll": return "Scrolling"
-        default: return tool
-        }
-    }
+    static func label(_ tool: String, _ args: [String: Any]) -> String { AgentTools.label(tool, args) }
 }
 
 /// Every chat, newest first, and the file they are listed in.
