@@ -11,9 +11,10 @@ import WebKit
 // Each tool is declared once, in `AgentTools.tools` — a `BrowserTool` with
 // its name, schema and body — and the catalogue runs every one the same way.
 // Reading: the tabs, a tab's visible text, a picture of a tab, the things on
-// a page that can be clicked or typed into. Acting: opening, going to,
-// closing and bringing forward tabs; clicking, typing, pressing a key,
-// scrolling. The catalogue asks first (Chat.permit) before every act, unless
+// a page that can be clicked or typed into. Showing — bringing a tab forward,
+// scrolling — changes only what the person sees, so it asks nothing. Acting:
+// opening, going to and closing tabs; clicking, typing, pressing a key. The
+// catalogue asks first (Chat.permit) before every act, unless
 // the chat acts without asking or the site is allowed — as Claude in Chrome
 // does — so a tool can't forget to. That switch is the person's, and the only
 // limit: there are no others on what the agent may read, type or open. What a
