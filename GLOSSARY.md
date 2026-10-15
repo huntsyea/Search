@@ -79,3 +79,17 @@ A separate set of tabs with its own row, switched with ⌃1–9.
 
 **Parked row**:
 A space's row while another space is on screen in the same window: kept in memory as it was, pages and all. Code: `Parked`.
+
+## Extensions
+
+**Extension worker**:
+An extension's background service worker (or, for an older extension, its background page), which WebKit starts and stops on its own. `ExtensionWorkers` knows whether each one runs.
+
+**Kept registration**:
+The service-worker registration WebKit keeps for an extension from one launch, or one run of its network process, to the next. WebKit takes it up again when the extension loads but starts no worker for it, so Search clears them all at launch.
+
+**Dead worker**:
+An extension worker that WebKit believes it has, but that doesn't run. `ExtensionWorkers` knows one by three signs: asked to start, it didn't say it started (the shim's `background.started`) within a while; WebKit reported that it failed to start; or WebKit's network process started again, which leaves every worker dead. A worker WebKit unloaded after half a minute idle is not dead; WebKit starts it again for the next event.
+
+**Revive**:
+What brings a dead worker back. Every registration is cleared, since WebKit can't clear one extension's alone, and every extension with a worker is unloaded and loaded again, its popup and side panels reopened. At most once a minute.
