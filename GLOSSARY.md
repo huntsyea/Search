@@ -59,3 +59,23 @@ The sign on a tab's row and page that the agent is acting in it, until the agent
 
 **Gather**:
 Putting a tab the agent opened into the chat's own tab group, when tab groups are on.
+
+## The tab row
+
+**Tab row**:
+The tabs of one space in one window, in order, with their groups, pairs and pins. ⌘1–9, ⌃Tab and the extensions' tab indexes all read it, so its order is the order on screen. Code: `TabRow`.
+
+**Group**:
+A named, foldable section of ordinary tabs. A tab is in at most one; a group lasts as long as it has a tab in it. Groups keep their own order, and with groups turned on the row is shown pins first, then each group's tabs in the groups' order, then the tabs in none. Code: `TabGroup`.
+
+**Pair**:
+Two pages shown side by side under Split View, sharing one place in the row. Its pages stand next to each other, in one group or none, and neither is a pin. Code: `TabSplit` (shaped as a list, for more pages later).
+
+**Pin**:
+A tab kept at the head of the row, the same in every window of its space, shown by one letter. A pin is a **square** or a **pinned row** (Arc's pinned list, under the squares); the squares come first. A pin is never in a group or a pair. Code: `Tab.pin`, and `Tab.listed` for a pinned row.
+
+**Space**:
+A separate set of tabs with its own row, switched with ⌃1–9.
+
+**Parked row**:
+A space's row while another space is on screen in the same window: kept in memory as it was, pages and all. Code: `Parked`.
