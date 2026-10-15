@@ -15,15 +15,17 @@ enum PiOnce {
 
     /// pi's last answer to `prompt`, as text. Thirty seconds at most.
     static func answer(system: String, prompt: String, model: String?) async throws -> String {
-        var arguments = [
-            "--print", "--mode", "json", "--no-session",
-            "--no-tools", "--no-mcp", "--no-skills", "--no-prompt-templates", "--no-context-files", "--no-themes",
-            "--thinking", "off",
-            "--system-prompt", system,
-        ]
+        var arguments = ["--print", "--mode", "json", "--no-session"]
+            + Pi.confined(tools: [])
+            + ["--thinking", "off", "--system-prompt", system]
         if let model, !model.isEmpty { arguments += ["--model", model] }
         arguments += ["--", prompt]
-        let output = try await Task.detached(priority: .utility) { try run(arguments) }.value
+        let output: String
+        do {
+            output = try await Task.detached(priority: .utility) { try Pi.print(arguments) }.value
+        } catch let failure as Pi.Failure {
+            throw Failure(why: failure.why)
+        }
         // JSON lines; the answer is the last assistant message's text.
         var answer: String?
         for line in output.split(separator: "\n") {
@@ -114,50 +116,6 @@ enum PiOnce {
         return nil
     }
 
-    /// pi run to the end with stdin empty and stdout read; nothing else open
-    /// goes with it.
-    private static func run(_ arguments: [String]) throws -> String {
-        guard let (pi, environment) = PiFinder.locate() else {
-            throw Failure(why: "pi isn't installed")
-        }
-        let output = Pipe()
-        guard let null = FileHandle(forUpdatingAtPath: "/dev/null") else { throw Failure(why: "No /dev/null") }
-        defer { try? null.close() }
-        var actions: posix_spawn_file_actions_t?
-        var attributes: posix_spawnattr_t?
-        posix_spawn_file_actions_init(&actions)
-        posix_spawnattr_init(&attributes)
-        defer {
-            posix_spawn_file_actions_destroy(&actions)
-            posix_spawnattr_destroy(&attributes)
-        }
-        posix_spawn_file_actions_adddup2(&actions, null.fileDescriptor, 0)
-        posix_spawn_file_actions_adddup2(&actions, output.fileHandleForWriting.fileDescriptor, 1)
-        posix_spawn_file_actions_adddup2(&actions, null.fileDescriptor, 2)
-        posix_spawn_file_actions_addchdir_np(&actions, NSTemporaryDirectory())
-        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_CLOEXEC_DEFAULT))
-
-        let argv = ([pi] + arguments).map { strdup($0) } + [nil]
-        let envp = environment.map { strdup("\($0.key)=\($0.value)") } + [nil]
-        defer {
-            argv.forEach { free($0) }
-            envp.forEach { free($0) }
-        }
-        var pid: pid_t = 0
-        let spawned = posix_spawn(&pid, pi, &actions, &attributes, argv, envp)
-        try? output.fileHandleForWriting.close()
-        guard spawned == 0 else { throw Failure(why: "pi couldn't start (\(spawned))") }
-
-        let timer = DispatchSource.makeTimerSource(queue: .global())
-        timer.schedule(deadline: .now() + 30)
-        timer.setEventHandler { kill(pid, SIGTERM) }
-        timer.resume()
-        let data = output.fileHandleForReading.readDataToEndOfFile()
-        timer.cancel()
-        var status: Int32 = 0
-        waitpid(pid, &status, 0)
-        return String(decoding: data, as: UTF8.self)
-    }
 }
 
 // MARK: - titles
@@ -339,11 +297,7 @@ struct Flow: Layout {
 final class PiModels: ObservableObject {
     static let shared = PiModels()
 
-    struct Model: Hashable, Identifiable {
-        let provider: String
-        let id: String
-        var key: String { provider + "/" + id }
-    }
+    typealias Model = Pi.Model
 
     @Published private(set) var models: [Model] = []
     @Published private(set) var loading = false
@@ -357,33 +311,9 @@ final class PiModels: ObservableObject {
         guard models.isEmpty, !loading else { return }
         loading = true
         Task {
-            let table = (try? await Task.detached(priority: .utility) { try PiOnce.list() }.value) ?? ""
-            models = table.split(separator: "\n").dropFirst().compactMap { line in
-                let cells = line.split(whereSeparator: \.isWhitespace)
-                guard cells.count >= 2 else { return nil }
-                return Model(provider: String(cells[0]), id: String(cells[1]))
-            }
+            models = (try? await Task.detached(priority: .utility) { try Pi.models() }.value) ?? []
             loading = false
         }
     }
 }
 
-extension PiOnce {
-    /// `pi --list-models`, its table as printed.
-    nonisolated static func list() throws -> String {
-        guard let (pi, environment) = PiFinder.locate() else { throw Failure(why: "pi isn't installed") }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: pi)
-        process.arguments = ["--list-models"]
-        process.environment = environment
-        process.currentDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-        let output = Pipe()
-        process.standardOutput = output
-        process.standardError = output
-        process.standardInput = FileHandle.nullDevice
-        try process.run()
-        let data = output.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
-        return String(decoding: data, as: UTF8.self)
-    }
-}

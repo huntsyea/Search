@@ -16,15 +16,46 @@ import Foundation
 // Its sessions are kept in Search's own folder (Chats/sessions), apart from
 // the person's pi in a terminal, and a test world's apart from the browser's.
 
-/// Where pi is, and the environment it expects: the one the person's login
-/// shell has. An app opened from the Dock doesn't get the shell's PATH, so
-/// pi — and the node it runs on — wouldn't be found without it.
-enum PiFinder {
+/// Finding, confining and starting pi: the one place the app goes to it.
+enum Pi {
+    struct Failure: LocalizedError {
+        let why: String
+        var errorDescription: String? { why }
+    }
+
+    /// A model pi can use, as `pi --list-models` lists it.
+    struct Model: Hashable, Identifiable {
+        let provider: String
+        let id: String
+        var key: String { provider + "/" + id }
+    }
+
+    /// A fake pi, for tests: when set, it is the pi started, with Search's
+    /// own environment and no login shell asked. Nil in the app.
+    nonisolated(unsafe) static var executable: URL?
+
+    /// The flags that keep pi to Search's own tools: only `tools` (none at
+    /// all when empty), and none of the person's MCP servers, skills, prompt
+    /// templates, context files or themes.
+    static func confined(tools: [String]) -> [String] {
+        tools.isEmpty
+            ? ["--no-tools", "--no-mcp", "--no-skills", "--no-prompt-templates", "--no-context-files", "--no-themes"]
+            : ["--tools", tools.joined(separator: ","), "--no-mcp", "--no-skills", "--no-prompt-templates", "--no-context-files", "--no-themes"]
+    }
+
+    /// Where pi is, and the environment it expects: the one the person's
+    /// login shell has. An app opened from the Dock doesn't get the shell's
+    /// PATH, so pi — and the node it runs on — wouldn't be found without it.
     /// Looked up once a run, off the main thread.
     nonisolated(unsafe) private static var found: (path: String, environment: [String: String])?
     private static let lock = NSLock()
 
     static func locate() -> (path: String, environment: [String: String])? {
+        if let executable {
+            return FileManager.default.isExecutableFile(atPath: executable.path)
+                ? (executable.path, ProcessInfo.processInfo.environment)
+                : nil
+        }
         lock.lock()
         defer { lock.unlock() }
         if let found { return found }
@@ -74,6 +105,166 @@ enum PiFinder {
         }
         return out.isEmpty ? nil : out
     }
+
+    /// pi started with `arguments` in `directory`: stdin, stdout and stderr
+    /// on pipes, and with `bridge` the extension's two pipes on 3 and 4.
+    /// Nothing else Search has open goes with it.
+    static func spawn(_ arguments: [String], in directory: URL,
+                      environment extra: [String: String] = [:], bridge: Bool) throws -> Child {
+        guard let (pi, base) = locate() else {
+            throw Failure(why: "pi isn't installed — npm install -g @earendil-works/pi-coding-agent, then try again")
+        }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let toPi = Pipe(), fromPi = Pipe(), errPi = Pipe()
+        let bridgeFromPi = bridge ? Pipe() : nil
+        let bridgeToPi = bridge ? Pipe() : nil
+
+        var actions: posix_spawn_file_actions_t?
+        var attributes: posix_spawnattr_t?
+        posix_spawn_file_actions_init(&actions)
+        posix_spawnattr_init(&attributes)
+        defer {
+            posix_spawn_file_actions_destroy(&actions)
+            posix_spawnattr_destroy(&attributes)
+        }
+        posix_spawn_file_actions_adddup2(&actions, toPi.fileHandleForReading.fileDescriptor, 0)
+        posix_spawn_file_actions_adddup2(&actions, fromPi.fileHandleForWriting.fileDescriptor, 1)
+        posix_spawn_file_actions_adddup2(&actions, errPi.fileHandleForWriting.fileDescriptor, 2)
+        // The extension's pipes: 3 for what pi says, 4 for what Search answers.
+        if let bridgeFromPi, let bridgeToPi {
+            posix_spawn_file_actions_adddup2(&actions, bridgeFromPi.fileHandleForWriting.fileDescriptor, 3)
+            posix_spawn_file_actions_adddup2(&actions, bridgeToPi.fileHandleForReading.fileDescriptor, 4)
+        }
+        posix_spawn_file_actions_addchdir_np(&actions, directory.path)
+        // Only those five: nothing else Search has open goes with it.
+        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_CLOEXEC_DEFAULT))
+
+        let argv = [pi] + arguments
+        var cArgs: [UnsafeMutablePointer<CChar>?] = argv.map { strdup($0) } + [nil]
+        defer { cArgs.forEach { free($0) } }
+        var environment = base
+        extra.forEach { environment[$0] = $1 }
+        var cEnv: [UnsafeMutablePointer<CChar>?] = environment.map { strdup("\($0)=\($1)") } + [nil]
+        defer { cEnv.forEach { free($0) } }
+
+        var child: pid_t = 0
+        let status = posix_spawn(&child, pi, &actions, &attributes, &cArgs, &cEnv)
+        toPi.fileHandleForReading.closeFile()
+        fromPi.fileHandleForWriting.closeFile()
+        errPi.fileHandleForWriting.closeFile()
+        bridgeFromPi?.fileHandleForWriting.closeFile()
+        bridgeToPi?.fileHandleForReading.closeFile()
+        guard status == 0 else { throw Failure(why: "pi couldn't be started (\(status))") }
+        // A write to a pi that has just gone fails, rather than taking Search with it.
+        _ = fcntl(toPi.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1)
+        if let bridgeToPi { _ = fcntl(bridgeToPi.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1) }
+        return Child(pid: child,
+                     input: toPi.fileHandleForWriting,
+                     output: fromPi.fileHandleForReading,
+                     errors: errPi.fileHandleForReading,
+                     bridgeIn: bridgeFromPi?.fileHandleForReading,
+                     bridgeOut: bridgeToPi?.fileHandleForWriting)
+    }
+
+    /// `pi <arguments>` run to its end with stdin empty, in the temporary
+    /// folder; its stdout. `deadline` seconds at most, then SIGTERM.
+    static func print(_ arguments: [String], deadline: TimeInterval = 30) throws -> String {
+        let child = try spawn(arguments, in: URL(fileURLWithPath: NSTemporaryDirectory()), bridge: false)
+        try? child.input.close()
+        let timer = DispatchSource.makeTimerSource(queue: .global())
+        timer.schedule(deadline: .now() + deadline)
+        timer.setEventHandler { child.signal(SIGTERM) }
+        timer.resume()
+        let data = child.output.readDataToEndOfFile()
+        timer.cancel()
+        child.wait()
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    /// `pi --list-models`, read into models: its table's first line is the
+    /// header; each other line is provider, model id, then more columns.
+    static func models() throws -> [Model] {
+        guard let (pi, environment) = locate() else { throw Failure(why: "pi isn't installed") }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: pi)
+        process.arguments = ["--list-models"]
+        process.environment = environment
+        process.currentDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        let output = Pipe()
+        process.standardOutput = output
+        process.standardError = output
+        process.standardInput = FileHandle.nullDevice
+        try process.run()
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        process.waitUntilExit()
+        let table = String(decoding: data, as: UTF8.self)
+        return table.split(separator: "\n").dropFirst().compactMap { line in
+            let cells = line.split(whereSeparator: \.isWhitespace)
+            guard cells.count >= 2 else { return nil }
+            return Model(provider: String(cells[0]), id: String(cells[1]))
+        }
+    }
+}
+
+extension Pi {
+    /// One started pi, and the ends of its pipes Search holds.
+    final class Child: @unchecked Sendable {
+        let pid: pid_t
+        let input: FileHandle        // pi's stdin, written by Search
+        let output: FileHandle       // pi's stdout
+        let bridgeIn: FileHandle?    // fd 3: what Search's extension says (bridge only)
+        let bridgeOut: FileHandle?   // fd 4: Search's answers (bridge only)
+
+        private let errors: FileHandle
+        private let tailLock = NSLock()
+        private var tail = ""
+        private let finished = DispatchSemaphore(value: 0)
+
+        init(pid: pid_t, input: FileHandle, output: FileHandle, errors: FileHandle,
+             bridgeIn: FileHandle?, bridgeOut: FileHandle?) {
+            self.pid = pid
+            self.input = input
+            self.output = output
+            self.errors = errors
+            self.bridgeIn = bridgeIn
+            self.bridgeOut = bridgeOut
+            // Read the tail itself: nobody else wants it, and it must drain so
+            // pi is never left blocked writing.
+            errors.readabilityHandler = { [weak self] handle in
+                let data = handle.availableData
+                guard let self else { return }
+                if data.isEmpty {
+                    handle.readabilityHandler = nil
+                    self.finished.signal()
+                    return
+                }
+                // The last few lines, for saying why it stopped; never parsed.
+                let text = String(decoding: data, as: UTF8.self)
+                self.tailLock.lock()
+                self.tail = String((self.tail + text).suffix(2000))
+                self.tailLock.unlock()
+            }
+        }
+
+        /// The last 2000 characters pi wrote to stderr; never parsed.
+        var errorTail: String {
+            tailLock.lock()
+            defer { tailLock.unlock() }
+            return tail
+        }
+
+        /// Waits for pi to end (waitpid), then up to a second for the rest
+        /// of its stderr; its exit status.
+        @discardableResult func wait() -> Int32 {
+            var status: Int32 = 0
+            waitpid(pid, &status, 0)
+            _ = finished.wait(timeout: .now() + 1)
+            return status
+        }
+
+        /// Signals pi.
+        func signal(_ signal: Int32) { kill(pid, signal) }
+    }
 }
 
 /// One pi process, for one chat.
@@ -92,15 +283,14 @@ final class PiProcess: @unchecked Sendable {
     /// A tool call pi gave up on.
     var onCancel: (() -> Void)?
 
+    private var child: Pi.Child?
     private var pid: pid_t = 0
     private var input: FileHandle?
     private var bridgeOut: FileHandle?
     private var output: FileHandle?
     private var bridgeIn: FileHandle?
-    private var errors: FileHandle?
     private var stdoutCarry = Data()
     private var bridgeCarry = Data()
-    private var stderrTail = ""
     private var waiting: [String: (Result<[String: Any], Error>) -> Void] = [:]
     private var nextID = 0
     private let lock = NSLock()
@@ -109,55 +299,18 @@ final class PiProcess: @unchecked Sendable {
 
     /// `arguments` follow `pi`; the extension and the session flags are the caller's.
     func start(arguments: [String], directory: URL, environment extra: [String: String]) throws {
-        guard let (pi, base) = PiFinder.locate() else {
-            throw Failure(why: "pi isn't installed — npm install -g @earendil-works/pi-coding-agent, then try again")
+        let child: Pi.Child
+        do {
+            child = try Pi.spawn(arguments, in: directory, environment: extra, bridge: true)
+        } catch let failure as Pi.Failure {
+            throw Failure(why: failure.why)
         }
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        let toPi = Pipe(), fromPi = Pipe(), errPi = Pipe(), bridgeFromPi = Pipe(), bridgeToPi = Pipe()
-
-        var actions: posix_spawn_file_actions_t?
-        var attributes: posix_spawnattr_t?
-        posix_spawn_file_actions_init(&actions)
-        posix_spawnattr_init(&attributes)
-        defer {
-            posix_spawn_file_actions_destroy(&actions)
-            posix_spawnattr_destroy(&attributes)
-        }
-        posix_spawn_file_actions_adddup2(&actions, toPi.fileHandleForReading.fileDescriptor, 0)
-        posix_spawn_file_actions_adddup2(&actions, fromPi.fileHandleForWriting.fileDescriptor, 1)
-        posix_spawn_file_actions_adddup2(&actions, errPi.fileHandleForWriting.fileDescriptor, 2)
-        // The extension's pipes: 3 for what pi says, 4 for what Search answers.
-        posix_spawn_file_actions_adddup2(&actions, bridgeFromPi.fileHandleForWriting.fileDescriptor, 3)
-        posix_spawn_file_actions_adddup2(&actions, bridgeToPi.fileHandleForReading.fileDescriptor, 4)
-        posix_spawn_file_actions_addchdir_np(&actions, directory.path)
-        // Only those five: nothing else Search has open goes with it.
-        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_CLOEXEC_DEFAULT))
-
-        let argv = [pi] + arguments
-        var cArgs: [UnsafeMutablePointer<CChar>?] = argv.map { strdup($0) } + [nil]
-        defer { cArgs.forEach { free($0) } }
-        var environment = base
-        extra.forEach { environment[$0] = $1 }
-        var cEnv: [UnsafeMutablePointer<CChar>?] = environment.map { strdup("\($0)=\($1)") } + [nil]
-        defer { cEnv.forEach { free($0) } }
-
-        var child: pid_t = 0
-        let status = posix_spawn(&child, pi, &actions, &attributes, &cArgs, &cEnv)
-        toPi.fileHandleForReading.closeFile()
-        fromPi.fileHandleForWriting.closeFile()
-        errPi.fileHandleForWriting.closeFile()
-        bridgeFromPi.fileHandleForWriting.closeFile()
-        bridgeToPi.fileHandleForReading.closeFile()
-        guard status == 0 else { throw Failure(why: "pi couldn't be started (\(status))") }
-        pid = child
-        // A write to a pi that has just gone fails, rather than taking Search with it.
-        _ = fcntl(toPi.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1)
-        _ = fcntl(bridgeToPi.fileHandleForWriting.fileDescriptor, F_SETNOSIGPIPE, 1)
-        input = toPi.fileHandleForWriting
-        bridgeOut = bridgeToPi.fileHandleForWriting
-        output = fromPi.fileHandleForReading
-        bridgeIn = bridgeFromPi.fileHandleForReading
-        errors = errPi.fileHandleForReading
+        self.child = child
+        pid = child.pid
+        input = child.input
+        bridgeOut = child.bridgeOut
+        output = child.output
+        bridgeIn = child.bridgeIn
 
         output?.readabilityHandler = { [weak self] handle in
             let data = handle.availableData
@@ -170,16 +323,6 @@ final class PiProcess: @unchecked Sendable {
             guard let self else { return }
             if data.isEmpty { handle.readabilityHandler = nil; return }
             self.take(data, into: &self.bridgeCarry) { self.bridgeLine($0) }
-        }
-        errors?.readabilityHandler = { [weak self] handle in
-            let data = handle.availableData
-            guard let self else { return }
-            if data.isEmpty { handle.readabilityHandler = nil; return }
-            // The last few lines, for saying why it stopped; never parsed.
-            let text = String(decoding: data, as: UTF8.self)
-            self.lock.lock()
-            self.stderrTail = String((self.stderrTail + text).suffix(2000))
-            self.lock.unlock()
         }
     }
 
@@ -295,19 +438,18 @@ final class PiProcess: @unchecked Sendable {
     }
 
     private func ended() {
-        let child = pid
-        guard child != 0 else { return }
+        guard pid != 0 else { return }
         pid = 0
-        var status: Int32 = 0
-        waitpid(child, &status, 0)
+        let child = self.child
+        self.child = nil
+        child?.wait()
         lock.lock()
         let pending = waiting
         waiting = [:]
-        let tail = stderrTail.trimmingCharacters(in: .whitespacesAndNewlines)
+        let tail = (child?.errorTail ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         lock.unlock()
         pending.values.forEach { $0(.failure(Failure(why: "pi stopped"))) }
         bridgeIn?.readabilityHandler = nil
-        errors?.readabilityHandler = nil
         let why = tail.isEmpty ? nil : String(tail.split(separator: "\n").last ?? "")
         DispatchQueue.main.async { self.onExit?(why) }
     }
