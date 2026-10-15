@@ -62,7 +62,8 @@ final class Extensions: NSObject, ObservableObject {
     @Published private(set) var installed: [Installed] = []
     /// The loaded ones, by id.
     @Published private(set) var contexts: [String: WKWebExtensionContext] = [:]
-    /// Whether each extension's worker runs, and bringing back the ones WebKit left dead (see ExtensionWorkers).
+    /// Whether each extension's worker runs, and bringing back the ones WebKit
+    /// left dead (see ExtensionWorkers).
     private(set) lazy var workers = ExtensionWorkers(store: Store.websites) { [weak self] ids, reason in
         await self?.revive(ids, because: reason)
     }
@@ -757,10 +758,10 @@ final class Extensions: NSObject, ObservableObject {
     /// starts with nothing of the one before, as in Chrome: loading waits.
     private var forgetting: [String: Task<Void, Never>] = [:]
 
-    /// Its chrome.storage, which WebKit keeps by id, and what its pages
-    /// kept at chrome-extension://<id>. WebKit lists no website records
-    /// for that origin (see `ExtensionWorkers.forgetKept()`), so the second is cleared from a
-    /// blank page at that origin, which only an extension context can
+    /// Its chrome.storage, which WebKit keeps by id, and what its pages kept
+    /// at chrome-extension://<id>. WebKit lists no website records for that
+    /// origin (see `ExtensionWorkers.forgetKept()`), so the second is cleared
+    /// from a blank page at that origin, which only an extension context can
     /// host: a stand-in with no worker, scripts or pages of its own, so
     /// nothing of the removed extension runs again.
     /// Whether all of it was cleared.
