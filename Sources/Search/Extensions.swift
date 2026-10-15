@@ -639,7 +639,7 @@ final class Extensions: NSObject, ObservableObject {
             guard installed.contains(where: { $0.id == id }) else { return }
             if let staged {
                 do {
-                    try ExtensionFiles.replace(staged, at: target)
+                    try await ExtensionFiles.replace(staged, at: target, in: Store.websites)
                 } catch {
                     browser?.announce("Couldn't replace \(original.name): \(error.localizedDescription)")
                     return
@@ -700,7 +700,7 @@ final class Extensions: NSObject, ObservableObject {
         let accepted = confirm ? await ask(install: name, wants: wants, icon: found.icon(for: CGSize(width: 64, height: 64))) : true
         guard accepted, !installed.contains(where: { $0.id == id }) else { return }
         let permissions = Extensions.grants(found, in: staged)
-        try ExtensionFiles.replace(staged, at: finalFolder)
+        try await ExtensionFiles.replace(staged, at: finalFolder, in: Store.websites)
         unload(id)
         errors[id] = nil
         let item = Installed(
@@ -922,11 +922,13 @@ final class Extensions: NSObject, ObservableObject {
                     return
                 }
             }
-            guard let index = installed.firstIndex(where: { $0.id == item.id }), installed[index].fromStore,
-                  installed[index].version == item.version,
-                  installed[index].permissions == current.permissions else { return }
+            guard let before = installed.firstIndex(where: { $0.id == item.id }), installed[before].fromStore,
+                  installed[before].version == item.version,
+                  installed[before].permissions == current.permissions else { return }
             let target = Extensions.folder(for: item.id)
-            try ExtensionFiles.replace(staged, at: target)
+            try await ExtensionFiles.replace(staged, at: target, in: Store.websites)
+            // Replacing suspends; the list may have changed meanwhile.
+            guard let index = installed.firstIndex(where: { $0.id == item.id }) else { return }
             unload(item.id)
             errors[item.id] = nil
             installed[index].version = found.version ?? version
