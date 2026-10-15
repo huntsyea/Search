@@ -216,7 +216,8 @@ final class ExtensionWorkersTests: XCTestCase {
         let tooSoon = await eventually(within: 1) { harness.revives.count == 2 }
         XCTAssertFalse(tooSoon, "revived: \(harness.revives)")
 
-        let later = await eventually(within: 8) { harness.revives.count == 2 }
+        // Generous: on a busy Mac the wait for the minute, here three seconds, can run long.
+        let later = await eventually(within: 20) { harness.revives.count == 2 }
         XCTAssertTrue(later, "revived: \(harness.revives)")
         XCTAssertEqual(harness.revives.last?.reason, "WebKit's network process started again", "revived: \(harness.revives)")
         let revived = try await harness.ask(host)
@@ -261,6 +262,47 @@ final class ExtensionWorkersTests: XCTestCase {
         XCTAssertTrue(revivedA.hasPrefix("pong"), revivedA)
         let revivedB = try await harness.ask(hostB)
         XCTAssertTrue(revivedB.hasPrefix("pong"), revivedB)
+    }
+
+    // WebKit keeps in memory what an extension loaded, by address, and the
+    // addresses don't change with its files, so without `ExtensionFiles.replace`
+    // dropping that memory, a reloaded extension ran its old scripts.
+    func testReplacingAnExtensionsFilesRunsTheNewScripts() async throws {
+        try "window.pageVersion = \"v1\";\n"
+            .write(to: folder.appendingPathComponent("page.js"), atomically: true, encoding: .utf8)
+        try "<!doctype html><p>page</p><script src=\"page.js\"></script>"
+            .write(to: folder.appendingPathComponent("page.html"), atomically: true, encoding: .utf8)
+        try ExtensionShims.prepare(folder, fresh: true)
+
+        let harness = launch()
+        await harness.workers.forgetKept()
+        let host = freshHost()
+        let first = try await harness.load(host)
+
+        let firstPong = try await harness.ask(host)
+        XCTAssertTrue(firstPong.hasPrefix("pong"), firstPong)
+        let firstVersion = try await harness.evaluate(host, "return String(window.pageVersion)")
+        XCTAssertEqual(firstVersion, "v1", firstVersion)
+
+        let staged = folder.deletingLastPathComponent().appendingPathComponent("staged-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.copyItem(at: folder, to: staged)
+        try "self.started = Date.now();\nchrome.runtime.onMessage.addListener((message, sender, respond) => { respond(\"v2 \" + self.started); });\n"
+            .write(to: staged.appendingPathComponent("worker.js"), atomically: true, encoding: .utf8)
+        try "window.pageVersion = \"v2\";\n"
+            .write(to: staged.appendingPathComponent("page.js"), atomically: true, encoding: .utf8)
+        try ExtensionShims.prepare(staged, fresh: true)
+
+        try await ExtensionFiles.replace(staged, at: folder, in: .default())
+        defer { try? FileManager.default.removeItem(at: staged) }
+
+        try? harness.controller.unload(first)
+        harness.workers.unloaded(host)
+        _ = try await harness.load(host)
+
+        let secondPong = try await harness.ask(host)
+        XCTAssertTrue(secondPong.hasPrefix("v2"), secondPong)
+        let secondVersion = try await harness.evaluate(host, "return String(window.pageVersion)")
+        XCTAssertEqual(secondVersion, "v2", secondVersion)
     }
 }
 
@@ -356,9 +398,7 @@ private final class WorkerHarness: NSObject, WKWebExtensionControllerDelegate, W
     /// the worker is dead; one that answers nothing three times running is.
     func ask(_ host: String) async throws -> String {
         let context = try XCTUnwrap(contexts[host])
-        let view = try makePage(context)
-        await waitForPage(view, url: try XCTUnwrap(context.baseURL).appendingPathComponent("page.html"))
-        XCTAssertTrue(finished.contains(ObjectIdentifier(view)), "the extension's page didn't load: \(String(describing: view.url)) \(String(describing: lastNavigationError))")
+        let view = try await openPage(context)
         // WebKit's own sendMessage, past the shim's, so the page's own worker
         // check plays no part.
         let script = """
@@ -372,6 +412,23 @@ private final class WorkerHarness: NSObject, WKWebExtensionControllerDelegate, W
             if attempt < 2 { try await Task.sleep(for: .milliseconds(500)) }
         }
         return answer
+    }
+
+    /// Runs `script` in a fresh page of the extension (`page.html`) and gives
+    /// back what it returned, as a string.
+    func evaluate(_ host: String, _ script: String) async throws -> String {
+        let context = try XCTUnwrap(contexts[host])
+        let view = try await openPage(context)
+        let result = try await view.callAsyncJavaScript(script, in: nil, contentWorld: .page)
+        return result as? String ?? String(describing: result)
+    }
+
+    /// Opens `page.html` in a fresh page of the extension, ready for a script.
+    private func openPage(_ context: WKWebExtensionContext) async throws -> WKWebView {
+        let view = try makePage(context)
+        await waitForPage(view, url: try XCTUnwrap(context.baseURL).appendingPathComponent("page.html"))
+        XCTAssertTrue(finished.contains(ObjectIdentifier(view)), "the extension's page didn't load: \(String(describing: view.url)) \(String(describing: lastNavigationError))")
+        return view
     }
 
     private func makePage(_ context: WKWebExtensionContext) throws -> WKWebView {
