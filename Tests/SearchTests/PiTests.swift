@@ -212,6 +212,36 @@ final class PiTests: XCTestCase {
         XCTAssertFalse(pi.running)
     }
 
+    func testStopEndsAPiThatIgnoresIt() async throws {
+        try fakePi("""
+        trap '' TERM
+        while read line; do :; done
+        sleep 30
+        """)
+        let exited = expectation(description: "pi exited")
+        let pi = try started { pi in
+            pi.onExit = { _ in exited.fulfill() }
+        }
+        pi.stop(grace: 0.2)
+        await fulfillment(of: [exited], timeout: 5)
+        XCTAssertFalse(pi.running)
+    }
+
+    /// A chat's pi that closes stdout but stays alive is still ended.
+    func testChatPiThatClosesStdoutStillGoes() async throws {
+        try fakePi("""
+        exec >&-
+        trap '' TERM
+        sleep 30
+        """)
+        let exited = expectation(description: "pi exited")
+        let pi = try started { pi in
+            pi.onExit = { _ in exited.fulfill() }
+        }
+        await fulfillment(of: [exited], timeout: 8)
+        XCTAssertFalse(pi.running)
+    }
+
     /// Nothing Search has open goes with pi: only its own five descriptors.
     func testNothingElseGoesWithPi() async throws {
         let held = (0..<10).compactMap { _ in FileHandle(forReadingAtPath: "/etc/hosts") }
@@ -294,6 +324,52 @@ final class PiTests: XCTestCase {
         }
     }
 
+    /// Needs both SIGKILL (pi ignores SIGTERM) and the process group: the
+    /// `sleep` holds stdout open even after the shell itself is gone.
+    func testOneShotGivesUpOnAPiThatIgnoresIt() throws {
+        try fakePi("""
+        trap '' TERM
+        sleep 30
+        """)
+        let began = Date()
+        XCTAssertThrowsError(try Pi.print([], deadline: 1)) { error in
+            guard let failure = error as? Pi.Failure else { return XCTFail("unexpected \(error)") }
+            XCTAssertTrue(failure.why.contains("longer than"), failure.why)
+        }
+        XCTAssertLessThan(Date().timeIntervalSince(began), 6)
+    }
+
+    /// stdout closing is not pi exiting: a pi that closes it and hangs still
+    /// goes at the deadline.
+    func testOneShotGivesUpWhenStdoutClosesFirst() throws {
+        try fakePi("""
+        exec >&-
+        trap '' TERM
+        sleep 30
+        """)
+        let began = Date()
+        XCTAssertThrowsError(try Pi.print([], deadline: 1)) { error in
+            guard let failure = error as? Pi.Failure else { return XCTFail("unexpected \(error)") }
+            XCTAssertTrue(failure.why.contains("longer than"), failure.why)
+        }
+        XCTAssertLessThan(Date().timeIntervalSince(began), 6)
+    }
+
+    func testOneShotSaysWhyItFailed() async throws {
+        try fakePi("""
+        echo "No API key for anthropic" >&2
+        exit 1
+        """)
+        do {
+            _ = try await PiOnce.answer(system: "s", prompt: "p", model: nil)
+            XCTFail("expected a failure")
+        } catch let failure as PiOnce.Failure {
+            XCTAssertEqual(failure.why, "No API key for anthropic")
+        } catch {
+            XCTFail("unexpected \(error)")
+        }
+    }
+
     // MARK: - the models
 
     func testModelsFromTheTable() throws {
@@ -306,5 +382,30 @@ final class PiTests: XCTestCase {
         XCTAssertEqual(try Pi.models(),
                        [Pi.Model(provider: "kimi-coding", id: "k3"),
                         Pi.Model(provider: "ollama-cloud", id: "glm-5.3")])
+    }
+
+    func testModelsLeaveStderrOut() throws {
+        try fakePi("""
+        echo "Warning: an extension failed to load" >&2
+        printf 'provider      model     context
+        kimi-coding   k3        1.0M
+        ollama-cloud  glm-5.3   200K
+        '
+        """)
+        XCTAssertEqual(try Pi.models(),
+                       [Pi.Model(provider: "kimi-coding", id: "k3"),
+                        Pi.Model(provider: "ollama-cloud", id: "glm-5.3")])
+    }
+
+    func testModelsGiveUp() throws {
+        try fakePi("""
+        sleep 30
+        """)
+        let began = Date()
+        XCTAssertThrowsError(try Pi.models(deadline: 1)) { error in
+            guard let failure = error as? Pi.Failure else { return XCTFail("unexpected \(error)") }
+            XCTAssertTrue(failure.why.contains("longer than"), failure.why)
+        }
+        XCTAssertLessThan(Date().timeIntervalSince(began), 5)
     }
 }

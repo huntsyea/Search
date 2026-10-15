@@ -136,8 +136,11 @@ enum Pi {
             posix_spawn_file_actions_adddup2(&actions, bridgeToPi.fileHandleForReading.fileDescriptor, 4)
         }
         posix_spawn_file_actions_addchdir_np(&actions, directory.path)
-        // Only those five: nothing else Search has open goes with it.
-        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_CLOEXEC_DEFAULT))
+        // Only those five: nothing else Search has open goes with it. And a
+        // process group of pi's own, so a signal reaches whatever pi started
+        // too, and nothing it leaves behind can hold its stdout open.
+        posix_spawnattr_setflags(&attributes, Int16(POSIX_SPAWN_CLOEXEC_DEFAULT | POSIX_SPAWN_SETPGROUP))
+        posix_spawnattr_setpgroup(&attributes, 0)
 
         let argv = [pi] + arguments
         var cArgs: [UnsafeMutablePointer<CChar>?] = argv.map { strdup($0) } + [nil]
@@ -167,37 +170,18 @@ enum Pi {
     }
 
     /// `pi <arguments>` run to its end with stdin empty, in the temporary
-    /// folder; its stdout. `deadline` seconds at most, then SIGTERM.
+    /// folder; its stdout. Thirty seconds at most, then it is ended.
     static func print(_ arguments: [String], deadline: TimeInterval = 30) throws -> String {
         let child = try spawn(arguments, in: URL(fileURLWithPath: NSTemporaryDirectory()), bridge: false)
-        try? child.input.close()
-        let timer = DispatchSource.makeTimerSource(queue: .global())
-        timer.schedule(deadline: .now() + deadline)
-        timer.setEventHandler { child.signal(SIGTERM) }
-        timer.resume()
-        let data = child.output.readDataToEndOfFile()
-        timer.cancel()
-        child.wait()
-        return String(decoding: data, as: UTF8.self)
+        return try child.finish(deadline: deadline)
     }
 
     /// `pi --list-models`, read into models: its table's first line is the
-    /// header; each other line is provider, model id, then more columns.
-    static func models() throws -> [Model] {
-        guard let (pi, environment) = locate() else { throw Failure(why: "pi isn't installed") }
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: pi)
-        process.arguments = ["--list-models"]
-        process.environment = environment
-        process.currentDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
-        let output = Pipe()
-        process.standardOutput = output
-        process.standardError = output
-        process.standardInput = FileHandle.nullDevice
-        try process.run()
-        let data = output.fileHandleForReading.readDataToEndOfFile()
-        process.waitUntilExit()
-        let table = String(decoding: data, as: UTF8.self)
+    /// header; each other line is provider, model id, then more columns. Ten
+    /// seconds at most, so a hung pi can't leave Settings' spinner up.
+    static func models(deadline: TimeInterval = 10) throws -> [Model] {
+        let child = try spawn(["--list-models"], in: URL(fileURLWithPath: NSTemporaryDirectory()), bridge: false)
+        let table = try child.finish(deadline: deadline)
         return table.split(separator: "\n").dropFirst().compactMap { line in
             let cells = line.split(whereSeparator: \.isWhitespace)
             guard cells.count >= 2 else { return nil }
@@ -219,6 +203,13 @@ extension Pi {
         private let tailLock = NSLock()
         private var tail = ""
         private let finished = DispatchSemaphore(value: 0)
+        // Whether `wait()` has reaped pi, its status once reaped, and whether
+        // its deadline passed. One lock guards all three, and every kill with
+        // them.
+        private let stateLock = NSLock()
+        private var reaped = false
+        private var exitStatus: Int32 = 0
+        private var timedOut = false
 
         init(pid: pid_t, input: FileHandle, output: FileHandle, errors: FileHandle,
              bridgeIn: FileHandle?, bridgeOut: FileHandle?) {
@@ -253,17 +244,95 @@ extension Pi {
             return tail
         }
 
-        /// Waits for pi to end (waitpid), then up to a second for the rest
-        /// of its stderr; its exit status.
+        /// Waits for pi to end, then up to a second for the rest of its
+        /// stderr; its exit status. Called again, it returns the same status
+        /// at once.
         @discardableResult func wait() -> Int32 {
-            var status: Int32 = 0
-            waitpid(pid, &status, 0)
+            stateLock.lock()
+            if reaped {
+                let status = exitStatus
+                stateLock.unlock()
+                return status
+            }
+            stateLock.unlock()
+            // Block until pi has exited, without reaping it yet: its pid, and
+            // its group, stay ours to signal until the reap below. Waited on
+            // outside the lock, so a signal never waits for this.
+            var info = siginfo_t()
+            while waitid(P_PID, id_t(pid), &info, WEXITED | WNOWAIT) == -1 && errno == EINTR {}
+            stateLock.lock()
+            if !reaped {
+                var status: Int32 = 0
+                while waitpid(pid, &status, 0) == -1 && errno == EINTR {}
+                exitStatus = status
+                reaped = true
+            }
+            let status = exitStatus
+            stateLock.unlock()
             _ = finished.wait(timeout: .now() + 1)
             return status
         }
 
-        /// Signals pi.
-        func signal(_ signal: Int32) { kill(pid, signal) }
+        /// Signals pi and everything it started — the whole process group.
+        /// The kill is inside the lock: once `wait()` has reaped pi, its pid,
+        /// and the group, may belong to someone else.
+        func signal(_ signal: Int32) {
+            stateLock.lock()
+            if !reaped { kill(-pid, signal) }
+            stateLock.unlock()
+        }
+
+        /// The deadline passed: ask pi to go, and remember that it did. Not
+        /// once `wait()` has reaped it, so a late timer can't fail a run that
+        /// has already ended well.
+        private func expire() {
+            stateLock.lock()
+            if !reaped {
+                timedOut = true
+                kill(-pid, SIGTERM)
+            }
+            stateLock.unlock()
+        }
+    }
+}
+
+extension Pi.Child {
+    /// stdin closed, stdout read to its end, pi waited for. At `deadline` pi
+    /// is sent SIGTERM, and SIGKILL two seconds later if still there. Throws
+    /// when the deadline passed, or when pi failed without printing
+    /// anything: why, from the last line of its stderr.
+    func finish(deadline: TimeInterval) throws -> String {
+        try? input.close()
+        let queue = DispatchQueue.global(qos: .userInitiated)
+        let terminate = DispatchSource.makeTimerSource(queue: queue)
+        terminate.schedule(deadline: .now() + deadline)
+        terminate.setEventHandler { [weak self] in self?.expire() }
+        terminate.resume()
+        let force = DispatchSource.makeTimerSource(queue: queue)
+        force.schedule(deadline: .now() + deadline + 2)
+        force.setEventHandler { [weak self] in self?.signal(SIGKILL) }
+        force.resume()
+        // A signal only asks pi to go; its stdout closing is not pi ending —
+        // it can close it and hang, or keep ignoring SIGTERM. So wait for the
+        // process itself, and only then stop the timers.
+        let data = output.readDataToEndOfFile()
+        let status = wait()
+        terminate.cancel()
+        force.cancel()
+        stateLock.lock()
+        let late = timedOut
+        stateLock.unlock()
+        if late {
+            throw Pi.Failure(why: "pi took longer than \(Int(deadline)) seconds")
+        }
+        let text = String(decoding: data, as: UTF8.self)
+        if status != 0, text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            let lines = errorTail.split(separator: "\n")
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+            throw Pi.Failure(why: lines.last ?? "pi stopped")
+        }
+        return text
     }
 }
 
@@ -305,8 +374,10 @@ final class PiProcess: @unchecked Sendable {
         } catch let failure as Pi.Failure {
             throw Failure(why: failure.why)
         }
+        lock.lock()
         self.child = child
         pid = child.pid
+        lock.unlock()
         input = child.input
         bridgeOut = child.bridgeOut
         output = child.output
@@ -425,28 +496,51 @@ final class PiProcess: @unchecked Sendable {
         return true
     }
 
-    /// Asked to stop: stdin closed is pi's orderly shutdown; a moment later,
-    /// if it is still there, it is told to go.
-    func stop() {
-        guard pid != 0 else { return }
+    /// Asked to stop: stdin closed is pi's orderly shutdown; three seconds
+    /// later, if it is still there, SIGTERM, and two seconds after that
+    /// SIGKILL, so even a pi that ignores the first still goes.
+    func stop() { stop(grace: 3) }
+
+    /// The same, after `grace` seconds rather than three (for tests).
+    func stop(grace: TimeInterval) {
+        // The child is taken under the lock, before stdin is closed: closing
+        // it can end pi's stdout, and `ended()` could clear `child` first.
+        lock.lock()
+        let child = self.child
+        let alive = pid != 0
+        lock.unlock()
+        guard let child, alive else { return }
         try? input?.close()
         input = nil
-        let child = pid
-        DispatchQueue.global().asyncAfter(deadline: .now() + 3) {
-            if kill(child, 0) == 0 { kill(child, SIGTERM) }
+        DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
+            child.signal(SIGTERM)
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + grace + 2) {
+            child.signal(SIGKILL)
         }
     }
 
     private func ended() {
-        guard pid != 0 else { return }
-        pid = 0
+        lock.lock()
         let child = self.child
+        let alive = pid != 0
         self.child = nil
-        child?.wait()
+        pid = 0
+        lock.unlock()
+        guard let child, alive else { return }
+        // stdout closing means pi is done talking, not that it has gone: a pi
+        // that closed it and stayed is still ended, a few seconds at most.
+        DispatchQueue.global().asyncAfter(deadline: .now() + 2) {
+            child.signal(SIGTERM)
+        }
+        DispatchQueue.global().asyncAfter(deadline: .now() + 4) {
+            child.signal(SIGKILL)
+        }
+        child.wait()
         lock.lock()
         let pending = waiting
         waiting = [:]
-        let tail = (child?.errorTail ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let tail = child.errorTail.trimmingCharacters(in: .whitespacesAndNewlines)
         lock.unlock()
         pending.values.forEach { $0(.failure(Failure(why: "pi stopped"))) }
         bridgeIn?.readabilityHandler = nil
@@ -454,5 +548,10 @@ final class PiProcess: @unchecked Sendable {
         DispatchQueue.main.async { self.onExit?(why) }
     }
 
-    deinit { if pid != 0 { kill(pid, SIGTERM) } }
+    deinit {
+        lock.lock()
+        let child = self.child
+        lock.unlock()
+        child?.signal(SIGTERM)
+    }
 }
