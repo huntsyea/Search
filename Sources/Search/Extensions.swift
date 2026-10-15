@@ -190,11 +190,14 @@ final class Extensions: NSObject, ObservableObject {
     // MARK: - starting
 
     func start(for browser: Browser) {
+        // Clearing what WebKit kept needs no window, so it begins here,
+        // before the window is up.
+        Task { await forgetKeptWorkers() }
         attach(browser)
         let begin: @MainActor () -> Void = { [weak self] in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                await forgetWorkersIfChanged()
+                await forgetKeptWorkers()
                 await forgetLeftOver()
                 // One after another, a moment apart: started all at once, WebKit
                 // fails some of their workers and never tries them again.
@@ -244,33 +247,25 @@ final class Extensions: NSObject, ObservableObject {
 
     // MARK: - workers WebKit remembers
 
+    private var keptWorkersForgotten: Task<Void, Never>?
+
     /// WebKit keeps each extension's service worker registered from one
-    /// launch to the next, with the scripts it fetched then, and may start
-    /// that copy rather than what is on disk now. A copy from another build
-    /// of the shim or another version of the extension can leave the worker
-    /// dead for good — reinstalling, reloading and restarting all bring the
-    /// same stale copy back (Vimium's keys stopped working, for one). WebKit
-    /// lists no records for extension origins, so there is no clearing one
-    /// extension's alone; clearing them all stops the workers that run. So
-    /// it is done at launch, before any extension loads, and only when what
-    /// they would run has changed since. Websites' workers go with them and
-    /// are registered again on the next visit.
-    private static let workersKey = "extensions.workers"
-
-    private var workers: String {
-        ([ExtensionShims.version] + installed.map { "\($0.id) \($0.version)" }.sorted()).joined(separator: "\n")
-    }
-
-    private func forgetWorkersIfChanged() async {
-        guard Store.settings.string(forKey: Extensions.workersKey) != workers else { return }
-        await Store.websites.removeData(ofTypes: [WKWebsiteDataTypeServiceWorkerRegistrations], modifiedSince: .distantPast)
-        Store.settings.set(workers, forKey: Extensions.workersKey)
-    }
-
-    /// An extension put in again, reloaded or found with its worker dead:
-    /// the version alone doesn't tell, so the next launch clears regardless.
-    private func workersChanged() {
-        Store.settings.removeObject(forKey: Extensions.workersKey)
+    /// launch to the next, and takes that registration up again when the
+    /// extension loads — but never starts a worker for it: every message to
+    /// it is answered with nothing, and unloading and loading the extension
+    /// brings the same dead registration back (Vimium's keys stopped
+    /// working, for one). WebKit lists no records for extension origins, so
+    /// there is no clearing one extension's alone, and clearing them all
+    /// stops the workers that run. So all of them are cleared at every
+    /// launch, before any extension loads; it runs once per launch, and
+    /// every load waits for it. Websites' workers go with them and are
+    /// registered again the next time the site is opened online; until then
+    /// a site kept for offline use doesn't open without a connection.
+    private func forgetKeptWorkers() async {
+        if keptWorkersForgotten == nil {
+            keptWorkersForgotten = Task { await Store.websites.removeData(ofTypes: [WKWebsiteDataTypeServiceWorkerRegistrations], modifiedSince: .distantPast) }
+        }
+        await keptWorkersForgotten?.value
     }
 
     // MARK: - the row, as WebKit sees it
@@ -443,6 +438,9 @@ final class Extensions: NSObject, ObservableObject {
 
     @discardableResult
     private func load(_ item: Installed) async -> Bool {
+        // No extension loads before the workers WebKit kept are cleared
+        // (see forgetKeptWorkers).
+        await forgetKeptWorkers()
         if let forgetting = forgetting[item.id] { await forgetting.value }
         // The shim this build of Search carries, in place of whatever the
         // build that installed it carried — away from the main thread: the
@@ -665,7 +663,6 @@ final class Extensions: NSObject, ObservableObject {
             }
             unload(id)
             errors[id] = nil
-            workersChanged()
             if let found, let index = installed.firstIndex(where: { $0.id == id }), let wants {
                 installed[index].name = found.displayName ?? installed[index].name
                 installed[index].version = found.version ?? installed[index].version
@@ -693,7 +690,6 @@ final class Extensions: NSObject, ObservableObject {
         guard let item = installed.first(where: { $0.id == id }), item.enabled,
               Date().timeIntervalSince(revived[id] ?? .distantPast) > 60 else { return }
         revived[id] = Date()
-        workersChanged()
         noteError("restarted the extension: \(reason)", for: id)
         // Its popup goes with it; it is opened again once the extension is back.
         let popup = ExtensionPopup.shared.extensionID == id ? ExtensionPopup.shared.view?.url : nil
@@ -748,7 +744,6 @@ final class Extensions: NSObject, ObservableObject {
         try ExtensionFiles.replace(staged, at: finalFolder)
         unload(id)
         errors[id] = nil
-        workersChanged()
         let item = Installed(
             id: id, name: name, version: found.version ?? "?", enabled: true, fromStore: fromStore,
             permissions: permissions,
@@ -807,7 +802,7 @@ final class Extensions: NSObject, ObservableObject {
 
     /// Its chrome.storage, which WebKit keeps by id, and what its pages
     /// kept at chrome-extension://<id>. WebKit lists no website records
-    /// for that origin (see `workersKey`), so the second is cleared from a
+    /// for that origin (see `forgetKeptWorkers()`), so the second is cleared from a
     /// blank page at that origin, which only an extension context can
     /// host: a stand-in with no worker, scripts or pages of its own, so
     /// nothing of the removed extension runs again.
@@ -976,7 +971,6 @@ final class Extensions: NSObject, ObservableObject {
             try ExtensionFiles.replace(staged, at: target)
             unload(item.id)
             errors[item.id] = nil
-            workersChanged()
             installed[index].version = found.version ?? version
             installed[index].permissions = wants.sorted()
             save()

@@ -11,6 +11,10 @@ in [ROADMAP.md](ROADMAP.md).
 
 ## Unreleased
 
+### Fixed
+
+- Extensions with a worker start working on every launch. On most launches WebKit took up the worker it had kept from the last one and never started it, so the extension answered nothing — Obsidian Web Clipper's popup said to reload the page — until Search was quit and opened again, and then only every other time. The workers WebKit keeps are now cleared at every launch, before any extension loads; websites' workers are registered again the next time they're opened online, so a site kept for offline use needs one visit with a connection first.
+
 ### Held back
 
 Not in this version, kept on main for a later one:
