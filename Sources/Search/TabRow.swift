@@ -422,13 +422,172 @@ struct TabRow: Equatable {
         finish(.soon, since: before, gone: gone)
     }
 
+    /// A tab dragged onto the row: before another tab, or at the end when it
+    /// was dropped on the empty space below. A pin stays among its own kind,
+    /// and a pair is one place, so a tab dropped on a page of a pair lands
+    /// before the pair rather than between its pages. A tab dropped before a
+    /// tab takes that tab's group.
+    mutating func drop(_ id: Tab.ID, before target: Tab.ID?) {
+        guard let sourceIndex = members.firstIndex(where: { $0.id == id }) else { return }
+        if let target {
+            guard target != id,
+                  let targetIndex = members.firstIndex(where: { $0.id == target }),
+                  pair(of: id)?.contains(target) != true,
+                  (members[sourceIndex].pin == nil) == (members[targetIndex].pin == nil) else { return }
+            // The pair the target is in is one place: land before its first
+            // page, whatever page of it the pointer was over.
+            let targetStart = pair(of: target).flatMap { inPair in members.firstIndex { $0.id == inPair.left } }
+                ?? targetIndex
+            let before = self
+            pairs.removeAll { $0.contains(id) }
+            members[sourceIndex].group = members[targetIndex].group
+            let dragged = members.remove(at: sourceIndex)
+            members.insert(dragged, at: sourceIndex < targetStart ? targetStart - 1 : targetStart)
+            let gone = tidy()
+            finish(.soon, since: before, gone: gone)
+        } else {
+            let before = self
+            pairs.removeAll { $0.contains(id) }
+            let dragged = members.remove(at: sourceIndex)
+            // A loose tab goes to the end; a pin goes at the end of its kind,
+            // so a square stays among squares and a pinned row among rows.
+            let amongPins = members.filter {
+                $0.pin != nil && (dragged.pin == .listed || $0.pin == .square)
+            }.count
+            members.insert(dragged, at: dragged.pin == nil ? members.count : amongPins)
+            let gone = tidy()
+            finish(.soon, since: before, gone: gone)
+        }
+    }
+
+    /// A tab dragged along the row as it is shown: the tab, or the whole pair
+    /// it is in, takes the place the pointer is over. A pair is one place, so
+    /// dropping onto a page lands beside the pair, never between its pages.
+    mutating func moveShown(_ id: Tab.ID, to index: Int) {
+        let shown = self.shown
+        guard shown.indices.contains(index),
+              let representative = pair(of: id)?.left ?? (contains(id) ? id : nil),
+              let from = shown.firstIndex(of: representative), from != index,
+              let anchor = member(shown[index]) else { return }
+        let moving: [Member]
+        if let inPair = pair(of: id) {
+            moving = members.filter { inPair.contains($0.id) }
+        } else if let only = member(id) {
+            moving = [only]
+        } else {
+            return
+        }
+        guard moving.allSatisfy({ ($0.pin == nil) == (anchor.pin == nil) }) else { return }
+        let targetSize = pair(of: anchor.id)?.tabs.count ?? 1
+        let remaining = members.filter { member in !moving.contains { $0.id == member.id } }
+        guard let target = remaining.firstIndex(where: { $0.id == anchor.id }) else { return }
+        let before = self
+        members = remaining
+        members.insert(contentsOf: moving, at: from < index ? target + targetSize : target)
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
+    /// The divider between a pair's pages dragged: each page's share of the
+    /// stage. Shares that can't be shown, or a list that doesn't fit the
+    /// pages, leave the pair as it was.
+    mutating func setPairSizes(_ pair: UUID, _ sizes: [Double]) {
+        guard let index = pairs.firstIndex(where: { $0.id == pair }),
+              sizes.count == pairs[index].tabs.count,
+              sizes.allSatisfy(\.isFinite) else { return }
+        let clamped = TabSplit.clamp(sizes)
+        guard pairs[index].sizes != clamped else { return }
+        let before = self
+        pairs[index].sizes = clamped
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
+    /// The page of a pair just looked at, to come back to when the pair is
+    /// chosen again. A tab in no pair has no other page to come back to.
+    mutating func focusPage(_ id: Tab.ID) {
+        guard let index = pairs.firstIndex(where: { $0.contains(id) }),
+              pairs[index].focused != id else { return }
+        let before = self
+        pairs[index].focused = id
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
+    /// The divider's menu › Swap Pages: a pair's pages and their shares change
+    /// places, and the row keeps the pair where it stood.
+    mutating func swapPair(_ pair: UUID) {
+        guard let index = pairs.firstIndex(where: { $0.id == pair }) else { return }
+        let found = pairs[index]
+        let moving = found.tabs.compactMap { member($0) }
+        guard moving.count == found.tabs.count,
+              let start = members.firstIndex(where: { $0.id == found.left }) else { return }
+        let before = self
+        pairs[index].tabs.reverse()
+        pairs[index].sizes.reverse()
+        members.removeAll { found.contains($0.id) }
+        members.insert(contentsOf: moving.reversed(), at: min(start, members.count))
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
+    /// A tab taking another's place in the row, as an extension's page going
+    /// to the web, or an open tab filling a pair's empty page. It stands where
+    /// the old one stood, takes its group and its place in the pair, and the
+    /// old one is gone.
+    mutating func replace(_ old: Tab.ID, with new: Member) {
+        guard members.contains(where: { $0.id == old }), new.id != old else { return }
+        let before = self
+        var incoming = new
+        // A tab already in the row fills the place from wherever it was; its
+        // old group goes if that left it empty.
+        if let at = members.firstIndex(where: { $0.id == new.id }) {
+            pairs.removeAll { $0.contains(new.id) }
+            members.remove(at: at)
+        }
+        guard let place = members.firstIndex(where: { $0.id == old }) else { return }
+        incoming.group = members[place].group
+        if let index = pairs.firstIndex(where: { $0.contains(old) }) {
+            pairs[index].replace(old, with: new.id)
+        }
+        members[place] = incoming
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
+    /// Another window changed the space's pins: the pin section becomes that
+    /// list, in its order, and every other tab keeps its place after them. A
+    /// pin the list doesn't name goes, and one it names but this row doesn't
+    /// have comes in. The list is another window's copy of what is already
+    /// saved, so it can wait for the delay.
+    mutating func setPins(_ pins: [Member]) {
+        let wanted = pins.filter { $0.pin != nil && !$0.shy }
+        var rest = members.filter { $0.pin == nil || $0.shy }
+        var section: [Member] = []
+        for pin in wanted {
+            if let existing = members.first(where: { $0.id == pin.id }) {
+                var member = existing
+                member.pin = pin.pin
+                section.append(member)
+                rest.removeAll { $0.id == pin.id }
+            } else {
+                section.append(pin)
+            }
+        }
+        let before = self
+        members = section + rest
+        let gone = tidy()
+        finish(.soon, since: before, gone: gone)
+    }
+
     // MARK: - the rules themselves
 
     /// One place for the urgency table, so every action says when it is worth
-    /// saving: a group and a pin are saved at once — they live in their own
-    /// file and are shared by every window — while the row's order and its
-    /// pairs can wait for the delay. A group that went away, or came back,
-    /// can't wait either. An action that changed nothing records nothing.
+    /// saving: a group, and a pin you make or move, are saved at once — they
+    /// live in their own file and are shared by every window — while the row's
+    /// order, its pairs, and the pins another window sends (`setPins`) can wait
+    /// for the delay. A group that went away, or came back, can't wait either.
+    /// An action that changed nothing records nothing.
     private mutating func finish(_ urgency: Urgency?, since before: TabRow, gone: [UUID] = []) {
         guard self != before, let urgency else { return }
         var merged = change ?? Change(save: urgency, goneGroups: [])
