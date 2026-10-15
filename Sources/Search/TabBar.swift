@@ -225,8 +225,8 @@ struct TabBar: View {
         } else {
             let space = browser.spaces[index]
             let row = space.id == browser.spaceID
-                ? Parked(tabs: browser.tabs, active: browser.activeID, splits: browser.splits)
-                : browser.parked[space.id] ?? Parked(tabs: [], active: nil)
+                ? browser.onScreen
+                : browser.parked[space.id] ?? .empty
             let shown = rowTabs(row.tabs, splits: row.splits)
             let each = width(in: strip, tabs: shown, splits: row.splits)
             HStack(spacing: Metrics.tabGap) {
@@ -987,9 +987,9 @@ struct TabMenu: View {
                 if !browser.tabGroups.isEmpty { Divider() }
                 ForEach(browser.tabGroups) { group in
                     Button(group.name) { browser.move(tab, toGroup: group.id) }
-                        .disabled(tab.groupID == group.id)
+                        .disabled(browser.group(of: tab) == group.id)
                 }
-                if tab.groupID != nil {
+                if browser.group(of: tab) != nil {
                     Divider()
                     Button("Remove from Group") { browser.move(tab, toGroup: nil) }
                 }

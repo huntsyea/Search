@@ -426,8 +426,10 @@ struct TabRow: Equatable {
     /// was dropped on the empty space below. A pin stays among its own kind,
     /// and a pair is one place, so a tab dropped on a page of a pair lands
     /// before the pair rather than between its pages. A tab dropped before a
-    /// tab takes that tab's group.
-    mutating func drop(_ id: Tab.ID, before target: Tab.ID?) {
+    /// tab takes that tab's group. `pin`: the dragged member is a pin and this
+    /// is given, its kind becomes that before it is placed, as a pin dragged
+    /// across the hidden line between the squares and the pinned rows does.
+    mutating func drop(_ id: Tab.ID, before target: Tab.ID?, as pin: Pin? = nil) {
         guard let sourceIndex = members.firstIndex(where: { $0.id == id }) else { return }
         if let target {
             guard target != id,
@@ -441,6 +443,7 @@ struct TabRow: Equatable {
             let before = self
             pairs.removeAll { $0.contains(id) }
             members[sourceIndex].group = members[targetIndex].group
+            if let pin, members[sourceIndex].pin != nil { members[sourceIndex].pin = pin }
             let dragged = members.remove(at: sourceIndex)
             members.insert(dragged, at: sourceIndex < targetStart ? targetStart - 1 : targetStart)
             let gone = tidy()
@@ -448,6 +451,7 @@ struct TabRow: Equatable {
         } else {
             let before = self
             pairs.removeAll { $0.contains(id) }
+            if let pin, members[sourceIndex].pin != nil { members[sourceIndex].pin = pin }
             let dragged = members.remove(at: sourceIndex)
             // A loose tab goes to the end; a pin goes at the end of its kind,
             // so a square stays among squares and a pinned row among rows.
@@ -463,13 +467,16 @@ struct TabRow: Equatable {
     /// A tab dragged along the row as it is shown: the tab, or the whole pair
     /// it is in, takes the place the pointer is over. A pair is one place, so
     /// dropping onto a page lands beside the pair, never between its pages.
-    mutating func moveShown(_ id: Tab.ID, to index: Int) {
+    /// `pin`: the dragged member is a pin and this is given, its kind becomes
+    /// that before it is placed, as a pin dragged across the hidden line
+    /// between the squares and the pinned rows does.
+    mutating func moveShown(_ id: Tab.ID, to index: Int, as pin: Pin? = nil) {
         let shown = self.shown
         guard shown.indices.contains(index),
               let representative = pair(of: id)?.left ?? (contains(id) ? id : nil),
               let from = shown.firstIndex(of: representative), from != index,
               let anchor = member(shown[index]) else { return }
-        let moving: [Member]
+        var moving: [Member]
         if let inPair = pair(of: id) {
             moving = members.filter { inPair.contains($0.id) }
         } else if let only = member(id) {
@@ -478,6 +485,13 @@ struct TabRow: Equatable {
             return
         }
         guard moving.allSatisfy({ ($0.pin == nil) == (anchor.pin == nil) }) else { return }
+        // The kind, before it is placed: a pin dragged across the hidden line
+        // lands as the kind it was dropped among, and the stable partition in
+        // `tidy` keeps it there. Every moving member is a pin then, since a
+        // pair holds none.
+        if let pin, moving.allSatisfy({ $0.pin != nil }) {
+            for at in moving.indices { moving[at].pin = pin }
+        }
         let targetSize = pair(of: anchor.id)?.tabs.count ?? 1
         let remaining = members.filter { member in !moving.contains { $0.id == member.id } }
         guard let target = remaining.firstIndex(where: { $0.id == anchor.id }) else { return }

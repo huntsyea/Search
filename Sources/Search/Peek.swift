@@ -34,11 +34,10 @@ extension Browser {
         guard let page = peekTab else { return }
         let from = active
         let place = placeForNew()
+        withAnimation(Motion.quick) { peekTab = nil }
         // Kept from a grouped tab, it joins that group, as a link opened
         // from there does (see open).
-        if prefs.usesTabGroups, !page.shy, let from = active { page.groupID = from.groupID }
-        withAnimation(Motion.quick) { peekTab = nil }
-        insert(page, at: place)
+        insert(page, at: place, from: prefs.usesTabGroups && !page.shy ? from : nil)
         if beside, prefs.splitView, let from, canSplit(page, with: from) {
             pair(page, with: from, onLeft: false)
         } else {

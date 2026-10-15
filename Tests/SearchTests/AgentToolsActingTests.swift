@@ -187,8 +187,8 @@ final class AgentToolsActingTests: XCTestCase {
 
         let opened = try XCTUnwrap(browser.tabs.first { $0 !== page })
         XCTAssertTrue(opened.agent)
-        XCTAssertNotNil(opened.groupID)
-        XCTAssertTrue(browser.tabGroups.contains { $0.id == opened.groupID })
+        XCTAssertNotNil(browser.group(of: opened))
+        XCTAssertTrue(browser.tabGroups.contains { $0.id == browser.group(of: opened) })
         XCTAssertFalse(page.agent)
     }
 
@@ -226,8 +226,8 @@ final class AgentToolsActingTests: XCTestCase {
         XCTAssertEqual(browser.tabs.count, tabCount + 1)
         XCTAssertTrue(opened.agent)
         XCTAssertTrue(page.agent)
-        XCTAssertNotNil(opened.groupID)
-        XCTAssertTrue(browser.tabGroups.contains { $0.id == opened.groupID })
+        XCTAssertNotNil(browser.group(of: opened))
+        XCTAssertTrue(browser.tabGroups.contains { $0.id == browser.group(of: opened) })
     }
 
     func testReadingAndShowingNeverAsk() async throws {

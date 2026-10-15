@@ -501,6 +501,42 @@ final class TabRowTests: XCTestCase {
         XCTAssertEqual(row.pair(of: p1)?.tabs, [p1, p2])
     }
 
+    func testDroppingAPinAcrossTheHiddenLineChangesItsKindAsItLands() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), s3 = UUID(), r1 = UUID(), r2 = UUID()
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(s3, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        row.open(member(r2, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, s3, r1, r2])
+        _ = row.takeChange()
+
+        // A square dropped among the pinned rows lands as one, at the place
+        // the pointer was over, not back at the end of the squares.
+        row.drop(s1, before: r2, as: .listed)
+        XCTAssertEqual(row.ids, [s2, s3, r1, s1, r2])
+        XCTAssertEqual(row.member(s1)?.pin, .listed)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+    }
+
+    func testMoveShownAcrossTheHiddenLineChangesItsKindAsItLands() {
+        var row = TabRow(rules: on)
+        let s1 = UUID(), s2 = UUID(), s3 = UUID(), r1 = UUID(), r2 = UUID()
+        row.open(member(s1, pin: .square), at: 0)
+        row.open(member(s2, pin: .square), at: 0)
+        row.open(member(s3, pin: .square), at: 0)
+        row.open(member(r1, pin: .listed), at: 0)
+        row.open(member(r2, pin: .listed), at: 0)
+        XCTAssertEqual(row.ids, [s1, s2, s3, r1, r2])
+        _ = row.takeChange()
+
+        row.moveShown(s1, to: 4, as: .listed)     // onto r2's place
+        XCTAssertEqual(row.ids, [s2, s3, r1, r2, s1])
+        XCTAssertEqual(row.member(s1)?.pin, .listed)
+        XCTAssertEqual(row.takeChange()?.save, .soon)
+    }
+
     func testSetPairSizesClampsAndIgnoresTheSameSizesOrTheWrongCount() throws {
         var row = TabRow(rules: on)
         let a = UUID(), b = UUID()
@@ -786,11 +822,13 @@ final class TabRowTests: XCTestCase {
             return "removePair"
 
         case 13:
-            row.drop(maybeID() ?? UUID(), before: rng.next() % 3 == 0 ? nil : maybeID())
+            row.drop(maybeID() ?? UUID(), before: rng.next() % 3 == 0 ? nil : maybeID(),
+                     as: rng.next() % 4 == 0 ? aPin() : nil)
             return "drop"
 
         case 14:
-            row.moveShown(maybeID() ?? UUID(), to: Int(rng.next() % UInt64(max(1, row.shown.count))))
+            row.moveShown(maybeID() ?? UUID(), to: Int(rng.next() % UInt64(max(1, row.shown.count))),
+                          as: rng.next() % 4 == 0 ? aPin() : nil)
             return "moveShown"
 
         case 15:

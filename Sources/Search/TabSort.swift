@@ -18,16 +18,9 @@ final class TabSorter: ObservableObject {
     /// What the last sort in each window did, for Undo and the bench.
     struct Result {
         let groups: [(name: String, tabs: [String])]
-        let before: Snapshot
+        let before: TabRow
     }
     private(set) var last: [ObjectIdentifier: Result] = [:]
-
-    /// The row as it was: each tab's group and place, and the groups.
-    struct Snapshot {
-        let order: [Tab.ID]
-        let groupOf: [Tab.ID: UUID?]
-        let groups: [TabGroup]
-    }
 
     func isSorting(_ browser: Browser) -> Bool { working.contains(ObjectIdentifier(browser)) }
 
@@ -69,9 +62,7 @@ final class TabSorter: ObservableObject {
     /// pi's groups put in place: tabs into groups of yours by name, or into
     /// new ones of two tabs or more.
     private func apply(_ answer: [(name: String, tabs: [String])], names: [String: Tab], in browser: Browser) {
-        let before = Snapshot(order: browser.tabs.map(\.id),
-                              groupOf: Dictionary(uniqueKeysWithValues: browser.tabs.map { ($0.id, $0.groupID) }),
-                              groups: browser.tabGroups)
+        let before = browser.row
         var placed = Set<String>()
         var done: [(name: String, tabs: [String])] = []
         for group in answer {
@@ -81,14 +72,13 @@ final class TabSorter: ObservableObject {
                 .filter { tab in browser.tabs.contains { $0.id == tab.id } && browser.group(of: tab) == nil }
             let name = group.name.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !members.isEmpty, !name.isEmpty else { continue }
-            let id: UUID
             if let mine = browser.tabGroups.first(where: { $0.name.caseInsensitiveCompare(name) == .orderedSame }) {
-                id = mine.id
+                for tab in members { browser.move(tab, toGroup: mine.id) }
             } else {
-                guard members.count >= 2 else { continue }
-                id = browser.addSortedGroup(named: name)
+                // A group made by Sort Tabs: named already, nothing to type.
+                guard members.count >= 2,
+                      browser.addTabGroup(named: name, containing: members) != nil else { continue }
             }
-            for tab in members { browser.move(tab, toGroup: id) }
             done.append((name, members.map(\.label)))
         }
         let moved = done.reduce(0) { $0 + $1.tabs.count }
@@ -209,15 +199,6 @@ final class TabSorter: ObservableObject {
         let answer = try? await PiOnce.answer(system: system, prompt: prompt(items, existing: existing),
                                               model: model ?? Store.settings.string(forKey: Chats.sortModelKey))
         return (answer, answer.flatMap(parseGroups))
-    }
-}
-
-extension Browser {
-    /// A group made by Sort Tabs: named already, nothing to type.
-    func addSortedGroup(named name: String) -> UUID {
-        let id = UUID()
-        tabGroups.append(TabGroup(id: id, name: name, collapsed: false))
-        return id
     }
 }
 

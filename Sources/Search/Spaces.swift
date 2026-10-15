@@ -157,15 +157,16 @@ enum Spaces {
     }
 }
 
-/// A space's row of tabs while another space is on screen.
+/// A space's row while another space is on screen: the row and its pages.
 struct Parked {
-    var tabs: [Tab]
+    var row: TabRow
+    var pages: [Tab.ID: Tab]
     var active: Tab.ID?
-    var splits: [TabSplit] = []
-    /// Its groups, as its file has them: kept here so that writing the row,
-    /// or coming back to the space, doesn't read and decode the file again
-    /// on the main thread. Nil when unknown, for the file to say.
-    var groups: [TabGroup]? = nil
+    var tabs: [Tab] { row.ids.compactMap { pages[$0] } }
+    var splits: [TabSplit] { row.pairs }
+    var groups: [TabGroup] { row.groups }
+    /// No row: a space with no tabs yet, as a preview draws it.
+    static var empty: Parked { Parked(row: TabRow(rules: TabRow.Rules(groups: false, pairs: false)), pages: [:], active: nil) }
 }
 
 extension Browser {
@@ -198,23 +199,20 @@ extension Browser {
         // The row on screen is parked as it is, sound and all: music or a
         // stream keeps playing in the space you left, as it does in a tab
         // you left. ⌘⇧M, or its speaker, stops it.
-        parked[spaceID] = Parked(tabs: tabs, active: activeID, splits: splits, groups: tabGroups)
+        parked[spaceID] = onScreen
 
         spaceID = id
-        // A space kept in memory has its groups with it; one that isn't is
-        // read whole just below (restoreSession), groups included.
-        tabGroups = parked[id]?.groups ?? []
         // The space new pages are made in, when this is the window in front;
         // and the one to come back to, when this is the oldest window.
         if Browsers.front === self || Browsers.front == nil { Spaces.current = id }
         if usesFiles { Store.settings.set(id.uuidString, forKey: "space.current") }
-        if let back = parked.removeValue(forKey: id), !back.tabs.isEmpty {
-            showRow(back.tabs, active: back.active, splits: back.splits)
+        if let back = parked.removeValue(forKey: id), !back.row.ids.isEmpty {
+            showRow(back)
             for tab in tabs where visibleTabIDs.contains(tab.id) {
                 if !tab.wake() { tab.revive() }
             }
         } else {
-            showRow([], active: nil)
+            showRow(.empty)
             restoreSession()
         }
         editing = active?.isBlank ?? true
