@@ -66,7 +66,7 @@ enum TestWorld {
         Store.settings.synchronize()
         erase(world)
         if Store.folder.lastPathComponent == "Search (\(world))" {
-            try? FileManager.default.removeItem(at: Store.folder)
+            remove(Store.folder)
         }
     }
 
@@ -101,7 +101,7 @@ enum TestWorld {
 
         for world in worlds where dead(world) {
             erase(world)
-            try? files.removeItem(at: support.appendingPathComponent("Search (\(world))", isDirectory: true))
+            remove(support.appendingPathComponent("Search (\(world))", isDirectory: true))
         }
     }
 
@@ -118,14 +118,73 @@ enum TestWorld {
         defaults.executableURL = URL(fileURLWithPath: "/usr/bin/defaults")
         defaults.arguments = ["delete", suite]
         defaults.standardOutput = Pipe()
-        defaults.standardError = Pipe()
-        try? defaults.run()
-        defaults.waitUntilExit()
+        let errors = Pipe()
+        defaults.standardError = errors
+        // A stuck `defaults` must not hang the run, so it is given a limit
+        // and killed after it.
+        let done = DispatchSemaphore(value: 0)
+        defaults.terminationHandler = { _ in done.signal() }
+        var ran = false
+        do {
+            try defaults.run()
+            ran = true
+        } catch {
+            complain("could not run defaults delete \(suite): \(error)")
+        }
+        if ran {
+            if done.wait(timeout: .now() + 10) == .timedOut {
+                defaults.terminate()
+                complain("defaults delete \(suite) did not finish in 10s")
+            } else {
+                let stderr = String(data: errors.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+                // An absent domain is success: `defaults` reports it as exit 1.
+                if defaults.terminationStatus != 0,
+                   !(defaults.terminationStatus == 1 && (stderr.contains("does not exist") || stderr.contains("not found"))) {
+                    complain("defaults delete \(suite) failed (\(defaults.terminationStatus)): \(stderr.trimmingCharacters(in: .whitespacesAndNewlines))")
+                }
+            }
+        }
         let files = FileManager.default
         let plist = files.urls(for: .libraryDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Preferences", isDirectory: true)
             .appendingPathComponent("\(suite).plist")
-        if files.fileExists(atPath: plist.path) { try? files.removeItem(at: plist) }
+        remove(plist)
+    }
+
+    /// Say what cleanup could not put away. Cleanup runs after the last test,
+    /// so there is no test left to fail; the line goes to standard error for
+    /// whoever reads the run's output.
+    private static func complain(_ message: String) {
+        FileHandle.standardError.write(Data("TestWorld: \(message)\n".utf8))
+    }
+
+    /// Remove `url`, and say so if it is still there afterwards. Cleanup runs
+    /// after the last test, so a failure cannot fail a test — it is said on
+    /// standard error, with the path and the error the removal gave.
+    private static func remove(_ url: URL) {
+        var failure: Error?
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch let error as NSError where absent(error) {
+            // Already gone: what cleanup wants.
+        } catch {
+            failure = error
+        }
+        if FileManager.default.fileExists(atPath: url.path) {
+            if let failure {
+                complain("could not remove \(url.path): \(failure)")
+            } else {
+                complain("\(url.path) is still there after cleanup")
+            }
+        }
+    }
+
+    /// Whether an error just says the path is not there — the state cleanup
+    /// wants, so not worth a complaint.
+    private static func absent(_ error: Error) -> Bool {
+        let error = error as NSError
+        return (error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError)
+            || (error.domain == NSPOSIXErrorDomain && error.code == Int(ENOENT))
     }
 
     /// Whether the pid a world is named for is gone: not running, and not

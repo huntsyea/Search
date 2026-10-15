@@ -299,6 +299,7 @@ final class AgentToolsActingTests: XCTestCase {
             if condition() { return }
             try await Task.sleep(nanoseconds: 20_000_000)
         }
+        if condition() { return }   // woken late with it already true: not a timeout
         XCTFail("Timed out waiting for the agent tools")
         throw WaitError.timedOut
     }
