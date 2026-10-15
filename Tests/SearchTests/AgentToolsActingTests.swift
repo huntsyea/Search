@@ -192,6 +192,44 @@ final class AgentToolsActingTests: XCTestCase {
         XCTAssertFalse(page.agent)
     }
 
+    func testATabAClickOpensIsMarkedAndGathered() async throws {
+        browser.prefs.usesTabGroups = true
+        chat.mode = .ask
+        let short = AgentTools.short(page)
+
+        _ = try await inPage(#"document.body.insertAdjacentHTML("beforeend", '<a href="' + location.href + '" target="_blank">Elsewhere</a>'); true"#)
+
+        let listing = start("browser_find", ["tab": short])
+        let body = text(try await answer(listing))
+        let link = try XCTUnwrap(body.split(separator: "\n").first { $0.contains("link \"Elsewhere\"") }
+            .map { String($0.prefix(while: { $0 != " " })) })
+
+        let tabCount = browser.tabs.count
+
+        let denied = start("browser_click", ["tab": short, "ref": link])
+        try await waitUntil { chat.asking.count == 1 }
+        XCTAssertEqual(chat.asking.first?.action, "click “Elsewhere” on 127.0.0.1")
+        XCTAssertEqual(browser.tabs.count, tabCount)
+        chat.answer(.deny)
+        _ = try await answer(denied)
+        XCTAssertEqual(browser.tabs.count, tabCount)
+        XCTAssertFalse(browser.tabs.contains { $0.agent })
+
+        let allowed = start("browser_click", ["tab": short, "ref": link])
+        try await waitUntil { chat.asking.count == 1 }
+        chat.answer(.once)
+        let openedAnswer = try await answer(allowed)
+        XCTAssertFalse(isError(openedAnswer))
+        XCTAssertTrue(chat.asking.isEmpty)
+
+        let opened = try XCTUnwrap(browser.tabs.first { $0 !== page })
+        XCTAssertEqual(browser.tabs.count, tabCount + 1)
+        XCTAssertTrue(opened.agent)
+        XCTAssertTrue(page.agent)
+        XCTAssertNotNil(opened.groupID)
+        XCTAssertTrue(browser.tabGroups.contains { $0.id == opened.groupID })
+    }
+
     func testReadingAndShowingNeverAsk() async throws {
         chat.mode = .ask
         let short = AgentTools.short(page)

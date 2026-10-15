@@ -45,10 +45,11 @@ struct BrowserTool {
 
     /// What a tool does when called. Reading and showing tools answer at
     /// once; an acting one only plans, and the catalogue does the rest.
+    /// On the main actor, as the window's tabs and pages are.
     enum Body {
-        case reads((Call) async -> [String: Any])
-        case shows((Call) async -> [String: Any])
-        case acts((Call) async -> Plan)
+        case reads(@MainActor (Call) async -> [String: Any])
+        case shows(@MainActor (Call) async -> [String: Any])
+        case acts(@MainActor (Call) async -> Plan)
     }
 
     /// A call as a tool gets it: its arguments and the window it acts in.
@@ -95,7 +96,7 @@ struct BrowserTool {
         /// makes its own (opening a tab).
         let tab: Tab?
         /// The act itself: only the catalogue calls it, and only once allowed.
-        let perform: () async -> Done
+        let perform: @MainActor () async -> Done
     }
 
     /// What an act did.
@@ -106,7 +107,7 @@ struct BrowserTool {
         var settling: Tab? = nil
         /// What the agent is told, once that page has loaded (the answer
         /// says where the tab is now, so it's made after the wait).
-        let answer: () -> [String: Any]
+        let answer: @MainActor () -> [String: Any]
     }
 
     /// One argument, as a JSON Schema property.
@@ -126,7 +127,7 @@ struct BrowserTool {
     let description: String
     let parameters: [Parameter]
     /// The step as the chat says it before it has finished ("Clicking").
-    let step: ([String: Any]) -> String
+    let step: @MainActor ([String: Any]) -> String
     /// What it does when called: the body the catalogue runs.
     let body: Body
 
