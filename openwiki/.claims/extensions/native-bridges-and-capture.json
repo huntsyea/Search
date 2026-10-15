@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:da9fdf551431d040c6fd632dc51759ab134639ba08f956f8e5b87b4479e0515c",
+  "claims": [
+    {
+      "id": "claim_1f27ea978569425a8aeec38a25a8e783",
+      "statement": "Native messaging reuses Chromium browsers' NativeMessagingHosts registrations, runs a host only if its allowed_origins lists the extension's chrome-extension origin and its program is executable, and validates the host name format.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionNative.swift#L4-L66",
+          "version": "repo-lines-v1:sha256:a67e43d3527004042cc998baf9eb35dffda250ada2c3925a5e8408ff61c8095d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjN2I3N2MxZGNmYTk3Mjc0MzBhZmExZWYxMDRhYzQ1MDViMDYwZDZkMzQ2ZWE3ZmQ1YTBlY2EyMDkxMjZjZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExMWU2MzUzYWRjNzlmYTM1ZWZlNGM4NGQ4YjdkNWFlZGI5NDNmNmFlNDE3ZjExYzczMzA5MGIwYTVlYWJlNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0NDk4Y2E0NTIzMThkNzU4ZmJmODZkNGY1MTRhODBiYTAyMDJiYTJhNmExZWNlYjgwMzBiMzhkMTVhNDg2MWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e5308467b883480e8becd4db97f4778a",
+      "statement": "Connected native ports answer the shim's presence probe without forwarding it and send a keep-alive every 25 seconds so WebKit does not unload the worker; hosts of disconnected ports are stopped as orphans.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionNative.swift#L78-L136",
+          "version": "repo-lines-v1:sha256:ca6e0237d645814e217c70545d6fa339cf45697edbcfb7d21bc03e17505030ed:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZTc4ZWVjMjQwMDc5OGQ3OTNjYjM1Zjk5ODM3MTFkMjI2MmMzYWZkOGE5NjNlOWQyNTAxNzFlODJkNmJhMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZmNWVhODY4ZDQyZTRlNDc5YmI2ZTNjMTBjYjA4YjdmM2UyZGMyNTExMzczOTFiMmU3MGRlY2RkMTNmY2U5NzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MWJlNjM1Zjc1OTQ0YTI0ZWY3MjgwMGZkNWUwZGIyYmQzNDIwOTVkZDFiMjE3NjkyOWViMmU3NDFkYzQ1MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4b67a34740714be5937e05859ecde262",
+      "statement": "Worker WebSockets are proxied through a native port to a URLSessionWebSocketTask with a chrome-extension Origin, to avoid a WebKit main-thread deadlock in extension workers.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionSocket.swift#L4-L80",
+          "version": "repo-lines-v1:sha256:72ba6e834dc1dacf5232bc9548df1b1312178725040d37aaf5061b5d54014212:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiNDU2MzUwY2QwODNhOTlhYjI2MjY2ZDdlN2YwNDg2NDQyZTNhNDcxMjkxODcxYTMzYjgzM2Y4M2Y1NmYxNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlYzdlNTIzZWY5YThkNjlkMTNmMmM2ODBhMDY5YWI3ZTY2ZmNhNzUwMjcxZWQ5NmRiZjE1NTUwMzk4MTkzNjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExMWU2MzUzYWRjNzlmYTM1ZWZlNGM4NGQ4YjdkNWFlZGI5NDNmNmFlNDE3ZjExYzczMzA5MGIwYTVlYWJlNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwMDkzZTYwYTk0Mjg3MmEzOGY3NzQzMWM3MDQwMDZlZTI3OTBiZjg3YTY5ZmYwM2YyMzhiYmU2OGNiYjY4MTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d0f4f03389ac4368baa872cd17a3334e",
+      "statement": "Each extension may have one offscreen document, created from its own page with throttled inactive scheduling, reported to WebKit as a tab but never added to a browser's tabs.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionOffscreen.swift#L3-L44",
+          "version": "repo-lines-v1:sha256:6357439c159b206ec74447451721712ffe2f0f6bed9255ba7b67e0acec5bfd67:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ZWJjYjU5ZTRiODk2NWEyMzg2YjFiZjZlOTY2ZDhiNDA5YjZjYTY2NTA0OWZkYTczMGU5ZDlhYTZiZTU2YmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4NzBiNDM3NTI0ZGUzODdjMTc0MTRkMTRkNzU1ODc2OTc0ODIxMDUyNTI2MTExMzMyNzdhMDM2NmY4Yzc4OWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1Njc3ZDIwZWRkYjEyNTgwOWNmZjM0Zjk3MWIyYWZjODBiMjFjODNmYzJlZDYyYWQwOTIwNzNkZDViN2RjMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiYmI1OWRlZjY1MTM1YWU0YzkxMWY5MTA4NmMwYTRmNWQzODczNjVjZWZhZDk0ZDdjOTIxMWEyNzMzY2E1NGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_de1ee5ccc5b84bbbbb90a3206d881fdb",
+      "statement": "Offscreen message deliveries are validated against the document's frame, tab and URL and deduplicated by token so one relay yields one delivery and reply.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionOffscreen.swift#L58-L80",
+          "version": "repo-lines-v1:sha256:39ef69fb4b183fef55506b46e0cf75333d2c99717e2266a1eda4aaf639b4f185:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhNGQ3MmNjMzU0NTFjZGU0Y2E5NGZiMTJkMWE2NTUzMWRiOTAwNGVkYWQzMDMwNWFiOGIwMmZkODQwYWQ2NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiMzkyZjgwYzM4ZjgyNDU4OWM2MDUxZGU2ZDUxYjE4Yzk2NDg4OGMzNTA1ZTk1YTg1NjZiYTkyN2QxZGFhNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlNmZlZTdhMDI2ZGI1YjliMzQxNGVjMDU1YTNhNTZmODRmZDc1NmIwOTBhNDBkNDY1YmNjNmIzYjE2ZjJlMmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6dbf09adee4a4b49bbe39952456a6f6c",
+      "statement": "Extension screen recording is mediated by Search calling getDisplayMedia in the extension's on-screen page so macOS's picker asks every time, without ScreenCaptureKit or Screen Recording permission.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionCapture.swift#L5-L25",
+          "version": "repo-lines-v1:sha256:7c716a7fb3ae00eca279a4bed2be93dfa80fc0882536453fc039ecb5459fc724:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYzU2YTQwODZhOTFkZGRjZDRiMTUxNTI5MjY4YzY0MjFiZTQ1NTRlZDAwYjJjMTU4OWRlZTk3Mzg5M2U1MGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlMDgyNjQ5MTgxNjljM2FiZDBhMjIzOTNkNjI3YjQ2M2E5MGQxMTNhNDMzYjZiYWNiM2M3N2UyMWQ2MzFiNzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwODQzNzVhZGVjNDUzMmVjZGI2OTBmOGM0ODA5OWJkMTI5MGQ2ZjM1OGMzNzMzMGZjOThjNDJmNzQwNDUyNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bd4e661db9884870b058d2e8aa18a3d7",
+      "statement": "Capture consent is remembered per extension but only honoured right after the user used the extension; refusals are not re-asked until restart, and the extension must declare desktopCapture.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionCapture.swift#L39-L90",
+          "version": "repo-lines-v1:sha256:7216062bfda8c33f1dcbf4b8dcf6cf3b28de8a62c9432b8d24c098c205b18918:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwZGFkNDgxYjYyM2RjOTk5NmFmZWViZmQ5MTAxMTJkMjFhZDE0NzRiMjM1ODg5MDczZmYwNTcyYzg0MDA4MGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiYmUyMzAwODFkNDg2ODIyZGM2NzZkZDIwZWUxZmU2YWU5OWUyYjg2ZDZiMTNlYjM2YTgzZTg2ZTRlZmU3ZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwYTE5NDliOWM2YzdlZjA2NTJlMzM2ZjNiN2EwMmQ1YzAxZjNkZWQ4NzA3ZmJkM2RmMWY3NTJlMDBhNmQzZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ffc8dc635bc40b6b961ea41b0806845",
+      "statement": "Capture stream ids are random 16-byte tokens valid once, for one minute, for one extension, and capture requests are accepted only from the top frame of the extension's own page.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionCapture.swift#L92-L134",
+          "version": "repo-lines-v1:sha256:d72f71ab0b346db73010823753f3e5e532c3c882094210f3725fe8ec82deb645:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZjRhYzc1ODU0ODFiYzYzOTE0ZThlNmYxYTg5ZmNiYzg5MzZkMzdiYTYzYWE5MjFjOGMxZDNjNDA3Zjk2MGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MDU1NTIyN2IxNGM1ZmEwYTQ0NTA1NjhmM2U0N2RmNzAxMDg1NjFlZDU4NjM3ZTZiODlkZDc5ZmVhOGE3NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5ZTBjMTUyM2I1MzJmNTQ3NmVjNGI2MDI2YThmZTVlNjYzZjhlNzI1ZDMyZTExMzI2YzNlNTVmMDE0ZGFhNzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_44e49a9f45cd46d0b666073b6ed5c53d",
+      "statement": "A recording pill lists each extension recording with a Stop button, marks capturing tabs, and hosts a recording offscreen document's view while it records.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/RecordingIndicator.swift#L5-L57",
+          "version": "repo-lines-v1:sha256:1a86331ee89d3f3c25f75935d9b3cb2305444d0fb6b186a8570f720ec120c424:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhZDVhMDE2NzZjNTNkZjc1YmE1NDhlYTdhNDg4NTAyOGMwMTA5MDc2NzcxNTBjNDdiNzVlZWQ5MmQxMjkyOWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YTZhM2Y4NGU2MWM1ZTkyOWNiY2JjY2FmOGVhOWI4OTI4OGFkZjNjOThlYjg0YWEzODg5ZTA4Nzg2NDU4YTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4ZTVkOGVkZDI3OTA2NmE0ZjNkNjI5NmQxOWFiYjQzNjY2MzdkYjEwZTk1OTdkYzQzZjNjZTc5OTZjMjhiODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_93566c881f164f1b8751349699bd9765",
+      "statement": "chrome.runtime is injected only into pages matched by a loaded extension's externally_connectable patterns, excluding all-site, TLD-wide and Google-domain patterns.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionExternal.swift#L3-L56",
+          "version": "repo-lines-v1:sha256:272a65b40af22e5b00fd14a17251bbea5d6c4660f3dd6c2eb8ff247adc20518d:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNmJiM2I1NjgyZjYxOTc1YWYzYTFlNjBmNGViYmVjOGM1NTIxMmRjNzQ5MDBmMDYyYThmNWU2NmExMDVkNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExOGJmY2MwNWRhNWVkOWI1NWRjNTcyNWE0ZmNkYWVjNWMyNTc1ZmRmNGNlMjJhMTk5MDliMWIzZjRkZTgxZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwMmI3NDk5OTVlZTYzOGM5MmQ4NjExNmU1ODMxYzNiYjU0NGU3ZjIxMGE5NTBiZGI4YTljYWEyNTA5NDJlM2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4f954106fdd471ca31dade7d5bd75ce",
+      "statement": "Website navigations to extension pages are allowed only to resources exposed in web_accessible_resources for an https source origin, with strict path validation that fails closed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionRedirectPolicy.swift#L1-L85",
+          "version": "repo-lines-v1:sha256:43136e147c6c14044956095f14e1c0e301832d17e931d3a8187c7fc8ab73f5de:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_374183358ca346bab7b832c22ad81924",
+      "statement": "The source of an extension return is taken from WebKit's navigation provenance, or for blank tabs from a matching server redirect, never from the web view URL.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionReturnNavigation.swift#L1-L79",
+          "version": "repo-lines-v1:sha256:378254781b875655e81ecf0ac6109645a5c0c05cafa2df36ee1d6723468c1c0e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1OWVhYzNlMDczNWU4NTQyN2MxYzFkMTFiYzc0ZDY0Y2M4YzBlZGYyMjhmM2VjYTY2MzdhYjdkN2UxYWRmN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_353311d2141f4a759db3b9d2a673d4de",
+      "statement": "Allowed extension returns cancel the web navigation and replace the tab with an extension view, never in private tabs.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4305-L4332",
+          "version": "repo-lines-v1:sha256:f0cd9ade778e87ab2346d8d40343f3de09829d5c3dec19dad24d5e6a7cd62706:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxOTQyMWZkNTcxMjIyNjY5N2QzNWVlYWU3Y2E3OGEwMWNkOTUxNGIzNzZlMmFlYWQ0ZDYxMmUwYjdjYTRmOTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4NDEyZGZmZTAwOTA2MTZlYjNiZGU1ZGI4NGE2M2NhZmJjNTAwOTI2YmNkZTVjNTkwNjdlNzFjYzk5NzM3NzcifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

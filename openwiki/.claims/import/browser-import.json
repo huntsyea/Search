@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:574c24397deaac41dae699d79f32d2aedd0c2e0a95aef4fc758775c669dd6fe7",
+  "claims": [
+    {
+      "id": "claim_671e0447e4a24296a4ef9a46162a8d87",
+      "statement": "Import supports a fixed list of Chromium browsers identified by their Application Support folder and Safe Storage keychain service, plus Firefox and Zen, unified behind ImportSource.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L1203-L1263",
+          "version": "repo-lines-v1:sha256:ce8da99ab7f652b6f1c5c825004e9bf5876c76a5392d6dd4c12c6732c99ca44a:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxNGUxNzc1ZjFjN2ViYzQwNWVkOTdiNDQ3ZjYzZmNjYjZlMzM0OTllOGEwMTlkNDRkNWY5ZWEzMGE2NTU0YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0YmM1ODAyNzQ5OTIyMDk1MjczOWNiNzgwNjBiNjQ2YjFjYWYyNTBiNjNkMGQ0MzVjYjQ0ZjJlYjc4YjY0ZWEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Import.swift#L656-L657",
+          "version": "repo-lines-v1:sha256:eacbca8f4960b24ec8c56bc14873ce1e4dcc68890ca4ad0be657688fdf269b7e:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2U2OTg0NzMwZGUxNDE1OTIxYjg0ZTg2MWE5NmQ3YTA2OGRkZjI0NzI5NDM4MGU0N2Q3MDQyMzNkYWZiOWU5ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzUzOTgzMzdlMWYxOTkwZTNlNTViZGI1ZGMwZjM2M2I0YTI4N2Y1N2I5MjYyMWQ2NzZjNTZiNzNmNzBkMWZlZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzhhNzc2MGIzZGNlMmIzYTAwNDJhYzg1ZTQ3MDg1Mzc3YTJiYjMzMzUwNTMwZmIwNzJmOGRkNDM0ZjY0MDE5NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjkwNjhkZGZhMjFhNzU3YzQ1NjM3MjY3OGY2ZGU2YjUzZjk4MGEwYzhiODlmODhhNTlkM2U5ZGExNGViYThkOSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Import.swift#L88-L105",
+          "version": "repo-lines-v1:sha256:ad856f66c0412ce6f68efb64880e3b0c7db89b07e55a0686018de7bdb6135790:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlNjc4NmM1MzJiNGY3OTg5Nzc5MTgzZDk2NGJiNzcxZDZmMTk3MWYwMTlhY2JhNGM5NTcwNzAwMjExMmFjNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkZDI0NDU4MmI2ZmIwM2QyM2I4NDE1YWJlY2QzNDZiMGM5ZjQ2NmI2Zjc1MmIwNjgxODljZTdlOWEyZGMzNTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2OGU4ZDM2N2NhMDM2ZTBmODc2ZjUyNjFmZGM3N2NkOGRhMzhlOGZhYzhkNDgyMjc2NTMyMWZiMThlZjRiMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_afb2336015cc48099ac4f4d1803c2a77",
+      "statement": "In test runs, browser profiles are read from the test world's Import folder rather than real browsers.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L107-L113",
+          "version": "repo-lines-v1:sha256:5691800e3cff68a918c7ec006e0cf599fedf7f37132181867f2304ccb1f9a807:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTIyYjU1ZGMzNTdjOTA1NmM4MmQ3ZTk0YzhlOTU4NDk3ZWUwZjc3MjI1NTk3N2RiOWY5ZTU5MGQ1YTdjMWFjOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzhmYzlkMmVjZGVhYzRjODg1ZTU0Mzk3NGJlNjc1ZjhmMGNkNjQxMWNkZTA0M2I3MzZjNmYzYjU2ODExYWQ5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTJmYWY4NjBhZjU5NDM5M2E5NTNiZDE3ZTljMDdmMTgxODQ2OGU5MzcxOWJiOTZiNjMzNWI0YzcwOTg1MTk2NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2088f2d1a0c74e9f92ad4d53ca616fac",
+      "statement": "Chromium passwords are decrypted with a key derived by PBKDF2-SHA1 (salt saltysalt, 1003 rounds) from the Safe Storage keychain passphrase, using AES-128-CBC with a 16-space IV; only v10-prefixed values are accepted and a 32-byte site-hash prefix is skipped.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L439-L513",
+          "version": "repo-lines-v1:sha256:45ebeb7b5b8b26e2fe4b8ed276b827b29c8a4bdb47f0dcb6a3a01cfe0f92b790:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlZDA4YTRmMWU3NTE5ODFjN2VjNjQ4MzUzMTliZDAxNTdhY2M2Y2FmMWZiM2NiY2QxZTc5YTgyMDNmMWUyNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU0NTg0ODRiMmEwOGJhM2U2YjZhMDk5YmFmZjM3MDlhMjNiMWRmOTY5MGUxMTIzZTQwNzZjNjM3MTRmYTU2ZDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiYzQxMTMxMzMxMjM2YjY5YTA2ZDhkZTI4ODY4ZmJkZDhhYjNkMTY1MzFhNDIxZWIzOTdhMDMxOWI4ZjdkODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_64688a74308e4130bfcafc07e0d2709d",
+      "statement": "Other browsers' SQLite databases are read from copies that include their -wal and -shm files.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L1346-L1350",
+          "version": "repo-lines-v1:sha256:3d03aa94ca65a89cd27c1e78df746c02f93705a3af6eb6f382ad02e81d86a77a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTZlZjdlMDQwOGY2OTk1NDBmOTJkMjlkYzlkNzRiYzFjZWI3N2I4YmUzMWJjMTdhZTgzNDJlYWRmNGQ5MzBlMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTYxOTMyMzhlMjVkMThkMjE5ZTBlOGIxZGYxZjBlMjhiZTU2OWI1YTRlMGJmYzJkMmNkYTMzYzZkNjgwMTRlMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTllNzYzNTVjZjExOTk0ODBjM2Y5OTgzNmIxNDg2Yzg0MWQ4OTFmYWFkOTA0YzYwOGUwOTMwMjJkMzc1N2FlZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzQ2ZDY4N2UwMTI1ZmJjMWVmMWVhNGMwYWMxY2YyMTA3MjAxYWFkNTljZDVlOWZjNDhiMjU4NTE3YjY4ZTIzMCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Import.swift#L17-L19",
+          "version": "repo-lines-v1:sha256:818e2856bf13cc819d99e8d174ce14d5ae4f32f15e13697da8d0b34f3d4c6a91:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGEzM2JkOGUxNDMyNGJkYWEwYzNhYjE5Mjk0Nzc3N2FlNTU2MGVlZTk5OGE2MDVjMDMyMTJkODRlMTlkMTkzZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2Y3YjA3NThjYjBlOTg5NjQwOGRhYmUyYWIyNDRiN2QyMzFlZWVkM2QwZTBlZDVjMWY5ZGE1MjE0MTU3MjRkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjE2MzNkZWQyMzZhOWYwYTU0M2IwZDQwNDExY2I2YjZhODBlNTdmNTgwMjM1ODE1ZGQwOWFjZjE3NjU2MjhlMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWZjZTIxY2FiNDhiYmViNGFhYTRjODU3NGI3ZTY3M2JjMzJkMjA0MTRjMTA2YjcwNmEwMzU5ODdkNWUwNzUxNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f717affe82a64108b2403422c788eab2",
+      "statement": "Previews count what can be imported from files alone without requesting a key or decrypting anything.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L348-L372",
+          "version": "repo-lines-v1:sha256:9c1c3184e0daa3267630468b49cd897a71bb6e2f1e5acc168e5b954f0df4223b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiZGMxYzVkY2RiZjIxNzg0YzVjNmQxZDgyZDUwMDk5NWY3YWQxN2FkMjg3NmU2MGU4MTg3N2Q1MjdlMjliOGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDdmM2QyMzMzODA0NDcxY2NmNTQ0MTMwNTUwZjE1NjYwMzkzZDVlZjE2NjQ1OTgzYTNkNjEwN2YwNDllYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlNTY3OWFjZWNlYjdhOWViYmI3MGFhYzE5OWQ4MDExYWZmZWQ5OGU4YmNjYzk1YmE3YTkwM2UzZGMwNGM3ODcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae8d59779ca54dc1aa55ff1ba9175bae",
+      "statement": "Firefox passwords are read from logins.json and key4.db only when no primary password is set; otherwise the user is told to export a CSV.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L886-L898",
+          "version": "repo-lines-v1:sha256:a9f1f7106306af4404e1e27fb457f68ca7bfb5cdaa2fdc9c36606a48953d8fd9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NDI5Njc0Nzc1ODhkNTEwN2Q5NzJiMzQ0MjkxYTA0YWNhZGQ3NTgyMWJlZDAwZGM1Y2IxNDE0OWE3MzFkODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0Yjc1YzNlNDQ5MzdlNDRiOGZhODRhNTFhNmY4NjBmZjE0YjAxZDVmOGM3MzE5ZDNhOGQ2ZGZlODBjYTQ5YzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDdmM2QyMzMzODA0NDcxY2NmNTQ0MTMwNTUwZjE1NjYwMzkzZDVlZjE2NjQ1OTgzYTNkNjEwN2YwNDllYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRlYjA1MmNlYjYzNmYzMjA1YWYxMTJmYjgzMmU0MWFhMWE4ODhjMDQ4YTc4YjU1MDA4ODk4Y2RiMjUwYTFmYTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2269a2294d7e454992912c038bbdce6d",
+      "statement": "Only extensions the user added from the Chrome Web Store are imported, and they are installed fresh from the store rather than copied.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L388-L436",
+          "version": "repo-lines-v1:sha256:4d247607d9c3375a7dcf699dedca9ce79f4e369470a42f7ea1d2b365cc9f2a0a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0MDJkZWM1YjVlZmFiYjg5YmMzY2U1ZmY3MzA4ZDA3Mjk5Y2M1MjUxZTc1MzVjNDg5MDI0YmYyYTM1YTExYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxYTlmNTBkN2UzNmY4MWI4NWZhMzQ2NzUzNjcwOTFmOTljMDE5NWJjYjUzMzEzZDJlYmU0MDNmMTExMjgwYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZhZTQ4MjE3NDNkNWUxNTRkN2EyYzNjOTY2YTI5YzNiM2U0MWY1Mzk3YzEwODdhMGVkYjAxNDMxOWE2MjcyZGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxNTg4N2FjZTdjOTUyYmUzYjgwNzZkNWU5OWI5YmNiM2Q4MTQ4MDZlOWM4MDllN2QxMzVhMzQ0NmI0NWNhMDYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/ImportPanel.swift#L449-L449",
+          "version": "repo-lines-v1:sha256:77493b5cd7bb795c34fbb4dffedc18df90aa071a20afd029ec8d8c9a7bd84a71:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzc0OTNiNWNkN2JiNzk1YzM0ZmJiNGRmZmVkYzE4ZGY5MGFhMDcxYTIwYWZkMDI5ZWM4ZDhjOWE3YmQ4NGE3MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzc0OTNiNWNkN2JiNzk1YzM0ZmJiNGRmZmVkYzE4ZGY5MGFhMDcxYTIwYWZkMDI5ZWM4ZDhjOWE3YmQ4NGE3MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODEzODdiMGZiMDJjZTY5N2UyZDBmZTcyNzMxZGYwMTk1MWMyZWY2Yzc2MmQ1YzA1NTJhYWQ0M2YyMTYxZTIxOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGQ0MWJhOTJhMjJlM2JmMmEzY2RjYzNhNjIyMjU3N2JiMmU2OTIxNmNkNmY1NmUxNThkOWU3NWFmMzZlZThlOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_795b1d0531ee4df3b85e46c200cf1d80",
+      "statement": "Arc's spaces, pinned containers and favourites are read from StorableSidebar.json defensively, ignoring Arc's Today, limiting depth to 64 and keeping only http(s) URLs without credentials.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ImportArc.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:c48bcae28d706902170921b3fe2fc3e3e6cc461939f1222cf0e113f0e48ebc03:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlN2E4MTNhZjBhYmE1NTBmMWEzYzIyNzJmMjFlNWRjNGM4ZWNjM2YyZWI3YWVjYzI5NjUzMzEyNTdlMTM4YzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwZDJmOTg3MmI1ZjMzMGRiZmIxYWFiMzFkOTkyNmI0YTFhM2QzMGMzZGI0ZjViNTNjYjViZDIyNmM5MWM5NmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6329671575054676a7f59592879da16a",
+      "statement": "File import accepts Netscape bookmark HTML, password CSV and Safari's export ZIP, recognising Safari's localized members by content and extracting ZIPs with ditto into a per-process scratch folder.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ImportFile.swift#L284-L290",
+          "version": "repo-lines-v1:sha256:144f3364d1f6fd89daf75dd29124c911f9502ca020fb6d42450f52a6b18eddbb:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFjMDllOTE0MjkzZTExMDJkOWFhNGZhZTZlNDk3MzljODg0NDA5YTMxOWM2ODEyZDQxNzlhYzk2N2Q3OGRlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjJmODBhNjY4NTNiYjQ2MjE4ZmU4MDFjMTM5MjEyMTg3MTY3MzcwYzhkYzkyNjI0MjZiZTdmZjhlOTVlN2U5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWI1ZGUyNGYyYjkzNjUzY2M5MWZiN2E0MzY5ZWU4ZWRjMWY0NGQ0ZWRiN2Y0OTg4YWIzODI2YTExNTRhMTk5ZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTAyMzQ2MTMyNDE2MzQ1ZDI1ZjRlNDZiMzZkMGEwNDdjMjFjNDI4ODdiYzhmZWI0YTAzYjQ0YWQ4NDRmZWZlMiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/ImportFile.swift#L345-L348",
+          "version": "repo-lines-v1:sha256:3a143eae2a749a3fb7b3be05950f2112025e1a03b41ca17f87ff535ec2a1672c:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTNhZWRhMjAxZjRkZTdjZjk4N2Y4YWVhNmUyMWVjNmFmMzUyYWJkZDNlMTRmYjIxNGU4Njc3MGNkMjVlYmNiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzM3ZjgwY2U5MjY3ZThmNzgwZGFmNjVlY2U1MWUwNGJhZmM4NjhkYjU1NjJhNDQ2NzIyYzA0ZjA4MDAwY2ViNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDgzNTBjN2EwZjA2MmFlNGNhNmU4NTdjZWYzNmI4ZTRhNTMyM2IwZTliNWVjOWQ3NjZjMDZlZjc3MDBlNGVmMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjA0Y2EzZTU0ZTcyZDM3MmM3Y2MyNGZkYWRlMGFiZTJiMTZhYzgyZmM0OTRiZDgzYTljNDMxNDcwNjQ3NmIzOCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/ImportFile.swift#L4-L22",
+          "version": "repo-lines-v1:sha256:57c8a84d6cf2c2ffb3e8b65b503b0e960329961d36a270fb78151211048705ed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1NTQwZjA3ZDNkZTkyZGUxOWY4OGFhZDcxNWM5NjQxYWU5ZmIzMDY5N2EwNDc0ZmI3ZWI3MWU0ZGM2NzI5ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBmYTlmNjIwOTliMGU2NDM0NTE1YWE2OTRiZjc3NzFlNTg5ZjJiY2JkNzBmZmI2YTJmYTI3MWU3NmM3ZDkzYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczN2E2YzgxN2I3NDkwOTgzODcyNTA3YThjNzIwOTcwNWY1MmQwNjBkY2YxNGM2NTMzOTNhMDFiZjRlNmZiMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ceacdc548c314795b6061f4e3d6df779",
+      "statement": "Leftover import scratch folders from processes that are gone are swept at launch.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ImportFile.swift#L24-L36",
+          "version": "repo-lines-v1:sha256:5b1d8fdb42f3ad1ef58e29df5884b0d4c674152733ff9414361c51c747b85e26:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2M2Y3NDYxMTE2MTkyNjhkZGMxMDUxNDdhYzQ3NmE5OWIwMmRlYzgxOWQwYjdkMzhmOTJlNWI2MzdkOWUwZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5YTViZTVmYjNjZWFjNjBmYTYzMmExMDkzMjY4ZmEwODcwNjcxODAyYWE5YmQzZjQ0MmQ5Mjg5YTUzZTRkNmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAxOTBlNzBhMzgxN2Y0NDU1MTJhYTZjYjAyYWQ2YWU4MWY4NWVjN2JmZjAzZWUxOWY5ZDA5NDllNDgyN2U1YzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0OWYzYWE0NDMxYzE2NmJjMjM0MTlkZWMxNzU3YzAwNjBkOGJmOGZlZGZhYzAwNmJiM2U5MmMxMzIxYjVmNWQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Links.swift#L99-L103",
+          "version": "repo-lines-v1:sha256:c261bdd38da5c47e75f9399d0b22e1ebd4db427f4354a890201bb92aeca21097:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWFjMTc3ODJmOTMxNjI4NTllMjQwYmQwMjUzMTRhYjdjMGYwMjY5MDEwODAyNjRhN2U0OWU4ZWVmNDMxZGJkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmFiNGNkNGVlNzkzMWI3ZjNiMTkzMTQwMTE1NTlhMTZlNWQzMjNjZmIzZTMwMDIwMDJlNjA4MzMyMjZmMDhiYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODBjMWY5MDg3NWYwZjY3OWVmZDAyOGM2NTZlMDJmNzVhYTA3NWRhMjJhMjYxYWE3ZTljOTA4NjMzOWM3Y2Q5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjJiYzA4MjdkYTBiZGNkYThlZDE4MGJlZjg1Mjg0ODU4MDNmM2I4OTg3ODc2MGUzZmUzOGEzOWRkMDMzZTA5NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a747d20ef7de4cb79684bc1a40663404",
+      "statement": "Import records note per browser what was added including bookmark ids, and Replace removes only that browser's earlier bookmarks when the new read was complete; passwords are never removed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Import.swift#L187-L192",
+          "version": "repo-lines-v1:sha256:ba627b651022c44d4b8bec8c2ed037ce2f4fbef572863e555ba30bb41c014f8a:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQxNzE3ODFlYjJhZTYxOTRiMjJmNTJkNWIyNzkwNjRiMmIyMTBiYmY4ZWM1MTA4NGVhYWE3YThjZGM0MWZlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjM3NzMyNjgwNGE3Y2UxMzBmMzNiOTlmNThkZTk1ZDY4MmIzMjVmZjkwMTViNWMxZTQzNGJjYzEyNDk1OWRlMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjJjYWE3YjE5ZGY2N2MxOGUyZWU2NTkzYmJkYWM2Y2YyZjhiNjM5ZGFiYTIyN2I3MjgxMTYyNGMyMWIyZjRjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjdlMjU1ZjY4MDhmNDBhZGViMzQyZmM1OWRjMjgzNWI3NWMzMTEzNTEzYzZlMDIyM2ExNjJmNzE0NGQ0ZjU1MCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/ImportRecord.swift#L1-L40",
+          "version": "repo-lines-v1:sha256:e286aec1afab903d196b062242d9dbf9336ee1edbaba9583fc3e420ef9970977:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmNzZhNjdkMTUzZTA0YWQyM2QzZmUwZjljYjc5MGNmM2EzNDQxMzQzOTI4MThiMDI4ODk4NzU1ZTYxNmI3ZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyNWYyMjBiNmNhNTFjOTgxMDc5MmM0ZTZkMzM4NzMwOGU3ZTViYTFjNzY2NjFjMzE3NjYzYmIwYzhhNmM1MDEifQ"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/ImportFileTests.swift#L223-L325",
+          "version": "repo-lines-v1:sha256:b3658b673403d1059242070b7efacc00b95d76af65c06f1acd9cf9af3ffd7830:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAzLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIzOTdiMjMyZmU1NDQ4Yzk4MzI3YTllMjFkZWZkYjAzYjRjYWM2YjJkMTM0ZmRjN2UxNGJiZmYxNzIxYWI3MzZhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIzODdlYWQ0MzUzMzIwMDE4Y2YwYjYyYmU2MWY2Yjc1ZDY4OTk2MWQ2MzNmNzFhMjg2ZWY5MzAzZTA4NDNiNDE1IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI5MDg2NTI3OTliNTFlNzllMWE4Nzk2ZWQzMzQzOWQ1ZjUxMDU2M2IwOTg2NWQ4MjhiY2ExYmQzMGE2NzE4ZmJhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTQ4YTBmYzJhZDEyNGI0YWQ1NTg4ZjNlMTExNzk1NTMwY2JmMmY5ZjZiYzQ5NzJkZDhjMGNmODVkMTZmYjIyIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

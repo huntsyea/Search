@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4cfd8f0197000c7c7f00817ab13a019eec1bc9151371eed4a0dc9dbeef44078a",
+  "claims": [
+    {
+      "id": "claim_f8258ed790044dda927b1fb28ed19a73",
+      "statement": "Search is a WebKit-based macOS browser built as a single SwiftPM executable target for macOS 14+ with no package dependencies.",
+      "evidence": [
+        {
+          "resource": "repo://Package.swift",
+          "version": "repo-file-v1:sha256:c88388023f01a5598113e70b2c67187f7829ebbdd33b4722d553f73ffd8faeef"
+        },
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:ba763e536c0e099f170481c05cab3aa3e4f9901734ede29ae787e1ba74a06b3e"
+        }
+      ]
+    },
+    {
+      "id": "claim_ea808852263a4e73822b2f7d37029161",
+      "statement": "swift build runs the app as a test run because its path is under .build, while ./build.sh assembles a signed Search.app in build/.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Store.swift#L12-L20",
+          "version": "repo-lines-v1:sha256:76b20771f4ed03d03e43809bda1b5e5807d9bb3a70310d6b5ee6fa89917779b4:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzYwMjQ3MGFiYThmNzJlZjIzZTAyODI3ZmEwNDVhZDRiNDg4OTRlN2Y4YjQyNTRjZjZkMjM2MWMwN2YxZmRmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmNhZTA3MTM1NzQyMDc2YTg3MGFiYjFkNDZjMWRkMTc4M2JkZTNkMTMyYzczNzQyMGZiNGM0NzIxOTRkOGJkOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ5ODJmZTI0NDZhMDQyYmFmNmNiYTA0MjhlMjVhMWJhNGE4ZDgxYTA2ODU2MWI5NTlkZjU5YTY1NDQ1MjUzZiJ9"
+        },
+        {
+          "resource": "repo://build.sh#L1-L20",
+          "version": "repo-lines-v1:sha256:6ed59c47b9819b83902baf508a0b12d905234708752e706a1fa06374e3ff75b1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NzVmOTI4NTQ2YWVlNzg1NWNiMWRiOWFmYzhhYjNmMWE4YTM0ZDQzZGU1YmJkNjJmNzA3NmQ3YmE5ZjM5MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5MjBmMjViMDE1OGNkOWNlMTI3YjZmYWYxODljODQ2MzIyOWE1YWI3MDAxNzNmNDBmMjgyN2E3MmQ5MTIyY2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkMWZhYTcxMTQ3ZDFlMWUxNGYxNmE3MTk2MmMwYzYwOGIzZmU4ZjgzOGFiMzllNjhhYmZjMGJiM2Y5MTBjNzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ff863119222b4996be5f9a8672899d63",
+      "statement": "The current version is 1.0.5.",
+      "evidence": [
+        {
+          "resource": "repo://VERSION",
+          "version": "repo-file-v1:sha256:8c54bfab7f1ae9bd1a7148eae41e7b0a8f4ad3726e0cac70f823a2d45db9e60c"
+        }
+      ]
+    },
+    {
+      "id": "claim_af59e42e4d164ff580ef719c2997854b",
+      "statement": "The app entry point is SearchApp in App.swift, which defines the single scene and the menus.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/App.swift#L8-L46",
+          "version": "repo-lines-v1:sha256:8c6c491f4fa12e3320800aacb75e8d01b23c728cf03f98f0f79b82769ad5903e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmJkYmI1MDE2YWM3ZGVlYTU2ZTg5MGFlOTNhZDc3MzY1Y2I0ZDhhMGQ4NjhiMmU2YzliZTNjYzExYzQ2NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdmOTE3N2UzYTcwOWRmMWY2Y2QxZTIxNjRkNTkxYzdmNmNlMDgwYzA3NjE1OTA0ODM1NTE4OThiNDQ1OGNjNzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllMjliYTk2MzA2N2FiNTc1YTFmYzMwMGMzNzcwZGJiMTYzYmRmOTYyMTU2NDMxMTQyMWFlZWFhNDMzNmZjOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMjEzMGIwMzVkNzM0YmYyMTQ5NTc5YmE0ZjQzYWJhMzFkYjkzYzJkZjE4NDkxZDM5ZGJlMWNmODRhMmJmYjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f56365f8e17b40a0885c0f3cd1c3a261",
+      "statement": "New behaviour is expected to ship off by default behind a Settings switch.",
+      "evidence": [
+        {
+          "resource": "repo://CONTRIBUTING.md",
+          "version": "repo-file-v1:sha256:436a469bc16b856c93081b11b77fe3073e87ed736e979025892ff6634f830ce2"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

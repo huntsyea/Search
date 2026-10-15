@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:fc29b66c8d7f5aadac57316fede91e07c35cf9300b6d16a3de59f00358dbe78a",
+  "claims": [
+    {
+      "id": "claim_9fd4669860404c588621fed5b4163fef",
+      "statement": "Missing Chrome APIs are provided by a script injected into each extension whose methods send native messages to the application name \"search\", which Search answers in Swift from its own data.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L3275-L3285",
+          "version": "repo-lines-v1:sha256:7d155fb41c1dc607c62b80bbcc94c9e0497ebdbabe16f4515934de9f962193b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxN2UxMGU0MmMzY2Q3MzNmOGQ0MmI0NDllNGUwZWM0NTNiNDlmMzVmNWEwNjEwNmZjMWQ1MzBhNTY2YmUyNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImEyOGVjZTcxNjhkNzQ2Y2ViOGIyZTlmMThmZDg4MjAzOGE5NTU2ODkyYjg3NWM2NTIyMTc1MmRkZWU3ZGU0MjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzNmNmNTE3ZTFlZjU3NGI0OGJlMzFjYTJjY2RkYjRiZWRjOWRlYTAwMGI5OThmMjFlZmFiZDcwMTk1MWM1M2YifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L380-L390",
+          "version": "repo-lines-v1:sha256:204ca49f1c42c59c26f2ef0b9a45a47a4ec11bc4dd3d3c944c29afb0fd18aeb6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJlZDE3NjU1YzE5OWQwMzRmYzlhYzExZmQxNjg3ZTg1MmRhMDRmYzlkNzMwYjk3MWU5NWIzZGEwNmI0YzM1NTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY4N2ViZGM3Mjg0NzljMGUxMTM4MDU2NjJlMjk2NTdjZWFlNzU4YmMxMmEwYjcyMjIxOTY0YzI1NGI3MWFhZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRjODcwZTc5YzI2MWJhZGY0NjJiODE0ODVmMTE0MmQ1NzkxNTM0NjNlZmM5M2NhNmI5MDY3OWUxYTEyYTY0MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3ZmQwYTNiMTAyNTc4MDEyMjhlZDdhYjcwMDcxMjk4YjQ5OTk5ZGUwYzVmNzM3MTY4NjA5MTkwYjNlOGE0MDgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L9-L34",
+          "version": "repo-lines-v1:sha256:45a28804835a705c006b7d38d10b1794937e0ca613af3b9e5ebbfa9745d927ba:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ZDIzNzFhMTZmMTQ1YzI1OTc5MTkwODZiZjUwNjliMmM2YThlZDMzNmI2YmY5MjgxYzMyZjJiZmU0ZjA3MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmYTkwY2ExYjliZGRjM2MzNjQ3MDBkNjYxMzUwNjgzZDk0YTgyNjllMTBiYzUwOTM0MGM5NGZkNmEwOGQ0YzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNzY0ZGM1YzNiYzM0OGE3NzViMDgzNmE1MjE2MzM2MWFiOGM1M2E4OGUzZGYxMDg1MGY5ZDUyMjIwZTNkOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViYjhiY2I4NDU4MzNmNDcxZDc2ZDdjMTBkOGM0ZjMyZTdjYmVmYjkyMjg1NDk1ZGMxNWVhNTViZTZlMTRhODkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_202de1a44dab479c96c610d297763d57",
+      "statement": "The shim defines a namespace only when it is missing, so WebKit's native implementation is used if one exists.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L1277-L1294",
+          "version": "repo-lines-v1:sha256:0ac69f1125ad6cc00233f4eca4226b2f777ed02c35a8d9f3ca5627c89390a24e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk5MzAwNmNhNjNlZjJkZjY3NWRmZTQwYzM1ZGU0YTJmYTUyNDA4OWIyZWFkYThkYTJhMWNiYWMyNWQ2YTQxNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3NDNhMjU0N2M4ZWVjMWZjNTdkMmM4YTM5MzU2MTFhZWFlODAzZDAyZGU1Y2E4ODE1MDYzMWY0NmQ4MWQ4NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyNDU4YzZiYjc4NjJmMzVjMThkMDc3NmEyNjJkNDQ1NDRhODEwMmIzMmVkYzIzNTg2MGVjZjY5N2JkMDIxZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhODc2Mzk0OTIxNzdhZWUxMmNiNTUyYzQwMmE3M2UwMWQyZTdjMzhhOTU1OTlmM2VjZTJkZTgyOWNlMGEwNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_61ffffb94c4844fea71fc1e89d18f9f0",
+      "statement": "prepare skips work when the folder's .search-shim stamp matches the current shim version hash, and deletes any .search-shim or .search-added files that shipped inside a fresh package.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L38-L60",
+          "version": "repo-lines-v1:sha256:ebcf0ea7ce6a2f0dce0b8b2dcd9df1e8a75cbac13f8c1c83b9b5e155fa313d7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiNjI1MWEzOGYyNTdhYWYxMzhmZGMxZjI3YTZhZTU4NjQ4OGMyOWE2ZTE4YTQ3MGU3ZDAwZmJlNTA2NzQ1MjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmOGMyODg0ZTA3MWNkNDg1Njk0ZmQyNTJhNjU3NjQzYWZlZTZjYTcwZjVlYWQxMTUxZDVmYTc2NWM0ODYxM2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViYjhiY2I4NDU4MzNmNDcxZDc2ZDdjMTBkOGM0ZjMyZTdjYmVmYjkyMjg1NDk1ZGMxNWVhNTViZTZlMTRhODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmODdkODJkZmIzMmQwODAyMmZkMmQ1ZTRiMmI2MmVhZjc3OTFjNzZmMTI1YTJmNDMyOWU1MDY3ZTY1MDg1MmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_26db76dd804c4e96a879fa11bbdace46",
+      "statement": "prepare adds nativeMessaging (and scripting for userScripts users) to the manifest and records what it added in .search-added.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L69-L83",
+          "version": "repo-lines-v1:sha256:9147e7ef22a708ddc564656217d6092c8dfbe1a00c97e0a4d587a7ff50bf30bd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyMmVlODgyMzRmNDYyMDI5OTIxY2ZmYjVlNDA3NzAxZWMyZTU5ZTZjMTMzYWRiYTNiMDE4M2UxOGMzNjIwMzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjZjAzMjJlYmY4NDdkOTNjNDFkM2QyMzJmYmI5MjdmNjRkM2VmZWNiYjAxNWQwNTdkNzM1MTFkYTc5NzAxN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJlNDIyNWZlZjdjNmNkN2U0OTJmMDBkN2E2NTlhZWY3YjAwMjI1MmRhNDFiMDU0NzY2MWU1MTQxN2VmOGM0MzYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3557acff917942d59bb1bea8279dbea1",
+      "statement": "Classic service workers get the shim inlined between marker comments, module workers import it first, content scripts and every shipped HTML page load it first, and MAIN-world content scripts also get the passkey patch.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L85-L157",
+          "version": "repo-lines-v1:sha256:3ce8cf9a262ae080896b56c7838bed6b0e9131c87e82a3cf55a6e81376fc08b2:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxYTY0MzljMThjOTQzMWU2N2JhMzA5M2Y2M2FlNDFiNTQ2ZDFkN2VhN2M4MDk3ZDYyMWJmOWFlYWNkNjM3NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ0NGU0MTFiNjE5OTQwNjhlYzViNTJhNTZlZGQ5YzUwMjUyMTc0OTg4OWU0MTRjNTQ2YTMwNTJmMDk5NDNlMTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmNDBmYjFlMTk5OWEzYzRkZDExMDY4ODE2ODBhYjYzZDQxNzVhN2JlODZiN2IwYWQwMjIxYmYxN2ZhMzY2MWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ec5822031ae64456a2dfff4df8d66c04",
+      "statement": "Worker paths that escape the package or are symlinks are not rewritten, while a worker symlink to a file inside the package is replaced by a copy.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L160-L194",
+          "version": "repo-lines-v1:sha256:88ec3e75709da81dcff0d7bf64ca928d9a061afd3459701e458692d96fb44aa7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NzNmOTMzZTQwMmRiNTg3OTg1MjcyYzdiM2FiYTU4NGFjMjAzMDM5MjM5MGM4YWQ1YTE0YTYxMWY4MDZmODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4YmMyMTk3N2JjMzJjMDRjYjFkZmZmN2I3NmQzYjNiOGY1NzMzNjU4ZGE5ZDI3YjAzZTg2NzAxZDBhMTQyNWEifQ"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/ExtensionWorkerLinkTests.swift#L27-L50",
+          "version": "repo-lines-v1:sha256:66bf525fe61cf45c4c4c25299a649c282e307a6c1a837aa6e94a6b3f17f26ad0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjOTM3NjczZmUwMTQ0ODAzZjQ5NDQ0NmRlOGE2ZjRiN2VmODNiMjIyOTYxYzE0ZTRjNzU4NWE5ZDg2YzkyZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhNzQxZDBiODlhMDU2MThjZWRkOGYyYWRjZWJlMzI5OTI5ODA2YmM0YjQ2MGFmOWQ1ZTdjYWRjMDkxODA4NmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwNjIwYTQ1MTk0MGUzMGUxYmZjMTE2OTllODkwYjI4ZDBiMDFjNTkzZTRiZWI0OWJhZWU0YzI3ZjFkMzhkZDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3Y2YzZmYyZGViNzRkZDFjYmRmN2Q3MjM2OWRiMzAwYmJmMDVmMzE2ZGI5NDk0OWJiM2QzNDMwNjgzMDYyYTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9468189aa49946f2aad8352f37fc90f3",
+      "statement": "The shim is specialised per extension with the events its code mentions and the scripts it ships, so late listeners and missing importScripts behave like Chrome.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L196-L231",
+          "version": "repo-lines-v1:sha256:a7f3f3b9673699eaaf9cc2fb552fd5a4805c927a44d93fcd181f193287548789:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1MTk3YmYzOTU0MmJlOGJkZjgzMTIyOTdjNTg5NzlkMjFiNzc0YjBlZTEyZjI0M2NlMTZiZjkwZTZjM2U4MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2MDg2ODk2MDYyOGMxNDI1NDhiNjcyNDdjYmYxMjI2Y2E4N2E2NDRlNTUxNTFlMjljYjBiZGM2MzVlZmEzNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY5ZGExMTdmMDE2YWFiNDMwMTI5MzFiZTg5YjhmNDk4Y2U1ZDEzMDI2M2VlZjM2NDczMTUwZjIwZmI1ZWM4NzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_40db9524a8a542b699f5f080277c0b82",
+      "statement": "Shimmed API families such as bookmarks, history, downloads, identity and tabGroups are gated in Swift on the manifest's permissions or stored optional grants, and setting.* calls require their family.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L3313-L3416",
+          "version": "repo-lines-v1:sha256:9e8fdec108cabdd58a9f576aca5c2c4299de9182c31ff2660364e11d8db8459c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhNWNlN2I5YTAxY2MwNTNiNGM0NjY4NzdhZGJiOTUzMWViZWQ0ZTVjNjcwODk4NjI2MjIyYzUxNjk0M2JiOGQ0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZTdjYzBhOTFlN2I5MDUxM2Q0N2FmNDk0YjQ5NzllNDJmZjJmZDMwODZiZjNjNmRmNmVmZWVjMWRkZmI1ZmRlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyOGM5ZmE3YjMwZmM1ZGY4NDM0MzI5MzE5NTNkMGZiOTdmOGFjMGM3MmQzNTc4M2M1NGY0MmRjNTBmMzIyYmZjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_f63241c0701f49c58a7e380a3367b6a2",
+      "statement": "Unknown APIs throw \"isn't available in Search\" and identity.getAuthToken is unsupported, directing extensions to launchWebAuthFlow.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L1418-L1425",
+          "version": "repo-lines-v1:sha256:86d01ca5ec37ea77a26d6cc421aa013060d28be458f48d914afe1738ade87806:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTNjNDIxNDJlNWE3NzQ4NmU2ZDMxODA3ODE3ZWZjZWJkYWZmZDU1YTY4NWQ4YjU1YzM4ZTdhMTVkNDYwZDhkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmUzM2RjNzMxZTdkMDdiMWYwYzA1Y2ZlYmQ3ZTE5MjIwMjNlNjA3N2JjMGFlN2JhMzAxNDhmNTA4MzNhMjVhOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOThlY2FmMjgxZjBhMmQ2YmYwNzY4MGU2ZDg0OTkwOWJkMDg1NGJiOWRmYmRkYmI1M2NjNDIwYmZlNmU1NzA4ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2FmZTM5MzM2YWNjOWJhMGEyOWRjNDFkZDZhYzQ1NmFlNDMzYmIwOTEwOTYyNzE1NzU2YTBjZGRkZDI0NjYyNyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L4095-L4106",
+          "version": "repo-lines-v1:sha256:9cb5ac49942d60fff5fe6325028809d54f59731b615d977df05a9b64743441d1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQyYTc3NmFhZDZiYWNhMWQ1NmFhNWEwNDBhNjMzNDg5ODQzNDk5MTFhMDFjYWE1NTQ3MmM5ZjA5NWRjNTRhMzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjNzdiYzc0ZDAwMmYwMmZjZGQ4MWJjMWVmMGVlMzQyNmQ5NTc2OGIwODlkMDI0ZTAzNWRhMjc3ZmI4NjY3OTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliNjUwOTRkY2M1MTE5YmFmNzQxYTQ2ZTU1NzMxNjFiNjY0N2Q5NGM2NzA0MDRmY2E1MDZlZDE1ZmFiMDc4Y2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c7ad27492c044fb88a28bd6437663032",
+      "statement": "Errors and unhandled rejections in extension pages and workers are reported to the browser via debug.error, and in test runs console errors and warnings too.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L3242-L3262",
+          "version": "repo-lines-v1:sha256:78c6e462c0489b633ae87e64b1e4d7ff09c8290b22c14495d91e20908a12b079:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzMTdhOTkwN2YzMWU4ODcyZGJmNjFkYWQ4ZmZlYTM0ZDQxMWI2ODU3OGE2YTEzNzU3YWY0OTAzOTZiNWVlNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliNjJmNjBkODU5MGE1NzljZjQ2ZjhkNjczNzhjNGM1NzJiOTYyY2VjY2RiOTBjN2E1ZjdiNDJiOTYwNzgyYTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMGQ0MjFhYTYyYmNhZWMxOGZlYjJiZDg2ZWFkNDZmNWUyZWM4ZWY3NTY2ZWU4YTJjMTFhMjUyZTIwZDY5NWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkMDk1NWMxNDY0OWIyZDkxNTBmODAxMDI4MzVmZDc3OWJmM2RjY2IzMGUxMDRiNDhiZDQ1MzkxNWQ2NDhlMTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fcd5e589a63d48d781f39acc83a15c94",
+      "statement": "launchWebAuthFlow opens a tab and resolves only when a chromiumapp.org redirect arrives in that tab or a popup it opened; closing the tab or ten minutes elapsing declines, and the redirect is never loaded.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L4343-L4408",
+          "version": "repo-lines-v1:sha256:d7d13c9e43a410247b9ba4e4b4da40c2046657eb73bbb5ac35cf5c03b1fdfc2b:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwZjk3Yzg1Zjk4MzVmOGIwMzc2MGI1YzIwNjhiYTdjNWY0Mjk1ZmE4NTA5ZjI0NGQ4YTAzNDM3NGQwMDIxZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFlMDIzYTE0MTEzNDAzOGI3OTNhMjRlODk0Nzg0NzNmMzFjYjc1MTE2NTRiYzU5MmY0NGMwMDczMjMyMmJmMGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEzN2YyN2VmODBmZjkyYjE4Yzc3YmM4NjMzZWQ5NWQyMzY2ZjJiYTQ5OGViZGJjOTRkYTY3MmU0NDljMzQ3ZmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2896770251f1452990ffdc7684a77e2f",
+      "statement": "For extensions with identity that watch a tab instead, a chromiumapp.org main-frame navigation is held as the tab's address without loading, and marked as a failed load after four seconds.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionShims.swift#L4410-L4435",
+          "version": "repo-lines-v1:sha256:cd5bc641ca17e8cf466453b25d2f7447982fe5e235ba933c8d1700144e7cb31f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllNWVlZjhmY2M3ZWMyZTllN2EwNTUwNGVlY2EzOWIwYTBiNGUwZGJkYmUyN2VhZGNhMTNkZTM5YTdjOTBjNTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MDU1NTIyN2IxNGM1ZmEwYTQ0NTA1NjhmM2U0N2RmNzAxMDg1NjFlZDU4NjM3ZTZiODlkZDc5ZmVhOGE3NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

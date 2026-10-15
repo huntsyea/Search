@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8548078d67662a774955d9a3a06f93b851468fa8b215e1ad225b9d93c47f6770",
+  "claims": [
+    {
+      "id": "claim_04e5ff1c5396413b9a5b392ae292beb1",
+      "statement": "The floating video moves the page's entire web view into a separate floating panel after hiding everything but the video, instead of using system picture-in-picture, which WebKit only allows after a real click.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Float.swift#L4-L15",
+          "version": "repo-lines-v1:sha256:18edc965ca14c6fba19c260ac4aa99e68f7ec3479f46cf00f6bf0858d5e423d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdhYjI1YzIyYjYxNzNjNTdhNDVkMzFmNWE5N2QyNzM0NTJhNTAxY2Q5MzI1ZWY2M2JhMTY0MDRhOGVjODJlMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0OGE5N2VkY2MyNWJmODM1MThhYWI5YTE2MTE3M2JiOWZjMDliYjBmNzllZTNkODBmNGYwMTkwOWU5YjhlZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNjAxNGQ5NjEzNDc5MmE3MWY1YTg1YTIzYWQxNjlmZjk0Y2UzMDg2MmM1ZjY5NmU4MzBkNjRhOGY4ZTI4MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0ZDY5MGIyMjk0ZjUwMTRkOWNiYmRjMGM5YTQ1Mjk4NDNiYzJmMGIxZTkxNTY4NDliOWM0ZTlmYmFiZDY0ZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_229511ae387e42e0a597a75cc0e8fab2",
+      "statement": "The floating panel is a borderless, resizable, non-activating NSPanel at floating level on all Spaces, without a shadow to reduce WindowServer compositing cost.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Float.swift#L84-L120",
+          "version": "repo-lines-v1:sha256:9c31abbdb15e0d3522cf319ac64ef8073b01431dc908182832cab200ba2fc033:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRiZDM0Zjc2NzYwODBiZTA1NzhkMTUyODRjYzgxMTc2MGE0M2VlODQxZmE2NTVmYmM4MzIzYWRiZDc4Yzc0OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYyZDg1ZTJlOGNmOTY5NDE5YjgxMzgxODJlNTMzZDI5OTIyMjdiZjZkM2UxODNiNDIxNjlmZGNlZjU0NjkwZjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkMzgzZGM1YzE2NjA4NTFkNWFiY2JjODM0MGYxNmNiMzFiNTY1ZWM4ZDFiNjI4NzI4MjQwOTUwYjkxY2JkMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3ZGMzMGM2MDQwZmY2ODVlZThlZGY0MjA0MThkNDA2NWQ2NDI4YjA4ZDBjMDY3Y2ViYTRjMjg2ZjZjMzVlZTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_96214bc7b55f405b8fadd10339c38106",
+      "statement": "Lifting is refused for blank, asleep or fullscreen tabs; automatic floats happen only on known video sites not grounded by the user, while Cmd-Shift-P works anywhere; the page moves only if the isolation script reports floating.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3706-L3745",
+          "version": "repo-lines-v1:sha256:638118f2d64c1908e363fba1b95dc5cdceb8582a95104c16b74941745ee0b77e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwYzVmZGY0ZTc4MWRjNTgwM2QwYzM0NmQ0N2EzMGRhMmIwYjYxMmJiZjUyMjFlNzQ0YTc2OWQ2ZmNiZWI5ZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRlM2VlMWEwMzIyYjA5YjZmYTM2MjIxYmEwNGQxMDQzZjViNTM4MjFlZTNmNjViYWI0OTExZDVlNTBmMmUxZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkNDFjNDc1MDNhNjlkNjkyOWZmNmEzMzA2MDVmMDg1NmExOTlkODVmMjgyZGU4Mjg1NzkxYTU1MGVlMWRkNmEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Float.swift#L800-L848",
+          "version": "repo-lines-v1:sha256:73002a987a33fe5db72bc5ec336074aa286a52edc797feef173109819ad7f015:eyJzZWxlY3RlZExpbmVDb3VudCI6NDksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyMDNjMzQ3YjcxNjI5N2Q4MjhlYzg2MDJkNjgwZWRkMTlmNzUwYWMxZmQ1NjVmMWZkYTU1YTJhNzNhMDk3NjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NGNhMjc2MjYwNGYwNGU3YzQwMjMzZGI1YjdiZmNlMTJkZGZjZWIyYmY1ZmNmZWZjODM1MmY1ZTA0NjlhNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczMWViMjc4ODAwMDU2NjU5ZTUxZTg4NjIwNTc2ZGUwZGM2MGU4OTkxYjUwZGJhZTFkYjU0MjEwZWRjNTIzNmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e2297cbb9bd14672b44babe80231e076",
+      "statement": "Videos float on tab switch by default and on leaving the app only when enabled.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L268-L283",
+          "version": "repo-lines-v1:sha256:ce88afe0e7e555997b9920ff57fbe3bcaad6f05f855b6d248cc0a22580a70f0c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlNzhlOGM5MGQ2NGViMmM4ZDMyMGY3NmU0ZDg1MTc0MTJlYWJkMTZlMzgyZTU0OTFlOWJjYzE3OTgzNjE5MjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODc1ZDk4MjlkZmM1NjZhMDYyMGNhYWEyMDliMDhkMjNmNTQwNDQwNTVkN2ZlYWJiNmI2YTI0Y2I2NTYyMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE4YWI3YjQzMWI1YTdiMWNmZTZjYWQ3ZDg1OTE1NTk4NTgzNWE1Nzc0ZDQzMjBkOWI1NDAxNjFhMmNiMGYwN2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiYWUyMTQ0YTkwMGZkMDdhNjYwOWNmMjc5MGU3ZmNkYjI5NzkxN2M2ZDEyZDE3ZTcyNzhiMjMyOWJkMzZkOTcifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L443-L447",
+          "version": "repo-lines-v1:sha256:29892f31d285094a3a73ec6dd432ea16f4d9dd72aa2d5768126ce5b427cb9d30:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzM4NzRjOTE1ZWJmNDMzYTVmY2UyNDc2NjQzMjVkNGZhZjZjNDg3NTlkYjJmYjFhOGM4ZjMwZGZiNjhhYjA5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjE5NjMxYjZhZjJmYjc5MDA5NjQ0NGExZTY4MWE1ZWRjYWEwNmFmMmU4NjJmN2UyYTJjODJhMDJhYzc4YzRkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWNhNWI1ZGZjYWRjOWM5ZDQ2MTY3NjA2OWZiYjA3ZGQzMzdiM2MyMGYxZTE2NWQzZTdiMjVmYjgwYzE1OTljZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTBmNzM2NGRhNDNhZTQ5ZDZhNjgxM2YyYzczMzZlZDZjMDliZWZjY2U1YmU3NGVmYTNmNTkxZWMxY2FmOGVjOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b30b090689834f7d8353ba4f53ffb6b7",
+      "statement": "Flicks send the floating panel to the pointed corner and docking leaves a sliver off an edge unless another screen continues there.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Float.swift#L47-L77",
+          "version": "repo-lines-v1:sha256:5fd478e0deeb116cb55f336c9832c8350e5431468c50aefbf4324c922bf9d732:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NjRlNWZlMmNmMzFmNDFhM2EwMDc1ODYzODQ4MjgxNjY3NjdjNmQwN2FlOTZkOTUwYzIxM2I3MzU2NTIwM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjZWZiNjkzYWRkMmIzMmM4MDQ5OTgyNDNhMGE2NjQzMTQzNTEzOThiMmFkNjIxNzk1YjFkOTNmNGU5NWE5OWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczZGZhNjM1NWM0YTRmZGFkOTlmZTc2NGIwZGYxOWFkZDFlMjkxZGRkODdlZWJkOTBmNGU4MjIxNGY2OTRjZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7977b650284c4cf7bf3861f3fe813c55",
+      "statement": "LiveRate, injected in the page world at document start in all frames, plays requested rate 1 as 1.0001 after a page has used a catch-up rate, avoiding WebKit's audio rebuild stall when crossing 1.0.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/LiveRate.swift#L3-L45",
+          "version": "repo-lines-v1:sha256:6643ee3469ee4625a1e1ce01663b43ad52470a60ad3435a9e4bc8aed5959c5dc:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2OGQ5ZDAyYTIzOTM5YzQ1ZjRiNTkzZTgyMWViNzc4MGRlYjQ1OTdiNGY5ZDQxZDA5MzIyMmYxYTg3NWM3N2EiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzMGNmODk0MDVhNTQ3MDA3NjUwZTg2YzQxNDUzM2M0N2JmMzc1OGVjZjAyYzBmMTE3N2RlYmE5NDFiZGE2NDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExOGJmY2MwNWRhNWVkOWI1NWRjNTcyNWE0ZmNkYWVjNWMyNTc1ZmRmNGNlMjJhMTk5MDliMWIzZjRkZTgxZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0ZDc4M2JjMDc5NzUxY2RmZGFjMDdmODQ2Y2MxNzUyNTg3YWNlYjA3MDhiZjk1YmZhYTg4ZWYzZmZkNWQwOTkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L780-L784",
+          "version": "repo-lines-v1:sha256:47bb9e8ec64ab3b136dfcff91f477dbeea908df75f28c1f97c854f03701488c0:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjUyNDg0NTA2OGUwYjQ3NDMxODcwMzdkNDYwYTdhZTJhNTNhNmRhZTMwNmU2NjE2ZmQ1N2M0OTRmYmVlNjdlNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTkwOWE1M2E2MThkMDI4ZTFkMzAwMGMwYTdhYmNlZWNiZTVmYjM3ZjRlNTExZWZlNDY2NDNmYWQ2ZTY2ODcyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGQ4YzNmNzAzNmZlN2I3NTk4ODM3YjA4NDRmZDI5MmJjMWI0N2NlZmU0MzFiZThiM2JlZTRkY2RlZmI4MDkzNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTM0NmMwY2RjN2UwMTVkNzU3MzcyMTQxN2RkNzZhNmRjODkyOGNmNGY3YmNlMWFhMmY4ZTM4MzVkOTIyYTM5MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_35b7bcb36ac148fbab89dcc4d68c053c",
+      "statement": "Pages at 120 Hz clears WebKit's prefer-near-60 feature flag per page before the view is built, only when the setting is on, and switching off restores only the pages it changed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/FrameRate.swift#L3-L75",
+          "version": "repo-lines-v1:sha256:df17753d59fdb7d425a0ee152f15acd8f76d560ef32315a31823f03c56fb82df:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkZDlmZmEyMTQ1MDA0NTZhZTc0OTE4NTUzZTRlODdmZDc4ZWNkYjc5OWM2NDFmMGQ1OWVkMzg1YzAzYzM2YTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjYjM0NWE2NjQ3ZDc5ODlkN2QwY2MwZTZkYzY0MmYyYzBiNTAzNzkzOWM3OTk2ZTcxZDI4ZmQ2MDlhNjY1NGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1Njc3ZDIwZWRkYjEyNTgwOWNmZjM0Zjk3MWIyYWZjODBiMjFjODNmYzJlZDYyYWQwOTIwNzNkZDViN2RjMzIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBkY2RhYzQxNmZhNzQ3NzlkMTZjZTIwNTQzN2UxMGY1M2Y1ODQ1YWE2NzNlNmYyYzc2ZDYwMjA0Mjg1NjJkN2IifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L588-L593",
+          "version": "repo-lines-v1:sha256:d05991e5f725cc8c5e72de392b1a46ba00f0332b04cd83879005832ab7017e61:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTg2YjQ2ZmNlOTE4ZDA3NmQ0NGUzN2YzMzMxZWVkY2I5YzQ0YzM0ZmVjMTU0Y2JmZmM0ODFkNWZkMTY4ZjhlYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDNhNDdmM2ZiNzJlNTY2ZmMwMmViNmVlOWM1NGViMDFlYTMxZTY3YzY4MjAyNTQwNDgzM2EwYjk4ZWFkNmFiNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGRhNmFhYmI2MzY4OThlZDZmMmFmMmY0NjUzNjg1MzNlY2MwZWMzZjc4YmQ1ZjViY2Y2Y2NmY2MzOTAxMzcwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTM0NGJiMGFiOTNkZWM5NzUxODc5MjliMDJkMmQ5ZmVmZmFiMjRjZGQ4YjU3MGYwMGUyMWVmZDczYTRhZjcxMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2455457f02b04547a27ff5cdbe7734d9",
+      "statement": "AudioWatch observes WebKit's private _isPlayingAudio key to mark a tab as making sound.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L1384-L1416",
+          "version": "repo-lines-v1:sha256:8ad25630bb193723818e562eb0a9e95b46be20cbce0e1bc016a74e5b91d3aacb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyZWQ0YWRhOTQ4M2MxZGE2N2VhMjkyMWRhNzFjZGI5YTNlN2NlNTBhYjVlMjY4NzgwODZjNTM4MGNlOTBkZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkMWM1ZTFiOGIxNmE3NDU4MDc5NzE3NWQ5OTZhMzQxNmM5NThjYWMxYzkyZDlkODYwZTNhNGQ4ODIxYmNkZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZkMDMzYWE4NzcxMjdkM2U0NjU4MTE3MjZjOGRhYWYwYjM5YjM0MDRlNzQ0NmNlZWRkMWRlZTlmOTcwNDEwMjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e8b90523d2e54e4098eaa059df0f5ce8",
+      "statement": "The float_video test runs the isolation script on local pages in a hidden probe without opening the floating window, and live_rate.py runs LiveRate's script in JavaScriptCore.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/float_video.py",
+          "version": "repo-file-v1:sha256:0baaba12a8dd67ee4e86bb82e1632d21a86cf1970ccec3282f9cd34ba813e1ef"
+        },
+        {
+          "resource": "repo://Tests/live_rate.py",
+          "version": "repo-file-v1:sha256:860a69e5f541718ca09694fd18bc13c6871513635c7052ff13c066de86331482"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

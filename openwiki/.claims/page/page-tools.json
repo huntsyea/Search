@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:9f18a743fbc675e9f8977d6b48b9b06ff955f8efac63aa053c1c3863943c41e8",
+  "claims": [
+    {
+      "id": "claim_fc111484233e4a0b9c32210c57b4bb9f",
+      "statement": "Reading mode selects the element with the most prose penalised by the links inside it, and leaving reading mode reloads the page instead of restoring markup.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Reader.swift#L1-L10",
+          "version": "repo-lines-v1:sha256:9e0e648b2dea006e580b3c90df211b89afbb35bab1913daa8a0c14079db1d4f5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYxMTk0YTJlNTUzZTc3YzdlZDhjMTZhOTNkMGU4NjAyYzhhNjRhMmY1ZTQ1OTNjZTY4NzIxOTY4ZjI5NDVlZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwOTgxZWJhZDcyZTAyNmI1MDY3Yjg5NjNjYWI1OTViZmU3NDM1Nzk1ZDc1N2U1YmZiZGRiOWYzOTkyNDM1OTgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L332-L354",
+          "version": "repo-lines-v1:sha256:824dc0e491ccec5a8e32526a92e057c418516a7ad93aad73d8d4ef56f9ef1621:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiYjBlYzRhODJmNGRmNWRjMmNmODRkZWQwNGU3MTgwY2I5MjdkNjhhZDY2ZGI2NTE4YTM0MTRmN2RlYjI4NTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4ZWMwNTFmYjRkNDYyYjgxODc4Zjg4MTkxOWU0NzFmNWNmMmRkODg5NDQ1OTgzNjJmNWM5N2FkZTRkZTIzODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwMTNmOGM1MDhhYzg5MzBlOTdhNTk4NjE1YWU3OWEwYmFiZjgxNTY1NzMyZTc2NjUwMDlkNjQ5YjBhOThmNmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9541530a72d4352862efdfab8812bb8",
+      "statement": "Find on Page builds its match list in Search's own content world so pages cannot observe or tamper with it, and counts at most 1000 matches at a time.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/PageFind.swift#L1-L30",
+          "version": "repo-lines-v1:sha256:66a07d7319cd1cc7d8583828396a29e3f3de625a95599d5bd13148010b856f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1OWVhYzNlMDczNWU4NTQyN2MxYzFkMTFiYzc0ZDY0Y2M4YzBlZGYyMjhmM2VjYTY2MzdhYjdkN2UxYWRmN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczMjdlMmZiMTZjMWI2ZTZmNDc1NmVhNTA0NDYwZTNlYmE3OTQzMzU2YWQwMmYyMTE0MjUwOWM1ZTcxYWQzMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyODY3MGVjMmUxZGI0ZjIzMDZjMTc5OGQ3NTViY2IxNDRhYjA0ZGU3N2FkYThiMWFmMzIwZjdhYTA2MzQwNGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aa89e6d374a54714b1bc118b75d698ed",
+      "statement": "The PageFind harness checks wrap-around navigation, case and whole-word options, Unicode folding, accent-insensitive matching, hidden-text exclusion and iframe handling, compiled standalone by test-find.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/PageFindHarness.swift#L120-L230",
+          "version": "repo-lines-v1:sha256:fdb41598c6a95c2028edecdb97a5c5bfae293788a17429495363ed5a3b2af93d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJlZTI3MmU3Nzg5NWNiZWY5ODEwMDM4MzlkZmY2YTE0MTM3ZTUzZDUwYTY3NzVlYjgxYTZjNjgzODdjYzlmNWUxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI1ZjJmNzVmMzE3NDE0MTg4YTc4MjI0YzczMGY4NmRlOTM0YTY1ZGU2MTRiZGVmYTAyMzliMTIwZDZmODE4ZjZlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIzMzk2MDk2Njk2OGI1MTMyMzNmODhlN2Q4YjZhMzQxOTdkMGMyZmQzYTI5YTQ5M2Q1YzMxMDM4MjI0NDMzNzQ2IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NjZhYmRjYzdjM2ZiNjE2MzI1OWI3NzQyNjQ4ZGQzZDdlMmJlYzE4MTFjZGJjYjdjODVlYjVlZDY1YjQ4Y2RiIn0"
+        },
+        {
+          "resource": "repo://test-find",
+          "version": "repo-file-v1:sha256:5581e8aa99b30cf09bc01ff1b61f23ed1ce5a63c7c02ae229bd02126522d33f1"
+        }
+      ]
+    },
+    {
+      "id": "claim_f8b8883713db4f18aeaa5e33b3619ee9",
+      "statement": "Text replacement follows the Mac's setting while smart quotes and dashes start off, and WebKit reads these switches from the app's standard defaults.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L479-L485",
+          "version": "repo-lines-v1:sha256:8d3c9c1a79cb01fc0bf46ca9fbac6ed9c81d214f8a1846098b278ef4ec0c96f6:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTg2MjE2MGNlMGY4YjcyNjY4MjJiYmFlMGQ3NTZkN2IwM2YzMmQwNTg2YjNjNDRlYjJhNzY3ZTk3YzNiYzNhMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk5YmRlZmVlYWNhNjM0MGUwMjkwZGM4NmU4ODljODlkNWUxODlhYTViYTQ0YjU4NWIzYjcwNzM0ZjRhNjJkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Substitutions.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:6dd60957aba9fb4055d46c71fac25d97688c3518190861bf91a4519dbd999276:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2MDE5ZjQ1MmQ5NmVkNTY2NTdmNGRmMGI3MDg4Y2M0MDJhOWRhZGU2ZWZkMTMyMjQ5YTkwMzkxNzRiOWRjMDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxZTVjYjcwMzAxNGQ3NmU4ZjU3NmJhODhjZGM3Y2Y5MjVmMzc1MmJjYTI0NjNjMzY0Yjc3NzcyYWU5MWVmNzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0f5f2d5dc5494ea490c626dc39fc5d25",
+      "statement": "For images, the page's context menu is suppressed for that element only and replaced by Search's own menu because WebKit's Download Image and Copy Image fail on some sites.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ImageMenu.swift#L1-L25",
+          "version": "repo-lines-v1:sha256:0ea748642fd85f55ee7da04c09283963595d646d2b3b15dcf5d0f0a87c165cd8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhODNiNmZiZjVjYjdkZWQyNzk4YTA1ZDY0ZTIxODk2ZjE4ZWYxNTY4NGE0N2ZlZDg5ZGFjYzY2Y2ZmZWJmMjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZGY5YTkzYTg2NjgwZjUxMWM1NDk5ODZhYjQ4NGEwMzRhZmZhYTc3OWE0YTA4MDA3ZjhjMjAyMWEwMzg4MWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7941ba180b74572933fd4a4a487c721",
+      "statement": "Peek and the link status line default to on in Preferences, although their file headers describe them as off by default.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Peek.swift#L1-L12",
+          "version": "repo-lines-v1:sha256:a37f3a516bf0f4e50ff559839fec76927161ee568028092a3afb67246c7c4638:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVkNTllNGM1ZTA3NTU5NDRkY2Y4ZjljYzk0M2MxOGRhNDNmZjA4MGIwMDQwNzUwMGM3NGRlMmY3NjIwYzVhMGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhlMTViYmI5ZGNjMzY3NWVkMGNhZGY1NWU4NmJjYWFhMzA1MGMxMmY2ODg1MWE0MzljYzAzNjM2MDdkMmUxYTIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L224-L245",
+          "version": "repo-lines-v1:sha256:bceec27a802da484730b45d63c5d8aa8683e828addbd628e3bbdc9c14a768f36:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZWVkMDE1Zjg2NTEwZjhiYjIyODYyNTVjMTUzYWM0YzIyMTc2ODZjNDFhYjMyZjZkYWFjMTY0YWEzZTk5ZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM2M2ZmNDNlZjFhMWMxYmYzNDk2ODQyYjI0ZmJjNzQ2OGQwMDExNjkyMzNmMmE1MGU3ODY3NjZkNWNlMjU5MDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjYjVhOTFjYjZiNTY4OTQyY2U3NTA4NWIyZWM5YzE0OWRkNjczNjU1ZDc5ZDJhY2QzMjQzODkyYmU3OTAzZjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiMGI5NjMyNGI4MDQ1NzM4MzYwOGZkYWVkMjdiYjUzNTU5NDgzNTVhMWIyZjNkYTkyNzUxY2U2N2VlNDMyZmIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L450-L456",
+          "version": "repo-lines-v1:sha256:d8efbb176e1f502a54b4090d098ca3ef2eba27ea37d500bbcdbbbdbbcf3b9497:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDA5YWVkNmQ5NzI3OWFiYjZjY2VlMDg0NWM2YjIxYzdiZTExMzE5YTgyOGFmNjE3YWFmMDI2YTMwOTM1OTQ2NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTllMzQ3MjZjZjBjMWI5ODNjZmM2OTFjNzM0YzUxNzRlMzkxNzRhMmE2Y2NhMTM4ZTIwMjI5MzRkYjMyZmNkMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjcwMmM2NDg5MzExMDViMjJmYTg0ZjkzMWU1OWI4MWNiZjdmY2VkODgzNzY5OGNjMzZiMGU5YzVlNTNkN2I0NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODMyZDVkM2Q4MjQ0Y2I2ZmE2NTZjOTBlYWMzMTIxODc2MDU2NjgxMGNhMGQ1MjMzYTNiOTQ5MWNiYTBkYmFmNSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/StatusLine.swift#L1-L5",
+          "version": "repo-lines-v1:sha256:a7e24a7ca30bace7c85417d29b86c24f65cd9de4fe660323a7a78d10012acaf2:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWMzNjJkZDQ2NTAwODJkMzQ3ZGExMWMyZGVjNzQyMGM0MmM2YzBkMTMzNjA1MDNiODg4ZmM5ODFmZTc2OTdkMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODYzYzRiMjgzYTcxOWZkOWM0ZmFiZTUyZDljOTUyMWIyY2ZmMzcxNGE2YWU2YWRkYmVmNjBlYzJiNmFkZmUwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTFiMDU4NGUxZWVhNGY2ODAyMzE2NDliOThiNTZmMDMwYzBhYjU4NDQ4NjAwYmI5M2JhMTZhNjMwNGE2YWVmZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2008c86a50f140baab2cadcfa37efa8f",
+      "statement": "Peek opens a shift-clicked link in a panel as a tab outside the row that can be kept beside the source tab or, with Split View, paired with it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4267-L4277",
+          "version": "repo-lines-v1:sha256:a08d2a86a036689598f4e244ce3f3376d453f16680e7ed8ebc82dd011a1331eb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkZGEyZWVlOWNhNWQxZmJiMDkxMGM0YTg5MmJlMTViZGI0OGE4MmJhMTEyMWMwMjUwYTk1Yjg0OWZiYjI0MzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5M2FmODcwNzE4ZDc4N2QyNWM3ZWMwYTFhZTBjNGEyMDRmYTdkNmRlMjY1MmI2MzM2NDkwYzg2YzMzMDFiODQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjExNjVhZWFkOWIzYzc4YzU4MGE0YjFhZDJiMmMyNDU0NDg1YWU2OGI0ODBhZDE2NGZmOWI4YTJhMDM0NDU0ODQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Peek.swift#L1-L50",
+          "version": "repo-lines-v1:sha256:1dab9c9e876e60194b41687961fbac0f1788ad5791f9a64ddb275f57ab9e5043:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUyNzIwYjQ5NWEwOGRmYjhmMmZiNjVmOWU0OTU1YzVkYmI4ZTQ2YzY4NTQyMmE2ZDczMjc5NDI2ZTcxZjBhOGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhmNDIyYTgyN2ExOTA0YjYyOTNjMzMwMmFjZTc2YTgyZjcyZDlmNWY2OWNjNDA1ZTE0Y2Y0ODRmNzdkMDVmZWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9b4107c1aa2b47f6bdc602b3fdc59144",
+      "statement": "Middle-clicked links are opened from the page's own trusted, unclaimed auxclick event in the main frame because WebKit gives no navigation action for the middle button.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4250-L4266",
+          "version": "repo-lines-v1:sha256:da3ad1133f112d6f3fe6fab18158b7c6d8d2e8b188cff06671dfe482a9244488:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlYzVlMjI4OTJjNTY1NWNiZGRlMTYxYzZlNDRkMjdiNTIwZWNiNjNmMDNkNTNhYTlkNjY1ZDFhN2I5NjhjYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiYTg0YTA3Nzk4ZjI3OTg2OWI0MzVlN2JkZTYyZmRjODZkNGFmOTM3MmRhNzIyZjk1YzYyNjlhMmFiOTAzZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZTZkYTI3MWNiNzg5NmM5Mjk3OGQ1YzRlNDU3ODhlNTRjNjE2ZjU1YjI2YTU1MzUwZmM1OTIyZmQzYzhmYjQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L1418-L1440",
+          "version": "repo-lines-v1:sha256:d386e13d66340016184917e1f0a9b5e3f442868c7b59e4457a68fe727ae25ab6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjNDJkMDU5NTE5MTIxMzkwZDYxZjZkNjM4N2Y5MmFhZmUwZWJmYzc3NGEyMTI1OGQzOTg1YjM3NDc1MmU2MjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwYTdmNDM1NGJlZjE2MmM2MjYzYjg1NGMwYjA3NjI3NzUwYWVjYTFkNDNiMGI1ZWI4MWU3OWQzMTcxMmY1NDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViODI2MmUwMmFjNzY5MmViODRhNDM2NjcxMGE3YjY5ZDQ0ZjY0ZDA5Y2RmZTQ5NmY0OWZmZmZlNTM4MTcyNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkyYjkzOTM1MjRmNzExOTQ3Y2RjYmM2MGIzMjM4YzYzMmU1YmI1NGMxNzNkNDRhNGYwMGVhM2U2YjgxOWJlZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4cc42d4687ae444783b466312bb3c1f9",
+      "statement": "WebKit's back/forward swipe is disabled and replaced by Search's own disc indicator that asks the page whether the content under the pointer can scroll sideways.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Swipe.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:f4fe3888b4b2ce1c6e72d6dfdf19dfd2a72b4fc0f0cafbea4465543856115588:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE2MTdjN2VjNGNlYjQ0NWRjMmQ4NDRlMjA0ODJlNWUwZjFiYzU0ZWQxMjNhOGIyNDkxMzFjYTE4N2YwMjU0ZDciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllOTRkZDM3N2JlOWQzMzg4MTM2ZmFmMmY5Nzg0OGY1NDI5NTgyODlkN2RhMDkzNzZiZWY2MjFhNzExODQ5YTAifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L599-L603",
+          "version": "repo-lines-v1:sha256:45d3d9da3552542c326f559c99718a4e5cb3c8ac2245901cb172a48086c08acd:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2QxZDVjMjZiNGEyZTI0NDg2MDkzMzlhOTQwZTA5ODEzYjFkODBjYTZhZGFhYjJhMjAxMjdkMzg4YzFkMTk3MiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNjM4ZWQ4MzRiMmI5NGQzNGFkNmYyYzVkOWE5ODU2NzU1YzJiNWJjZmZjYTYxNDEyZWM1NzQwM2FiNWM0ZDU4OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWEzZGY4ZDVlZDJhNzBiODJlOWJhNmQwYmE4ZDM1MTA0YjQ2MjdhZTM5M2UwYzU1MjEyYzJkMjQ3N2EyYjMwYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTJkM2UxZjVlOTBiZmExMWFmOTJkYmJiOTMyMjg5MzA4YWZiZGEwMWVkNjY0OGM4YTVkNmMwMDE5YmQyYzRiNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_23027736c14c4e02b89713cea5b9b720",
+      "statement": "The Web Inspector is opened with Chrome's keys through private WebKit API checked with responds(to:) before use.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Inspector.swift#L1-L15",
+          "version": "repo-lines-v1:sha256:8d9c85c74071db07ce82453eb29dc9a0e5b553bda1c6c27eb2a184e95a87dad3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU1OWVhYzNlMDczNWU4NTQyN2MxYzFkMTFiYzc0ZDY0Y2M4YzBlZGYyMjhmM2VjYTY2MzdhYjdkN2UxYWRmN2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyMDI2NWRmYzViNDZiNGU1MzUyMmE2ZGNhYmEyMDM2NmNlZmQxZjAyYmM3OTYzMWUwMTJlYTA3ZTk1YTMyYTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlkNTQ4ODM1ZmY5YzU1OTM0MTlmOWVhOTM1MDQwOTIxMjE1M2JmMjM2NWMzMmEwODFiM2I4N2I2MTY1ZDgzMzcifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L133-L142",
+          "version": "repo-lines-v1:sha256:72067094109b5011e7c7da77ea810911c778096f8824a77ccc7d1c2c693dcea4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzMWRmMmM2YjkxNzA0YTZjNWFiYTI0MjZiOTcyYjUzOTczNWUxNTkyNzc4MmMxNWMzODUxNzRkOTAwNDc5MDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk4YTI2M2ZkYWJkZWVmNTFmZTYyZTJhZmUxZGUzZGM1OGVhMmYwYjYxNTM4NDk1MGI1YjEzMzA4MGJiMjk2ZWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NzlmMzBlNDc3YzNjNDViODFmYWY0M2RjN2M3MmVhZmU2MjkxZjc4MDRiMzM1MDQ2NjBmNDNkNzNjNzg5NjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2a2a072a60541009579428e005a81ed",
+      "statement": "Autoscroll with the middle button is off by default and implemented inside the page.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AutoScroll.swift#L1-L10",
+          "version": "repo-lines-v1:sha256:e6b386761a63306d079240afe4b4d7872255c6352ac4899e8a7504ef361acbab:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1MDkxNWQyNzg3ZDdkODI4MTMyMjBmMTYxZGM4Njc5YTk3ZmE1NGUxMDU4ZGZkZWVjOTg0NzhjNGJkNzYxZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3MDU4OTQwNzE4YjAzYTNmZjRkZTlhNjQxYzNmOTVhMTIwMzIwODkwZjlkN2Q0ZTRlNjhlNDkxYjE5MGQyYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0MmE5ZjM4ZDBlOTc0NDdjMTQ5MTRiMzE0M2RlZDQyMzgxNWQ0ZTcxMjZlMjAxY2JjNjdkMmFjNzBkMzQzZTYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:0c59c265adb7f24d6cf753dc850e3fb2304c7a321cf35b203d2de3aac1f3cc13",
+  "claims": [
+    {
+      "id": "claim_83badd05eff44c419e5f4712a3b70bea",
+      "statement": "Search is a single SwiftPM executable target in Swift 5 language mode for macOS 14+, with an XCTest target and no external package dependencies.",
+      "evidence": [
+        {
+          "resource": "repo://Package.swift",
+          "version": "repo-file-v1:sha256:c88388023f01a5598113e70b2c67187f7829ebbdd33b4722d553f73ffd8faeef"
+        }
+      ]
+    },
+    {
+      "id": "claim_c4450f93711f4743a9aa8e22dc87ec41",
+      "statement": "SearchApp is the @main SwiftUI App with one Window scene using a hidden title bar; menus are defined in its commands and act on the front window's Browser with customisable shortcut ids.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/App.swift#L8-L70",
+          "version": "repo-lines-v1:sha256:a44f762b265ec43f8659423d741b8040d154c6749bb118abcbfd210cd8b95630:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVjZmJkYmI1MDE2YWM3ZGVlYTU2ZTg5MGFlOTNhZDc3MzY1Y2I0ZDhhMGQ4NjhiMmU2YzliZTNjYzExYzQ2NGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjllMjliYTk2MzA2N2FiNTc1YTFmYzMwMGMzNzcwZGJiMTYzYmRmOTYyMTU2NDMxMTQyMWFlZWFhNDMzNmZjOTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlMzRkZTMzMjhlZWUyNDM0YTU2NzA2NTk1ODNjOTNmNDliMTY3MTI0ZGE0MmFkMmU1NmI4NzE4OTQzMDMwZjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b129b526cbdd402db4a6f8dbeb371d28",
+      "statement": "Links is the NSApplicationDelegate: it installs an uncaught-exception handler that appends to crash.log, receives kAEGetURL Apple Events, and on termination flushes windows and pending disk writes after waiting up to five seconds for file imports.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L10-L91",
+          "version": "repo-lines-v1:sha256:b9dbe72186c2245d7cf68809eab8f819f10bcfcf3aa054ec559ad285a88739d5:eyJzZWxlY3RlZExpbmVDb3VudCI6ODIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdiOTVmY2M3OWIzNTc3ZmNjMTYzYjg3ZTU5MzQzM2IzNGU0ZDY0NmQ1YTM2OTRlN2I4NTJjMGUxNmEwZDEwNWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MTQzZjVjYmY0YWVmNTJhYmUxZTNiNDdlYjkyZTA4YTI4YTcwZWQzYzExMjQxYWZmYzJlZmI2ZjYyNGUyNjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxY2JkYzkzM2RhM2ViMzA4Njg2NWY2NmU4MGRmMTc0ZWU3ZWNjNWNlNzIwYzcyNWJjNzIzMzQwMjE4YzE4MjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b2d6362c32d84205b9e461d894d78bc3",
+      "statement": "The first window is SwiftUI's scene whose Browser is held by SceneSlot; additional windows are AppKit NSWindows hosting the same ContentView, and Browsers.all lists every window's browser oldest first.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L163-L200",
+          "version": "repo-lines-v1:sha256:c31b05559541aec09289ea5710734d0c979d100f4a7aef0a5043a44d92c5e00b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzZWJlNTM1ZTc4NjNkOWY2ZDVkZTY2NTk0ODA0NzQzNThjNWJlZmI4ZDVmMWRjMjM5M2Y1YjkyMDYyNTdmODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2ODA0MGM3M2JlZDg2MGQ4MmVhNWMxN2IzYWE5ZTRiNTkyMjM1ZWQ5YjU2M2Q0NmQ2YThlMjk1YmQ2YTc5MjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNDZhMjNjYTlhZDUzNWJkMGE2NjUwZDk1OGVmYWJkMDU1NTJmMTFiZDVkYTVlOGUxMWRlYTdlMTUwNzYzYjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjliZWFlNjE0ZTk2YzI3MzQ0NGMwNGI4YThjZWUxNjM5MTI0MTc1NzUxNWNiNDU3ODk1OGVkMjY0ODJjMjgyZTAifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L5-L110",
+          "version": "repo-lines-v1:sha256:fa390855111bdf43541bf9eaa4dea170a5b2700743a456834ae3c647266d741d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA2LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmMWYxZmJlYzNkMDFkYmI0ZjIyNWMxMjNhYmVkNzQ3NTc3ODdkYWViZTRiNDk3NjYwNjQxODhmNWJhZDJiZjdiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlNDE0ZjFmYzE1YmFjM2ZhY2NlOTBlOWUyZGFiNGU5MzdjZDBiNjE2Njk3Njg2MzUzNmQ3YzA5NDNiZGYyZjg5IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJhOTJmOWY2ZjA5ZjQ2ZDZlOTBhYTc3Y2ZmY2JiNzA5YWIyMDUwZTM3Yjk0ZjU5MTlhNDQxNjg1OThkN2ZjZjM5In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_aaad68f9901f4b1382678ffb20903d48",
+      "statement": "Front tracks the key window's Browser so menu state follows the window in front; becoming key also updates the current space and the focused window reported to extensions.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L117-L124",
+          "version": "repo-lines-v1:sha256:a95c856953f284e88765728d0cf53e1879f1f838c3eb3ca21f67da75f0577949:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTk5MWM2M2NhODAxNDVkYzZlNzJhNjBjYThlMmM1YTViYTI3ZGJmYzljNDlhODM5YWYwMjc4MzU0N2NjNThmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjBmMmI1YWViNzFiNDMxMjc2MWFhYTE1MzM5MzIxNmU2MmQ5NjBjNzFiNDgwZjhlNDI2ODJiOGIwZDljMjMxNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWE3NGU4MGQ5NmFlZTNlNDg5OTFmYWFhMWY2N2U3Njg3MTk4NzllODgzZWViNjA2Y2NkYTliYzYzYzRkNDhiOSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L44-L58",
+          "version": "repo-lines-v1:sha256:a8ff896c7f4109a06230828a70febc5682173af0d361644eaf82aed2ce224f2c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhNTAzMzIxZDVmZTllMjZiMjdmODczNTFhZTA1YTk0ODgyNjRkN2ExNTgwNDMxNDczMzIwY2VjNDEyMGNiZWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwODUzNjAwNjlmYmQxMWM1YTgzNWQzYWQ0NzM2ZmRhMTMxMjA3Njc4Y2EzNzkzOTZiZDI3Y2NjYjliNzQ4MDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwNWIyOTliZmMwMTAyMDA4YTM1NjIxM2EyNTA4OTdhNGUxMmZlOGMzNDFhMzBiYTJmYjU5MjA4MzZkNjliZDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4faa0b2193e74a5d8923bcd8d716f5a8",
+      "statement": "Other windows recorded in windows.json are reopened once, when the first window appears.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/App.swift#L1512-L1522",
+          "version": "repo-lines-v1:sha256:d4c7b2e92f03afdbd47ee6a70bf37c2b3c7bb44da0edd654d75f95c9631e3bea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3OWE5NWY5OTVjODRkN2E0NTNkNzllZGNmOGNmMWUwODI5OWRkY2YwNDIwZDE0NDI0NDc3MmY1YzExMGRmMjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2MjRjN2MzMWRmYjc3YTkwNzhiYzQxZWZiOTkzNmVlMzc5MWI5MDYwMGVlMGMxMGExOGQ5ODY5MDkzMTg2Y2IifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L349-L366",
+          "version": "repo-lines-v1:sha256:45b10305624b5c96a73fd60b145afd23d0ec1369c7eee41159770574ade5c37b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZDQ2NWM5NDIwYzA2OGMxMWQ5MWVjODM5NGRhZWQzZmVkNDgzZGJkNTFiODlkYTFiN2E2MTI2ODljOTRmNWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUyNzZiMjQ1ZTJiODhjYmI1NmIyNTAxYzJmNjQ4ZDYzNGYzM2VlMTI1NjRlNTEzNjQyNjU0NDgzOGRhZDRhMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEwYjJiMmQ3YWVhZGIxYmIyY2FkM2NmMmNkNDZiY2E1ZmQ1Y2RhZTlhYmQ1OTA0NTFjMTQ5NmQ3YmFlYTQyNzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c14e24934bae490b872df0efb036b231",
+      "statement": "Keyboard shortcuts are captured by an NSEvent local monitor per window before the web view sees them, with each window handling only its own events.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/App.swift#L1016-L1057",
+          "version": "repo-lines-v1:sha256:0bf9d7733fbd6e5034e26d7fa263febd0ec2fa13f71e97b0ac26979cc0a96adf:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwMDE0ZTFiZGFiODQ1MzliM2Y4OWZlNTFiYzcwODdjMzRlZDkxMzFiMDZiOTVlZTcwNmUzZmUxNzhiY2ExYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhjYTA2OWQyNzI1ZGFmMjI1NWE5OGNlZGEyZWUxYjlhYjE5MGU4Yzc2MzI2Mzg5M2MxOTk5OGU0ZDYwNmE0MWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_139f0f4cce824c45abfb0d90e86c702c",
+      "statement": "Submitting the field switches to an open tab if picked, runs an address command if on top, and otherwise resolves the destination via site chip, Address parsing, keyword shortcut, then the default search engine; an unresolvable entry increments refusals.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L272-L284",
+          "version": "repo-lines-v1:sha256:8aab1366281c32af4aaf8f47fe8da4bdd5d08db13640b79c2ee151d7b9bb7200:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzMDVjMjcxYWM2MDE5OGZmYWE5NjE0YjVhNjU2ODY3NmIzZGQ0YzNkMzFmM2IzMjE5NzhmMGFiNGE4NjMxYzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA5YTM5ZjAyY2Q0MjUzMDdhMGRmYmZmZjNjZjg3Mjg0M2M2YzU0N2Q5OGExZDlkZDU2NzMwZTdiYzFhYmM2MmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMTdmNGVjOWViOWU3NjQ5MGZhMmY3ZjZmODQ1NjMzNjk5YWQ1MmY5Y2Y1NTA2Y2NlNjA1MGFlMjVhMDI5NjEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4084-L4148",
+          "version": "repo-lines-v1:sha256:d9339d0363514b944a487820bcc2aecad978e9b65cf5c0660c86c8d1b3f35d2f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlMWJlMjJkMjQ0MmUzNmU3ZmZmYWMyMTA3MTEyMjljOGQ5ZDg0M2YxMDM0NDBlYmFiNzIwZTE2MzBiMDdlYzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwZjc0MjJmMTE1NTEyNTEyNWE4N2M2MDY3MGE3MGMzMWRkNDRhZGQyNzRjM2ZkMDZmMGUxNzUxOTM2MmY2NTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU4MDk0YzY4OGJiM2RkMWFkMzI0YzYyZjJjNzAxODBmMTYxNmVmZjk1OGY0ODM1ODFkNTFjYzhhMGI2NTY1ZTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b12f80bcee641889b43c4bb4293fdb3",
+      "statement": "Search engines are templates with %s; custom templates must be http(s) with a stable host or fall back to Google.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Engine.swift#L1-L80",
+          "version": "repo-lines-v1:sha256:395a017c92ace882fba28f23b75b78a9fee35d1fff0653418d117acbf75a4bfe:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

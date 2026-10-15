@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1f1961f46598e018c704b45e2c2614bdcbabfa082fede31cf3101de4dcb114d7",
+  "claims": [
+    {
+      "id": "claim_28149511b7c040628b26fe4f1115aef0",
+      "statement": "The bench is off unless enabled in Settings; when on, the app listens on a Unix socket in its own folder with mode 0600 and checks the peer's uid equals the user's before reading.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L107-L185",
+          "version": "repo-lines-v1:sha256:5627ea3530caf443420694580a6614a9211271b3cba0dd5a03ab0d5eab1e3420:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZDNiZjllMzkzMzYxZTZkYTQ3OWI0NzQ4YmE4MjU5ZDczNTY1Nzk3M2IxNWMzMDk1ZWQ2OGExOWM1MzQ1NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyMWRlMWJmZmU0ODNlZDA5NWJhNWMwNWQ4YTAxZGI2NTU4MzhmNmE4ZGI5ZjQ1MDc3NjZhYjYyMTk4OTBjZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmZjg3NjVhZDU0NDZlYTI4MzczZWZkOWM5MzhhMmFkMDMzNGYxNjExZGZjZWE4M2E1MzRkMGYyYjJjMjA4NzkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L6-L21",
+          "version": "repo-lines-v1:sha256:3ccea15b67e342d1c4904d11568d9db606fc23ac9290dcb07dfa35257a4788c3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI1ZmJjNTVjYmU3NTAwMjBhMDMxODE2NGVhZDhjMzBiMDMwNDcxYzgzYzdiMGNhYmQxZGJjNjhjMTA1NjI5ZjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YmNlMzNkZTRlM2M0MDExMzZlY2RhMjIwMWU4ZDAwZmJjZjc3YWMyNTk4MjdkZTRmNzA1ODEwNTc1NGZiZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0Zjg1NTY4OTQwNWVjMGUxNzY5NjQyNDNjMzFlMTAwODViODBmZDk1MWU4ZDY4YzU1MjYzOTE3MDg4ZGZkZDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c10a8745b3d648c09cc029f798f68664",
+      "statement": "The bench protocol is one JSON object per line in and out, one request per connection.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L186-L233",
+          "version": "repo-lines-v1:sha256:b2f5bcce690e2a8355b8befa82e0513ac9fdb47178f780d12916616ab4898387:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzZGYxYTU4NGEzYmQ2YTEyNjAyNGUzNjlmZTYxYTA4ZDg2ZTFkZTU5NDViNGIwNjk4ZTQ1YTU4YTIyOTNmMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAwMDE0ZDE2NjBiNzZkZGY3YWZhNGI2OTEyZTQzNmRjMGZmZDAyYWJlYzU4Mjc5NTYwN2YwNTAxNTYyNTg5ZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI1OGZmODYzMjE0NTdkNDljNWNiNzllNjg3YThiNzQwNmI3NWI5ZmM5YzllM2YxNmQ4ZTIwM2FiM2YwODYwNjIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L9-L16",
+          "version": "repo-lines-v1:sha256:86b6a47f5992c613d1db13ba7e1fe7731249e1ae0b1ec820c2a42e631399df67:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTM1ZWIyMDBiNzkyNmJhYjMxZTUxZTRkMTk5NDQ1ZTMwMTU3YjQxNGJmYjZlMjliNGI3ZmJiZDc2OWQ1NDc0YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTgwOTg5MzYwNTQxOTk5YjBmYzViZGViMWRjMjc1NTQ3ZTkyMzAzOTYwN2M3MmVkZGIxOTIyMTk1OTBlMThmYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTkxZGZkNDBjNjk3NzdhZTQ0ODQzOGZhNjgwNzBjMDU2YjZjNDUzZjQxOGZmMDMzZGY3MzU1NDE5OTllM2Q2ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTI2MzQyZmQ1YmE1MWUwZjAwMzA5OTY4YjYzMmFjZDViZTJjYjMxNTk3Yzg1ZGYwZmFlOGE1ZWRiZDk3NDA1NyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_cde9395f8ae04dc489502de2111cd66e",
+      "statement": "Enabling the bench in Settings writes a consent mark to the data-protection keychain; a bench setting without the mark is reset to off at launch except in test runs.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L61-L103",
+          "version": "repo-lines-v1:sha256:90db07cc96933d9e7012bd5e7919580172b16eaf18bd49296161be6405b94b03:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzc5ZDBjMjIwMTljN2ZlMmMxMjY1ODIzYjY5YzdlODU3MGJkM2U4OTk5ZTBhNDlmNmE5NzQ1ODEyYWFkNmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyMWRlMWJmZmU0ODNlZDA5NWJhNWMwNWQ4YTAxZGI2NTU4MzhmNmE4ZGI5ZjQ1MDc3NjZhYjYyMTk4OTBjZmMifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L364-L368",
+          "version": "repo-lines-v1:sha256:f379fa99fd825aad4a129389bd9e0656716ca8db03738e91189b77215e99393a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI4YjA0NjU2ZWEwNTZjOGNmYTgzMWQ4MTE2N2M4YjJhY2FlYmY5ODY3MWQxMDg5ZmZjMjc5ZTcyMjM1ODRmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU4YjcwOGM2MjJjZjA5YTYwYjcyOTcxZTE0MmUwZjAyMTM0YjNhODZjYmZjNzVkYjZlZTAwNDI0NTM1NWFhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTQ4OWQ0OGQ5NTliMGQwOGQ0NjQ1OTJkZDU1Mzg3ZGU4ZDZiM2Y1Y2YzYWExMWU0ZjM2Nzk5OGVlMDJiYzRlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTgyYzJhYzEwM2EwN2U5M2RmNTI5ZGUzMjg4MWQ3NDM4YThjNTIxMTk1NjBkYmU5ZWM0ZmQyZjA3MTFmOWY3MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a7d2b4af5c214ba78b7bf49a02d3772d",
+      "statement": "Bench tabs are appended with a flask, never selected for the user, never saved to the session or history, and only bench tabs can be closed by the bench.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L12-L21",
+          "version": "repo-lines-v1:sha256:ba723f8050af1f22aec366034bf7488af20f247555d3bbf329c2daf35be17c28:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmYjg2N2VkZmE4YmZkZTFlZmVkZTUzODMwYmMxZTZiZjRkOTA2Njc2MTBjN2MzOTgwYzFkNTdjNjJjOWM2ZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YmNlMzNkZTRlM2M0MDExMzZlY2RhMjIwMWU4ZDAwZmJjZjc3YWMyNTk4MjdkZTRmNzA1ODEwNTc1NGZiZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZjY2Q4ODk0YTYwMjVhOTk2ZTEwMjM3YWY1ZmRkYWJmM2VjZWIzODJlNzk3YTUzNjNkZTVhMThmNmIyOWM4NWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0Zjg1NTY4OTQwNWVjMGUxNzY5NjQyNDNjMzFlMTAwODViODBmZDk1MWU4ZDY4YzU1MjYzOTE3MDg4ZGZkZDYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L499-L502",
+          "version": "repo-lines-v1:sha256:03aba44cc8ce3f44747d590f2c9f1798ff76e2fbd34b1afc450d2cd087fc2ecb:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMjkyZDc3YmQzNWNjYjMyOWNmY2I2ZjM2NGIyYzQ3ODZmMjZhNDk5ZDhlYzUwNTBiMWZmMGI5NGNjZDE0MzEyOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjIwYWRlYTc1NjEwYjA1ZTI5YzczMTgxOGQ3YWRhMWZmYmVmMDk3MmQ5NWNjNTk2OTVjOWQ3NTJhNjc4YTQxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODdmOTdjZTEyMWJiYmZiN2JmMGQxZGFkZDAyYmE4N2RhNDBjMTU3MTA1MzBjZTAxZTE5NjQ4NmJiOWJiMjcwYyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjRhMTBiZTUxMGY2N2QzZTNkODg3NzU2OTBiNzJhMDg2ZDJiOTE0ZWQ3MDk4MmJjOWJjZjA5ZjY1ODZhMjI4MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6758126d7e5a4d83b30bc614227a89e5",
+      "statement": "Commands that would act on the user's own browser, such as key, press, tap, pin, quit and windows, refuse to run outside a test run.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L355-L360",
+          "version": "repo-lines-v1:sha256:ab8eefdd337c64be4df9a250a55371883d568a6c0fb18524b2d33d8afd5da1ae:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjgyMzcwMDQzMTAzZWEzODJjNzQ2Y2ZlYzAyODI1ZjlkNmI4NGQwNTcwYjM5Y2ViMWQ3MGQ1MGViNjg5N2FkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODBlZTQ3MGMwMDdlNGRmZjg3ODIxODI1ZjcwMWQyNDRkNjJlYWE4NGQ4YWE0ZDY3NWQxZDc0NWNmMzJjYzVhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWEyMmE0NzNhNzIzZDUyY2U4YjUwMDEzNzMyYjVkYjU3MGM0NjQwMTNkZDk0YTA4ZDI4ZGViZTVhYWU5ZDAyYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzZjNjE2NzkzOGYyYzZlM2VmMzVmMDYyYjAyYzZkNTNmMDUyY2EwMGVjOGEzYTkwZDE3YjgyYmY1OTM5MWQyNCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L417-L417",
+          "version": "repo-lines-v1:sha256:50fe2e127b8dea84fbbb7caca3a94d91d415013c6dc282202b8a20f2edebe8b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBmZTJlMTI3YjhkZWE4NGZiYmI3Y2FjYTNhOTRkOTFkNDE1MDEzYzZkYzI4MjIwMmI4YTIwZjJlZGViZThiMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTBmZTJlMTI3YjhkZWE4NGZiYmI3Y2FjYTNhOTRkOTFkNDE1MDEzYzZkYzI4MjIwMmI4YTIwZjJlZGViZThiMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGEyMjA3MGFiNjBmMWMyM2Y0YWVhNGVmMDNhM2NmNjBiNTIxZGViYzIyMzQzNzUzMWE5MDcxMDcyOWEyZDhiYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2YyMjk5YjA4YzI0NjgxZTE0ZmNhYTIwNDJiMzZmZTkxMWM5M2QxMTlmODlhODM5MTZiNTgzODZjODkyNDMyOSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L720-L760",
+          "version": "repo-lines-v1:sha256:c177e79c76f5daa1849b72648c1f188f0fa8084443e3008a4528994aa1306a7f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2ZTBlNDYzNzZmZjZiZGY4ODU4YTlhOWZlOTRkNWQ5NjQ2YzJhNDIxNjVlOGVhZGRiZjQ1MDM2Mjc4YzlkNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2OWYyZTcyOWM2Yzg3MzhiNGU3ZDgwOGVhZDc1ZWMzNzg5M2MzOThmNjViMzlhOWMyZDEzODcyNzMyODE0NGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjEwNWVhZjUyZGFhNTQxYTMwMjc5MDQ3N2Q2Yjg4Y2I2Zjc1ODllODEzZThmZjA2MzM2ZTY0MjJhNmU5ZGVmMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4MWFlM2JmYzgyN2FjMmNmOTllMWEwOWNkOTM1MTY3NzVmNjFjYTNiYzM1MWZjZTA3ZGJmZWUyY2MyZmNmNTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_59579832672348d79257c41cac82b069",
+      "statement": "In a test run any window that reaches a screen is removed and named in every subsequent bench answer, making the bench fail.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L235-L245",
+          "version": "repo-lines-v1:sha256:341bc371c02f5a8feaae55274016b9fffabe83058a5f1c6072fdec911aca271f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhY2EwNDM2N2VkNTAzNGNjZjU1OGM3MDRmNjAyZDdlZjc4OGU1MDE5MWIwMTU3YTFmZGQ3NTA3Nzk2ZjMxYmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkZTRkYmJjNzVmOTE5OGE2YWNkNDliMjhiOGEwMzA5ZmYxN2RiYTU4NDc0OWUyNzI5MGUzMDkzNzg4NzY3ZWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2ODc3YjVhZmQ3OTc3ZjdkNTI4ZjcxYWZiNDFjYmE5NGU0ZDI0MmU5ZjY4MGY4NzFiY2QzNGJmMWQ5NWYxMGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI4NzgyNmY4ZWM2NDU4MzU4OWY1ZjVkNDAzYzMxOTE1ZTMzNTRlMjJjMTljOGEwMzM4YTUxN2EzNTc1YzY2MjUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Bench.swift#L3136-L3175",
+          "version": "repo-lines-v1:sha256:5b197806ed45c5f4e9bc663e1b120ec1d1d9e0d44bf936ea1bf60a984e87bf7a:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZkZDk2NDM3ZTIxNjE1YTlhZjQ2YTkzMzhmNDdiNjkwZGNiYWRmZjI4MjE0MzgzZGM3MDJiYWE4NTdkZWNhYzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2ZGZmYThmNTg1MGVkYmZhMTQyYTJiNDFjOTFmYTFjNjQwNWRkMTVlNTQzZDExYjliNjM4NGFkOTFkYzE2NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyZGZkYWVjZDFmZDE4MjU3YTlhN2UwMDRlYWY2NjJkNTAxODcwZmM3MDBhNTExOTgyZjFkNjc0NjUwMmEwYWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d6b2d55527b94034b1732ddedd9a9cfa",
+      "statement": "The ./bench CLI targets the installed browser by default, the test world with --test, or a named world with --world, by socket path under Application Support.",
+      "evidence": [
+        {
+          "resource": "repo://bench#L130-L175",
+          "version": "repo-lines-v1:sha256:413c72c41001c48cb96536ae8baed54a16683cd3c7e19645f28e7b3d9e678e4f:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwZDA4MjY5YzdiYmNkM2IyNjllNjdmYzkzZTJkODZlM2EwMzgwYmUyYzJiYWI3ZGNiNTViYWFmYjAwNjBjZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjZmZGI0M2YwMTQyMTJlODBmYTg0ZTJhZGFkMmM5ZTExZjcxZGQ5ODNlZDYyOTBiZTIwMTcxYjA1NzkzMTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQwYjcwZTI3NGI2MzM0ODU4YWM5MmMwNzhlYmQ0NTQ3ZDY0ZjYyNTU4MmIxYjY2YTBlNDhmMDhiOWY0OTE2OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1ZWZmNGNiN2M4NjY0NjZhNDY0OTI0ZjMyODY5NGMzOWM3YmI4ZjcwYzhhNmYyOWY4Y2ZjNWQ1ZDgyYjdhYWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_603ed621e47748fa89d346b730baa017",
+      "statement": "fresh.sh wipes a world's folder, defaults suite and website store, then opens build/Search.app with SEARCH_PROBE, hidden when the world's bench switch is on.",
+      "evidence": [
+        {
+          "resource": "repo://fresh.sh",
+          "version": "repo-file-v1:sha256:c30694d39cf2d1c4e1e4d00bef11c7d165d23e55e4c32631b5d52a305cb6099d"
+        }
+      ]
+    },
+    {
+      "id": "claim_8a9b6970753f4f90abd203c8c53a305a",
+      "statement": "Test worlds have separate folders, defaults suites, WebKit stores and keychain labels from the real browser.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Store.swift#L11-L149",
+          "version": "repo-lines-v1:sha256:511978d522ffe9ecce5bd6cd3ee9f0a1f592a3894ad9ad595bc6f11a10727968:eyJzZWxlY3RlZExpbmVDb3VudCI6MTM5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiYTk5OGM0Mzk1NTZjN2E1NjBiNGU4MzNmODRmODc2NjUwNGQwNWIyM2NjMDFhM2ZlNzYxMmZiZTYyNGEzYTRkIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhMzljNDA3ODI1YzZhYThhZDNiMTEzNGE4NTQyODVkMzNmNWQ0NjZmMzhkZDNkNWNjYmYwNDY1ZjA4NTkzZmYxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxNzRmYmE5MTg4MDU5MDMzOTA1OTRiNDY2NTFlODc3YWQ1NTI2MDBkY2RlYWM5ZDRlNTFmNjA5YmQwOTc2ZWJlIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjMTk1MDI5YzAzY2I4ZmFhZDliYmEwYjdmYTdkYTFiNmQ0ODJkZWZlN2E0NDljYzI4NjJkNzZiYmY1NjE0ZDk5In0"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L46-L48",
+          "version": "repo-lines-v1:sha256:16ed3f19597788064e8566a9c57e96417be55b7e2185ca06920956d2d88937b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmRlMDA0NDdjNGVhNTA2ZDUwYTllYTE5MmI5NTcyZjY0ZTcyZTE2NzRkYmVkNmExOTMzM2Q2MDkyMTllMDU5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBmMWUyOTYwNTlhMDY1OTQ0ZWExYTdlOWVlMmI1OTc3YTY1NGNmMjcwZjVmNWMwYTQ4NDU0ZDI0MWYzMTAyOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzg5M2Y3OTU3OGJjMmEzNTUyY2ZlNDE3ZTM1YTg2MmUyNTE0MTdkMWMxZGM0NzQ4MmFmZDJkNDBhNGIwZDc0MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzBmZjFhMzU0ZWE3NTZhZjUxNjBlNTQ1YmE2N2I3ODAwNTJhNGY1ODAwNTdhMjU0MmU5MWZmNTA1MjhkYzA0YSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_50be7971a0f049808df9ae9e8355ca1e",
+      "statement": "The search-bench skill instructs agents to use test worlds for invasive commands and to act only on bench tabs in a user's real browser.",
+      "evidence": [
+        {
+          "resource": "repo://skill/search-bench/SKILL.md",
+          "version": "repo-file-v1:sha256:f098bfee9a81f2b8a704a9e2394a76e66b8acc98b084b63703164fdfd65e5110"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8ac6bfd8744108e484e9bf79d1143ee8bbe659b01c0bacfeb4692b6ebe22cd05",
+  "claims": [
+    {
+      "id": "claim_cb62bbf475454141a787a0a9caeac8bc",
+      "statement": "A run is a test run when SEARCH_PROBE is set or the executable lives under a .build folder, and test runs use a separate Application Support folder, a separate UserDefaults suite, and a separate WebKit website data store.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Store.swift#L108-L149",
+          "version": "repo-lines-v1:sha256:16dcbf1ccd425c218ece3b2581535e86e57c984c0033e1390c93edb94103d261:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlMTk4NjY2OTBmNzViNjI2ZjJiZTE2MzVjYTk0MTExYWY0ZjU1YTVhZmIwNGJmYmYxMmZmMGQwMWRiNWNlZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzOWM0MDc4MjVjNmFhOGFkM2IxMTM0YTg1NDI4NWQzM2Y1ZDQ2NmYzOGRkM2Q1Y2NiZjA0NjVmMDg1OTNmZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljMThkNjcwNjljNTc5ZTgxNTgzNDNjMzU3ZDlmZTIzYzBjZDkxOWI1ZTQ5MGRhYmVlMjE2YWEyYTBkNTlhYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMxOTUwMjljMDNjYjhmYWFkOWJiYTBiN2ZhN2RhMWI2ZDQ4MmRlZmU3YTQ0OWNjMjg2MmQ3NmJiZjU2MTRkOTkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Store.swift#L11-L53",
+          "version": "repo-lines-v1:sha256:62a55c3bfd4c89ff359f0662407523d53b0eaaff5a3507818d697cdde2e3c571:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhOTk4YzQzOTU1NmM3YTU2MGI0ZTgzM2Y4NGY4NzY2NTA0ZDA1YjIzY2MwMWEzZmU3NjEyZmJlNjI0YTNhNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3NGZiYTkxODgwNTkwMzM5MDU5NGI0NjY1MWU4NzdhZDU1MjYwMGRjZGVhYzlkNGU1MWY2MDliZDA5NzZlYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0ZmMwMDY2NjI2ZTZkNTA5Y2NhZjJmMDc1NDc4OWM0OGM5MWQ0ZTdmYmUwM2NhODlkYzBjYTEzNmExNTIxZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b0154026aa84b198b987d4e45db46a2",
+      "statement": "Test-world WebKit store identifiers are fixed UUIDs of the form 5E4C…, with a named world's FNV-1a hash in the middle groups, so each world's data persists between runs; fresh.sh computes the same identifier to wipe it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Store.swift#L89-L102",
+          "version": "repo-lines-v1:sha256:18a46829d966b0a25f3bd9d80e574c98a529ebd8fc5c2a7c1c8a0bb6671af370:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdlNTY5NzY5OWU1NjQ1NWU5OGZkMjExOWEwOWIwMzRkZGVhYWE3MzAwZDkzMzRlZDIzOWZlYjE4ODc5NWQ5MTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3ZTYxNzlkNDk2YTEyYjllNDYxNzQxMzU1M2EwMDJhOTY1YjAzMTI0ODRhZjY5OWNjNmMxZDQwOGQxZTFjZmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk4ODM1ZGUxOTU2YWNhY2U5OGZjNDI3M2Y5MGQ0ZWEzZDhlYTU1ZmY2OTIyZDgzYzFkMDg2ODgzY2YyMDhhODMifQ"
+        },
+        {
+          "resource": "repo://fresh.sh#L17-L50",
+          "version": "repo-lines-v1:sha256:4759e5036ebbac009874a97cc038058609e2931c6deb9b4f83587d279d2cab29:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlYmQyYTg3NGZhOGY3ZjFiOThjYzQ4NDgwNGZjMTcxMjk2ZDBiNjdkZTc4OWY2YmRjOTcwNDZkOTM1ZDU5NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ0OTkwODI5ZGJkNjIxZDdjYWQ0MDEwMDkyMGUxNzM1YjlhZjE5OTVkOWUxZTc5NzY0ZGE0OWZiNjY3MjQwYmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExNTc2ZjVkOGE5MDA1MDZmMDZiNmZlZjViYjYwMGRhMzQ2OTJlZWRhN2ZmYmE4NGRhNzU2YmFjZTU5NTM4YmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ce5ad0f062947ca9fd3a78aa765150b",
+      "statement": "On first run the old Office Browser Application Support folder is moved to Search and the old bundle's defaults are copied once.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Store.swift#L104-L165",
+          "version": "repo-lines-v1:sha256:8789d060c2ae874efbb51a8d141970a0f8addac324501ed649364c55bb623ebe:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkNzAwNWVkMzE1NDE0ZDUwOGY3YTAzNDQwNTFhMzQ3ODQ0MzAwZmE1NjExNTMyMmM3ZGNmM2QzNzhmNGY4MzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlkMmUxMWJkN2VjNTM1OWQzMWNhODRmZmM4NGFlY2Q0ODljMDY0NzJlY2Y1ZDMyYWIzYjc1ZDI3MjUxNWU5MjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0MjYyNDc4YjUzNjQ5YzlhOTg4NzQ0YzFhZjU1NjllMDRkMDY4MWY4YzUyMjE0ZjliZTFiYTk1Nzk5ZjUxOTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3c979fca7d914714b75fa487e458ffdb",
+      "statement": "Disk serialises all background file writes on one queue, drops writes overtaken by a newer write of the same file, writes atomically, and supports synchronous writes and draining at quit.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L52-L58",
+          "version": "repo-lines-v1:sha256:424cbe71aa53056ec8abb6f5f20b08dd0f23d0062d7cba8fcb3e4850a3370482:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ3YWY4ZGU3NjFiYTUxYThjYWM1NTAyNTI4ZmE5OWY3ZGU5Y2RlMjNjNmRjNjZiYjQxZGE4MWVmNzFkZjMxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2YzNmY2NzFmZTE0YjYzMmIwNDdiNTBiMmM5MGQ0Njk1MTlkNjYxZTAxM2FjZmEzN2VkMGQ4ZWEwM2ZlOGJjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzFmNWE1OThlNGE3OGIyNDZmYTNkNWJlMGQ4NDQ0YzhmN2MxYzk5OWZiZDc2MWNlMWJmY2RkZDBlNThkMGIzYiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Store.swift#L168-L207",
+          "version": "repo-lines-v1:sha256:7b23d8fd2a9990ba6766b553479c23750a2660ad6fcf808bd73cd84a6c9e0266:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3MmNjM2Y5YTE2MWIyZjRmMGYzZmE2YzFlMTg3NmYwNmVlNWU0NWE5MGNhYzVkMDEyODhhODViYjRmMWYxZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1aa7fc27d7d0408fb73ced7074cf786e",
+      "statement": "A data file that exists but fails to decode is renamed aside as name.unreadable-timestamp.json rather than being overwritten.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Session.swift#L70-L81",
+          "version": "repo-lines-v1:sha256:e73add420af4b0ae2187bfc1f19035f5e06fb0911a2d7f6a641139aeab8d8a90:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4YzUzNzkyOWJmMDdhODhkNTIxY2Y3NmRkMDJmMjU0ZmE3MmYwMjVhMGE0MTM3NmI2Yjk4ZjMzOTJiNGYzM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljNDNlMDVhZmU3ZWU5NzMwMGJiYWU2NGYzMGJiODUyN2EwZDhmYWYxMjI5NjNlMTU4NDUwNTNlZGI5YjY2ZDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0MGE5YmViNDA5ZjA1MDI3YmQyMzE3NjlmN2RkMWJkMzY0MDM4OWExMTQ0ZWMwMDRhYzg5MjI1OWFlZTI0YWEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Store.swift#L126-L138",
+          "version": "repo-lines-v1:sha256:45106c0916b16fc291f17e6d60b5ddae7765cee704ed75c56dcef4038a4ae93a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhMGRmODNlNWE2NjE2ZTMzZmRjZGE2MWM4M2Y2OWFhMmM4NzY0OGI5Y2VmZmEyODUzMzA4MmExMTAxYTAyMGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxMDI2ZjVmNDk3ZjhlMmUzZWE5Njc2ZDIzNjk2NTBiNGUwNzNkNmE5MTUwN2IxZTgxMTg3MTFhYjRmYTU2MTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4MzdhZjI4YmJiNGQyM2Y2NzU5NDc1ZjY0NTI5OGU2NTkwMDdmZmUzYjBlOTE5N2EyMGY0ZmU5YTUyZDdiZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5c0c68b2aef649b6add562900171418b",
+      "statement": "The first space's row is stored in session.json and every other space's in session-<uuid>.json; entries keep only URL, title and pin/name/home/group/pin identity.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Session.swift#L7-L48",
+          "version": "repo-lines-v1:sha256:52c1facac0a68a942bf1d26c4b59675a466c691654ff26bef6cd3f26d450887b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1Y2RmMzRlMjI4MGQ2NzBmNzNjYjU2MTYzOTQ0YTcwNGE4ZTljNTBjYTA0Y2JiMzc3ZGJmY2EzM2VjOWVmN2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMwOTAyYTgyMjU4NzZiY2IzOWZkMjcwZDE0ZjNmZDdlNDM1M2VjZmRmMGZjN2FjZDNjOWM2NjRhNTkyM2M0NjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2YjlmNDQ1MjFhNDkxMGIyYjZiYTFjZmI3ZTZlY2RlNjY4YjRjMzE5ZDZmZmU2N2YxYTAyYmQ2NTExMDEyYmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a21ed075ae84432aaa799d17c762729",
+      "statement": "Session decoding treats unreadable groups, pin ids, listed flags and split axes as absent rather than failing, and still reads the older left/right/fraction split format.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Session.swift#L92-L147",
+          "version": "repo-lines-v1:sha256:e76e11a8447388687032368d46d02a0740552cb0e11d71dfc39be802c3872040:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNlZGEwMTU5YjYwYjVlMGU1MjQ0NzY3MjE5ZWY2OTA1YmFkNGY3ZTY4ZTIzZTJlMzQxZjQ4M2MwMmQ5ZjYyMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjYmFhZWNhYzNjYmZjYmQ0ZjgxODBjYWFmMGI0ZTlmY2NmZTY1MGYxOTNhODRjMjM1NzkxNjEwZmJlYTYwY2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_87db38887b534cdcae77141ced741ea8",
+      "statement": "Start with a fresh window rewrites each space's session to its pins only with no active tab before any window reads it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/App.swift#L21-L28",
+          "version": "repo-lines-v1:sha256:6050e69c188abe1ea21a7ad316a89525517142813e5a9a4fb806665e0afb48da:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGJjYzYxMWFmMjNhOTFjM2I3MjdkMGFjZTRkZTIyMjQyZmM0OTA2YzcxOTRhNjM0OTE5YjY1ZDcwM2RkMDBiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODVmYTRiNWE2Nzg4Y2QyMjZjYjM3NmE3OTVlY2EzMjdhMmZjNGUyNDYzY2MyNWFmNTIyZGNmZDlkNTkyYTk2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjkyMzFmM2RkMjg2NDNlYTliZGM5MjJjNTY3OWFhMWE4NDVlMTA3NjZhMDM3ZmE5NDM4NDBhYTE1Y2U5MzdjZCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Session.swift#L50-L63",
+          "version": "repo-lines-v1:sha256:fe425f02efea909575c84946cf7389312d51a749782f8aa153e0f00efba05c99:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0MGNkOGVhMDgzZmM5NTY0MGE4NDkzMzliOGY5NGE4Mzk5NjVmNTExZGU2NWUxMWM5NTgzZjgyNzA2MDNlODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3NTU0YTg0MTllOGRiNmFkZmVjZWZlMTlkNTIzMGZkZjQ3MTM4NTI4ZTc5MzY0YjhmMDBlM2ZiZTFiOGM1NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJmMWRlZGZmNDNhOGNlODMyZjVhODcwMzU5ZDNhZGUxNzIwMGIwNDFiZjM3M2YzZmYxOTUxYTAwZTczZWYyNDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_764caf02b1ab4b129ffe9c835ec77fe5",
+      "statement": "Pins are shared across windows per space in pins.json; changes post SearchPinsChanged to other windows, and pins are migrated from session files when pins.json is missing.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Pins.swift#L1-L84",
+          "version": "repo-lines-v1:sha256:7c3d93832f32009b2d076758cf80cb20c495d4239c5c9e6a76f5e485f0dec000:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e2c3c936e5b47ea9030e1121011bfd0",
+      "statement": "Preferences is a single ObservableObject whose published properties each persist one key to Store.settings on change; a bench setting without the launch consent mark is reset to off.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L364-L368",
+          "version": "repo-lines-v1:sha256:f379fa99fd825aad4a129389bd9e0656716ca8db03738e91189b77215e99393a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI4YjA0NjU2ZWEwNTZjOGNmYTgzMWQ4MTE2N2M4YjJhY2FlYmY5ODY3MWQxMDg5ZmZjMjc5ZTcyMjM1ODRmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmU4YjcwOGM2MjJjZjA5YTYwYjcyOTcxZTE0MmUwZjAyMTM0YjNhODZjYmZjNzVkYjZlZTAwNDI0NTM1NWFhNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTQ4OWQ0OGQ5NTliMGQwOGQ0NjQ1OTJkZDU1Mzg3ZGU4ZDZiM2Y1Y2YzYWExMWU0ZjM2Nzk5OGVlMDJiYzRlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTgyYzJhYzEwM2EwN2U5M2RmNTI5ZGUzMjg4MWQ3NDM4YThjNTIxMTk1NjBkYmU5ZWM0ZmQyZjA3MTFmOWY3MyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L40-L120",
+          "version": "repo-lines-v1:sha256:f954de61acf825c888aadae4001634d2f44152c13b5a20d5ecf64b61f29ada2b:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NzUxNDBlMjZlOWM1YTE3MTFkNjQ0NWExOGI3ZjRhZTIwMjJmOTkzZWY2Mjg0MDc1NTQzMDFiOTZlMGRjMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjNGUzYjkzYzMxNDZkZTJjZTQ3NWZjODE5NWZlN2FkYzdhMjU2ZTA4ZDY0NTNiYzQzZGQ2ODQ3MTAyYTE5YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA4NTk4NzE1ZDkzOTU2ZTZjOTYzOGRmNzMxZTVkYWM3ZjQ0NzVkYzNiNTM4NGUwNmYxYjY3OTU4N2NmN2UxNmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f81241028784a16b69c4d50ec20d43a",
+      "statement": "Each JSON data file has a single owning type: bookmarks.json (Bookmarks), hidden.json (Curtain), history.json (History), downloads.json (Loot), pins.json (Pins), search-sites.json (SiteSearch), spaces.json (Spaces), windows.json (Browsers).",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bookmarks.swift#L500-L500",
+          "version": "repo-lines-v1:sha256:bf20b5a04b17fb8eca81f0f4c32297ea6e0ffab61b8699e76dd32bc2e817cd79:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYmYyMGI1YTA0YjE3ZmI4ZWNhODFmMGY0YzMyMjk3ZWE2ZTBmZmFiNjFiODY5OWU3NmRkMzJiYzJlODE3Y2Q3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmYyMGI1YTA0YjE3ZmI4ZWNhODFmMGY0YzMyMjk3ZWE2ZTBmZmFiNjFiODY5OWU3NmRkMzJiYzJlODE3Y2Q3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2JjNDExMzEzMzEyMzZiNjlhMDZkOGRlMjg4NjhmYmRkOGFiM2QxNjUzMWE0MjFlYjM5N2EwMzE5YjhmN2Q4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDI5MGM5NGM4YzVlODg3YWE3Mzg5MDdiNjNiZjAxYzE4OGEyNWU5MDRhYzkxOWUxYjM5OGZkYzRlNzE4MTc0YiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Curtain.swift#L85-L85",
+          "version": "repo-lines-v1:sha256:3702b5ec70e92db63a57e553422fe79eca0d47fa7461e520503dfd47f6452135:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcwMmI1ZWM3MGU5MmRiNjNhNTdlNTUzNDIyZmU3OWVjYTBkNDdmYTc0NjFlNTIwNTAzZGZkNDdmNjQ1MjEzNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzcwMmI1ZWM3MGU5MmRiNjNhNTdlNTUzNDIyZmU3OWVjYTBkNDdmYTc0NjFlNTIwNTAzZGZkNDdmNjQ1MjEzNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2JjNDExMzEzMzEyMzZiNjlhMDZkOGRlMjg4NjhmYmRkOGFiM2QxNjUzMWE0MjFlYjM5N2EwMzE5YjhmN2Q4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTNkODFmYWIxYWNmNDUxZjQxZDdkNTllNzkyZTM4N2M4ZTg3NDY2MWI1M2MyMzljNDNmNTA1NGI0NDMzNjI0NiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/History.swift#L460-L460",
+          "version": "repo-lines-v1:sha256:a006926a6291cfd05486a7cd6c748ceca8ba133475c16473e40ee5a66cf24fab:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTAwNjkyNmE2MjkxY2ZkMDU0ODZhN2NkNmM3NDhjZWNhOGJhMTMzNDc1YzE2NDczZTQwZWU1YTY2Y2YyNGZhYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTAwNjkyNmE2MjkxY2ZkMDU0ODZhN2NkNmM3NDhjZWNhOGJhMTMzNDc1YzE2NDczZTQwZWU1YTY2Y2YyNGZhYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzI2NzY5ZDE1ZWE5OGZhMGZkYjVjNjU3NTAzMDBiMGQwMDUzYzEzYTM3OTgwYzc2ZTBjMjc4Y2IzMmJhY2ViMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTkzM2QyZDY0Yjg5ZWUzZjBlZmM5YmNlYjdmOWU0MTIxYmYyNDdhMmIxMTc0OThkMmQ0YzI2ZWMwY2QzY2YzYyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Loot.swift#L54-L54",
+          "version": "repo-lines-v1:sha256:f2a9c996fa745fbcf737528e4bde3a3175fa4010072fe926a4fcc2de963bc24e:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjJhOWM5OTZmYTc0NWZiY2Y3Mzc1MjhlNGJkZTNhMzE3NWZhNDAxMDA3MmZlOTI2YTRmY2MyZGU5NjNiYzI0ZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjJhOWM5OTZmYTc0NWZiY2Y3Mzc1MjhlNGJkZTNhMzE3NWZhNDAxMDA3MmZlOTI2YTRmY2MyZGU5NjNiYzI0ZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjQ4NWY0MGFjYWZiYTVhNTdjZWJlYzRhMWI2ODcxMjhjZDZhN2M4NTU5N2NkYTY5ZjEzNTgyYTUzZWQyZDhhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmFhMmRlNmYxZjZkMTgwYjJkNWViOWVjOGQ0MDc2N2U5NzZhMjBkZGQ3ZjQwYTlkNDNkYjBlZWVmMmJhMWM2ZSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/SiteSearch.swift#L98-L98",
+          "version": "repo-lines-v1:sha256:064d23e70ac250e96b7229dd1a18668a297798620b6ba4cbb5b9fe154f30ca4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDY0ZDIzZTcwYWMyNTBlOTZiNzIyOWRkMWExODY2OGEyOTc3OTg2MjBiNmJhNGNiYjViOWZlMTU0ZjMwY2E0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDY0ZDIzZTcwYWMyNTBlOTZiNzIyOWRkMWExODY2OGEyOTc3OTg2MjBiNmJhNGNiYjViOWZlMTU0ZjMwY2E0YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjk3ZGU3Mzc2NmI3ZmE3OTIyNmYwMGZkYmQ2ODM5ZDc0NjQ1ZTVkZjZkMWNhMDc3OTlhNThlNWY5ZDZkMTFhOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGI3ODBmMzMyYWNiMjU1OGJmM2M1YzExZGI0YWY2NTdiNDg3NmJhMmJhYjFhZTNlNzQyZDhiZjZiN2MyMThmNCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L69-L69",
+          "version": "repo-lines-v1:sha256:a59fb9333522d2a2a8ca7be22f83ff25217a0aa1b70b97116f9810f365ee8adc:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU5ZmI5MzMzNTIyZDJhMmE4Y2E3YmUyMmY4M2ZmMjUyMTdhMGFhMWI3MGI5NzExNmY5ODEwZjM2NWVlOGFkYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTU5ZmI5MzMzNTIyZDJhMmE4Y2E3YmUyMmY4M2ZmMjUyMTdhMGFhMWI3MGI5NzExNmY5ODEwZjM2NWVlOGFkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWUwOTAzMTM4ZWY4NjhiOGJiYzUzMGQzNGEzNjg1NjM4MWExYjBhMTIyMjJlMzgyODg2MGFkY2FjODY3YzcwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTJiYmY0MzY5ZDA5ZWVmZTlhY2U1M2UzNWQ1NWJiNzM2NzRjOTY4ZjhiYTQ3ZDI2OWUzMzExYzUwNzVjOWI1YSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Windows.swift#L305-L305",
+          "version": "repo-lines-v1:sha256:3af6e90322afde5810c36acaed4a01f81f91fa99c6d8880974aab7b0cba8a3cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2FmNmU5MDMyMmFmZGU1ODEwYzM2YWNhZWQ0YTAxZjgxZjkxZmE5OWM2ZDg4ODA5NzRhYWI3YjBjYmE4YTNjZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2FmNmU5MDMyMmFmZGU1ODEwYzM2YWNhZWQ0YTAxZjgxZjkxZmE5OWM2ZDg4ODA5NzRhYWI3YjBjYmE4YTNjZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTdkN2E1OTc0MDU0Nzg0ODc3NTM5ZmViNDc3YWJkNmExMzRiNWYyZDZjNjFhNDMwYTQxMzAxNmIyMTlhZGQ0ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGQwNjgwMWRmZjViODAyN2JhY2EzMTEyYzYwYjZmZTZmYWE1Mjg1ZTFmOTY2M2JiNjUxMTc1Y2IwM2UwNmU0OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0d4a633d4048481c89eb60dabea7e439",
+      "statement": "The first space (and spaces sharing its sign-ins) use Store.websites; every other space gets a cached WKWebsiteDataStore created with the space's UUID, and the keep-sign-ins setting toggles tracking prevention via a private selector on those stores.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L95-L106",
+          "version": "repo-lines-v1:sha256:ccb245db6007083c1115efafd811c6fca92916de3b9ee56abb3f028d6a754d3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkOWMyMzg1YTZhZDNjMTJiYjdmNGE0MmFiOGNjYzIyZDAxNDU0OGRiNGIyMjFlYjU3ZDBiMmViNTRkMjhmYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMzEzNGVkNjA2MjU4NWY5M2IzMzgyYjUzZjU5NWYzMDc4OTIwYmE4MGQyYTEwYWM4NjViNjA3Mzc0NzhjNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhZDhkZWUxOTgxZmU2YjIzMGI5Nzk4MzNlMDBjNDg3YjJhZDkyMWY1ODM2YjA1MzJhMjAyYjRiYWVmYzRiNTIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Store.swift#L55-L78",
+          "version": "repo-lines-v1:sha256:495f3e9b3020a4764c1e6f027579ce6cae50f60c269d9c789917e97fe17f5070:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwOWQwMjg1MmUzYjIwZTgyNzM2YjA0ZTk5NmZjZjdiNTk3MDQzZTk1YzE3OWM1NGMxZjVmZWY3MjUzYWE3ODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlYzg2NThmNzYyNzQxYTc4ZDZkMDZjMWQxOTc4NmM1ZDhlYjRlMDgwMTNjYTAxYWUzNmM3OGQzMjI0NWNhYTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0NDczOWVmNGUxZjYwOTcwZmFkMTU1YTBhMTBhN2M0NjkyOTM0Yjg5NTMyYTc2NTJlNjU2NzE0MTZlYmRkOTYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

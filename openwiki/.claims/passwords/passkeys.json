@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d3f042b33bba86d07cb68ff8cbc9abaed9042e50b1cea6a63ad2a15cbc8f8959",
+  "claims": [
+    {
+      "id": "claim_a43f2a8bfdf84bc197effa7cf8b93662",
+      "statement": "Search carries WebAuthn itself rather than letting WebKit open AutoFill operations with AuthenticationServicesAgent, because a crash during conditional mediation leaves the agent refusing all later passkey requests.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L6-L35",
+          "version": "repo-lines-v1:sha256:7728a9fd456b1c78f1c45169a8acddc747f60335db08fcf6fb58b9a476e7ee1a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwMTU5N2JjNTNjZmM5MTI2OWZlMDY1ZTRkNDgzOTRkZWQzN2M5NTA0ZDlkOWQ1NDRhNTJiNTg3NTlkNjhkMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjY2I3OGY3NmQ5NjkyYTQ2MmZjODZkNjRhOWE5ZTYzZWQwNGM5YWMyMTc5ZGE3NDM4YmE4N2UxNmYyNGEyMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4NjMwZTg0YzMwNGRhZWNmZjc2NDllZTc3ZWU4YWY5NDBhODBkYzY4MDNjNmZiMDAyNzJiNmE1MjIyOWEzMzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkMzNhOWU4NmI3NjEzNjA5ZjFlODE1OGMxZmZiYTQ3NTE5NzA2ODdiZTFlZDk5ZjZjNGViZjQyNjBhODFlZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f8f744bcb044c4f8105f855d6e078d1",
+      "statement": "Passkeys require the web-browser public-key-credential entitlement, detected at runtime, and are defaulted on the first time an entitled build runs.",
+      "evidence": [
+        {
+          "resource": "repo://Search.passkeys.entitlements",
+          "version": "repo-file-v1:sha256:4ba86f0a9b4e6c47722efcbd82898c8bbbc31c8f7b54d88257b40a5e3a6789af"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L164-L170",
+          "version": "repo-lines-v1:sha256:de57c5436aaaca81cdc040708c25dd8f0ed6c7b97788c06e5a991cb47e6bf013:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTM1ZGEzOGYyMTFiZGFmNzNkZmQ3MDJjMjRiMTc2MjI1MDM3N2E5N2M4YjFhMTg1ODM5NWY1ODdjMWQwMmVkZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzYwNGI5MGZmOGIyZmU1NjY3MWY1ZmQ4NDdjYjMxZDA0NWJjMzc5NWQ1ZjlkZjE2YzE5ZmEzM2E1ZTczNTQ5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2UzOTI2NGExYTFkMDBlNDAyNDQ1Yzc4N2U3MmU5ZjkxOTUwYmE1OTkyMzY3ZDQ4MzdlNTJiZTAzODA0ZWIxNiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L401-L414",
+          "version": "repo-lines-v1:sha256:294567a618689ffc62ae3df39a8b600ef3d904d4310f82a2db25ebcad5c224e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkYjg4OGRmZjgyODY4MTQxNmUwNmViMGQwNWNlNDk5MDZhMGY2ZDQ5ZDExMWIyMDYxNDMzYTAyMTZlZTQ5MDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkODUwODU2ODc1ZjY5OWE0ZTM0YzBjNmYwNWIzNGQwZTYwNTAwOGI3NzIzYzgxMDZiY2ZjMzVkZmIwNDExZDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlOTk5Y2Q0NDM3MWRjZGRmN2U0ZWNiOGFlNzQwMDYxOWViM2I1YjYwZWFkZjBmN2UwZGM5OGU2NDAyMjRmNjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlZTk2NTI3OTQ0MTBkYTM2YmJmYzFjZTRlN2U1ZTFiNjdiMDRhYzQ3N2I5M2I1NmQ3YTVjZjg5MTI2YWU4MjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e4c2059911cb4a52ae29bdf71d32f7fc",
+      "statement": "macOS's permission for Search to use platform passkeys is requested only when a ceremony needs it, with concurrent callers queued.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L42-L70",
+          "version": "repo-lines-v1:sha256:e9ea8d2d377d4fa692f79f13859fdbbdd2d69bc1bcd84d998387aceba898a8af:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExZmM5YTg2NDVkZTcwY2M5Mzc3MDY3NzQzNTBhZmI4YWUwYTM3YjEwNzE5YzFmYTRlOTcwZDZiNjIzNzNhYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWUwOWUzYjM0ZTVlMDg5OWRmOGJiMjEyNzQyNGIwOTg3MjA5MTJkNjlkYzhjM2RmYjZlZWQ3ODE1OTY2OWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVhMDYyMjA1ZDM0NjQwMDc5M2FjM2M3ZTljODNiOWMzMDFlYzQ3ZjJlNmZhMTUyMjM3OWU1NjFhMzU5ZGViODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bbafd8de53594e43b1bf5049ebb4cf63",
+      "statement": "A patch in the page world replaces navigator.credentials on the prototype and talks to Search's world through window events, since the page world has no window.webkit.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L846-L870",
+          "version": "repo-lines-v1:sha256:d152056c2f90b0cdef2cfaf56826196687ef78f32494f78a751108d5a9d090cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliMmIxOWVjYWI1N2I0MTYyYjI0NjkxNGM2YzJlZWMxN2MyMTQ2YThmZWZiYmUwY2RiMjVmYzkzYzU1MzliYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwNThkMmIxNjljNDk4ZTAzMzNmYjNiZGJhMTliMDgxOWQ0MDI0ZmIxNWE4ZjczODkwMmJjZTU2NDQ0NjkwNWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1MjVjNDExYzFjZDk2NzE5MDMyNzFjNTdmMzRjYmRhMTkxNWIwZmM4ZDE3OTNiOTBiNDgwNWJlYmRmMDVkZDcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dce70c53f2704ad1b8ef5fca4d4d19d9",
+      "statement": "Requests are attributed using WebKit's frame info (origin, main frame, page host, window), never page-supplied values.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L824-L845",
+          "version": "repo-lines-v1:sha256:0e2f9244703be2ebdf430e72007c0028b177703196c935bfe0b456ee0c8043cf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwODQ3MTM4ZTRjZDY0ZTlkY2Y0NjVhMmUyMTE5YTk3ZTA4MmIzMWViZjhhYTUwMjgyYTI2Y2Y1NDgxZTVmYWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQyOTU1ODliYjEwNDc5NzA1NzkwOWRkZGE1YmVlM2ZlZWMwMTJmNTE0MzFmNmQ3MjA0OGJiOTI0Y2NmMzc0NDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU0N2QxMjhiYjE1NDY4YzQ1NTVjYTEzYjEwYWJhNDg0NjEyODA2ZjUwMmQ0M2VhMTdhMjI3YzgwMDUxODdiNTUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L90-L100",
+          "version": "repo-lines-v1:sha256:cc307cc47c39f4b7f200e26efc8f8f27ca3198ec5e422f4f43a1a41495978f25:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxYTRiNTI4MjllYjVkNzI2MzIxODEwNWNmYTE2ZmI3YTgxYzhiOTc0OWMwMzNmYWQ0NGNmZjhlNDA2ZjgwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2NWNiYzRkNTBjOGY1NzAzM2UwODQxYTQ0ZjA3ZWQ2MmJiMmEwMThmYzE5Y2I2YjUwNDMxOTkyYjY4YzYwOTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1ZTdhZDdmM2U1M2I0OTVlYTE1MWY5MDE5ZmE4ZjQ0OGNmNzhjMjc0NjUzZjA2ODMwMjc1MzBkYTFjYThmYmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_979eaf389e5e4d2cb5c5db31ded43bce",
+      "statement": "perform requires https or local http, a focused front window for sheet requests, no cross-site frames, a non-empty challenge, and a relying party that is the host or a registrable parent domain.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L247-L290",
+          "version": "repo-lines-v1:sha256:3f85e119891af8aa467cc6d47cd21ab2e08da0be441cbff1aa67548dc41e2cb3:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk2NWZhYzNmN2EwOGE5YjI4N2JiNjIxNDM5YTVhMTY0MDhiMjYwZjJjNjI5YzNiNjJmYjMzNDU1YTZiMzQ4NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUzNjEwM2RiOWY5ZTY4ODJiZGZiYjgyYjZjNTNjZGNkMTQ1NTVmOWM1ZjViOWZiMzBmYzgwN2IxZDkxMWE1NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwMzc0NzYwZDgyOTNlNzlkYWZhNWFiZTRhNWFmYWI1NWUxOTM3YTgwMTNiNDhhMTUzZDgxN2M4NDc1NDg4ZWMifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L568-L585",
+          "version": "repo-lines-v1:sha256:da18306ce139facd07925f62f76028cafa0c2ef4c3687f81d5a6cfaa2ce95672:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MmY4MjJjZmFlZWYyMTlkOGYxMWE0ZTQ0ZTU1MzFlNDQwN2ZlMWU2NjBjZTVlMjg4YjkxYTllNTBlYzUwNGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzOWM0MDc4MjVjNmFhOGFkM2IxMTM0YTg1NDI4NWQzM2Y1ZDQ2NmYzOGRkM2Q1Y2NiZjA0NjVmMDg1OTNmZjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ5YWE4ZDI4M2EwZTcxNzg1NDA5NzJkZjZiMGRlZmNhOTJiNDg4MTcwOWYxM2UwNjRkZTQ0ZGZiMjhjMDM2MzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmZGU2YmJiNjgwZGZhYTE1ZWFhMWNiMTliNTE3ZjQ1ZmRkMzI3MTkxYTA2MmM2ZDE5NzRmZWIxM2NlNjBkOGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c3422de987d54ddebd8370617e1ccc35",
+      "statement": "Client data is constructed by Search with the origin derived from WebKit's frame security origin.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L286-L289",
+          "version": "repo-lines-v1:sha256:2d23810b3e3b69c04e7d86201ee0059adf56294ef29f12e7bbda2be27393a9d7:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZGM0MTk3YzcyNmFlNDQzOWJhOWY5NmZjOGJjZDNiNjg2ZGY0ODAxYjNmNzA2NWEyNTYwZDg5MzExMjZmZWFhNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGQ1MWIwYmFiNWEyYjFhNmIwN2EzZjE2ZjQ3NzI4NjZiNWZlY2FmZDM2OGE1NmQyYjc0ZjY3MDRkMzU2NWJjMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjZhODhmN2U2YzcwZmE5ZjJkN2ViMzI2NWFmNzA3NGFkZDRhMzE2NmZkMDQ5NGU2OTkwYjYxZTIwMWU4N2I3MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2JlYzE3Njc2ZjM0MjVkNjVjZmFhODUzZDg4MGY3ZWEyNGI1NzdlNjUzYTVjMzdkOTk4ZmNiM2I0MGUxNTVjMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b3ce1f6c971448eb67a6474fc06f3f3",
+      "statement": "Conditional requests are held per page while the Mac is asked only which passkeys it has; the sheet appears only after the user picks one, and a new document ends the wait.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L124-L245",
+          "version": "repo-lines-v1:sha256:f1e0832e6bf81277b137fa8818af32d5c11c4b9c18a4e433c23ea441db04be8b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIyLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiOTcxODYyY2UyZDFkMDNjZTI3YjQ3YjgwNTJkNjcyMjNhMTdiNjM3NTg2NzdlNDQyNWQxODYzZjU4MDFjZmZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJkZTEyM2YyMDE0MzRjMDUwNDQwMGZhYTJhMjQ0NmU2ZGNmYWQ4MzgxNTRkNDc4ZGE1ODVlYzU5ODU0NWI2OThjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNTFjODNmZTM3Y2E5ODMzNGYyYWFlZDdmMzU2ZWEyNTg2ZTNmY2NkMWE2YTc5ZDI1ZmExODQ3MmY3NGZjNGUwIn0"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L289-L293",
+          "version": "repo-lines-v1:sha256:63a0f9f70bc2e3183b53da80b78cd8ff967d52c8a42c4b0b17493dbb577b8323:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDU5YjkzOWY3YWFmNWJjZjExNjZlOTliOGNkNzQxZjQwNGUxMTVkOWFkNjhhODk4YTgzYzU0NzRlOGM5OTg2OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWE3YzI3NTE1NGE0YjQ4ZDUwN2MzNDc2MDFmMjEyMzY4OGE1ZjkyYTc3ZDZkNThlMGEzYzMyOWY4OGFkMDRkMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjkwNWRlZGY2ZTEwOGYxZDMwZjZjMmY2NTYyMTA4NDgwODg2ZDJmOWQwOTUyOTRlMjM4NjQ1NzMxYTNhMDk4MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTEzY2I5NDc4ZDM4ZWFkMWEzOWQxNDNhMmMwM2IzMTY2NmIxMjExNDU5YThlZTFjMmNmZGIwNzBiNjNkNmFmOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_02fccacd9f2e4f43b9c0605efe0b9fee",
+      "statement": "PRF results are sealed for a one-time page key using ECDH P-256, HKDF-SHA256 and AES-GCM, and are not sent without it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L439-L497",
+          "version": "repo-lines-v1:sha256:edfb4e4e785199be3abdff2935d4c1518ef677d708c008801d5065f2a68c5e68:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkMmY4MjMzYTZkNGRlNzYxMWI3OGQ4ZmFjOTZjNmIyNTcwNjJlZmY4MDU4NDFjOWMwNjk3YjQ0ZTRkY2MxM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0MjRlNzdhMjA0Mzk5NGExYzk5MTI4OWNhOWZmZDhlZGI0NGQ1ZjM3NzA3MGJkMmYwZGZhOGE1ODcxOTE5M2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNTA5ODQ5NDE1ODdkMDRmYzM0NTc1NDQ5OWY0MmI3MzQyYmNiNzk0ODdhZDI2MjZhMjg2OGY4ZGZjZDk2NTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_33b308e07f1745c88fd9b02967584b9e",
+      "statement": "Test runs never show the system sheet and instead return a rehearsal credential with a real P-256 key and nothing signed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L321-L345",
+          "version": "repo-lines-v1:sha256:2442c65f8bbbc0e21a24b7259717fad6670cc553d30814ad09198c9cf81fb1f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkMzZlNGFhYThmYWEzNzJiMjU5MWQzMWIzNjc1OWZmODc2M2VjMjM4OTE5ZTg1NDE5ZTc4NDZiMmEyYmJkMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMTY5M2I0Y2QyYWVjZDdjOWMyNjE2ZTc0MDk4NGI4YjZmMWM1NGQ3NTExNzQwOWE1MjU0ZTJjYjdhMzJmMjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJhYWNhNDEyNzU5YWEwYzkyMzE0ZjYyYjYwYjUwMmE5MmFkM2RhNjlkYzA4ZDZkZDY5ZDY1NzE0M2E1YzEwNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Passkeys.swift#L547-L565",
+          "version": "repo-lines-v1:sha256:9370b5cde80443fcbd8ebec4d06604cef4d2977f1250bb43c9699ac609471f3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4MjU2NWRmY2Q0MzEwYmFlOGE5N2IwMzdmYTUxYWRkN2M1MzNlNTZkZGQyNTAxMmQwMWQ2MGVlZTIzYzA2MjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2OGE1YmVjOTViODZjOTk0NzYyNGMyMWRiZDdjNjIwMmJkYjg3YjIxYmQ5ZmM3Y2I2NTg1MjU3N2JhZTkyODUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4Y2MwYWViMDMyZDA0NWE5Yzg2ZTUxMDhhODc3YjRjYTFmYWVkODc5ZGQzMDYwNzM5OTNlOTJmNjUyYWNlMjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4670a73e70a4405cb549276ef48695b8",
+      "statement": "Passkeys for a waiting page are listed first in the account list under the sign-in field.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Accounts.swift#L1-L10",
+          "version": "repo-lines-v1:sha256:af5c12f513d3a7317332cb4726de122567fc3bda21df2e3d89e2f3f3714172e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiYzc3YTgzNTFlZWY3MjdkNTdjNjUyYWZmNGJlZDgwOGVhMDJlZjJiMzIyYzMyYzdkOWZlNDZiNjZmYWQ4NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0M2Y1Zjc0NTA4MDU5NTA0NWM0NjZhNmU2N2YyNDBkYzZjMWYwMmQzMzA3NjQ4NGQxMWFiNGUyOGM3NjIzNmQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

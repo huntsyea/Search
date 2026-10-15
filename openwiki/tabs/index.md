@@ -1,0 +1,4 @@
+# Files
+
+- [Spaces, pins, tab groups and the tab switcher](spaces-pins-groups.md) - How Search organises tabs — Spaces (separate rows and optionally separate WebKit data stores, parked rows, deletion), pins (letters, squares and rows, put down by ⌘W, shared across windows via pins.json), tab groups (Chrome-numbered, collapsible, ordering invariant), dragging tabs between rows, spaces and windows, the ⌃Tab switcher, and space swiping — with persistence and tests.
+- [Split View](split-view.md) - Two pages side by side (1.0.5, off by default) — the TabSplit model and its invariants, pairing rules (pins, private, bench), the never-rebuilt PaneStage AppKit stage with per-page StageViews, the divider (snap, narrowest page, gutter), focus and keys, SplitStage overlays and per-pane questions, the split tab item in the row, drag-to-edge drop zones, session persistence, and the split_view.py probe suite.
