@@ -34,6 +34,21 @@ enum OwnTools: Equatable {
     case refused
 }
 
+/// Why a command line the person typed can't be an agent.
+enum AgentAddError: LocalizedError, Equatable {
+    case unclosedQuote
+    case noProgram
+    case relativePath
+
+    var errorDescription: String? {
+        switch self {
+        case .unclosedQuote: return "That command line has an unclosed quote."
+        case .noProgram: return "That command line has no program."
+        case .relativePath: return "Give the program's full path, or a name on your PATH."
+        }
+    }
+}
+
 /// What Settings shows for an agent: the last thing a start said.
 enum AgentState {
     case ready
@@ -152,6 +167,11 @@ final class Agents: ObservableObject {
         Store.settings.set(method, forKey: Agents.signInKey(id))
     }
 
+    /// Forget the remembered sign-in method: the agent rejected it.
+    func forget(signInFor id: String) {
+        Store.settings.removeObject(forKey: Agents.signInKey(id))
+    }
+
     /// The model the person chose for this agent, remembered for its next
     /// chat too.
     func remember(model value: String, for id: String) {
@@ -196,10 +216,14 @@ final class Agents: ObservableObject {
     }
 
     /// One the person added: a name and a command line, run as an ACP agent.
-    @discardableResult
-    func add(name: String, command: String) -> AgentChoice? {
-        let words = Agents.words(command)
-        guard let program = words.first, !program.isEmpty else { return nil }
+    /// Fails with why the line can't be used.
+    func add(name: String, command: String) -> Result<AgentChoice, AgentAddError> {
+        guard let words = Agents.words(command) else { return .failure(.unclosedQuote) }
+        guard let program = words.first, !program.isEmpty else { return .failure(.noProgram) }
+        // A relative path would mean something else run from the chat's own
+        // folder: only a full path, a "~/" path, or a name on the PATH.
+        let relative = program.contains("/") && !program.hasPrefix("/") && !program.hasPrefix("~/")
+        guard !relative else { return .failure(.relativePath) }
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let id = "custom." + UUID().uuidString
         let called = trimmed.isEmpty ? program : trimmed
@@ -208,7 +232,7 @@ final class Agents: ObservableObject {
         Store.settings.set(entries, forKey: Agents.customKey)
         let choice = Agents.customChoice(id: id, name: called, command: command)
         all.append(choice)
-        return choice
+        return .success(choice)
     }
 
     /// A custom one the person took away. Known agents and pi are not removed.
@@ -225,7 +249,7 @@ final class Agents: ObservableObject {
     /// finished. One that isn't there any more starts by failing with
     /// "\(name) isn't on this Mac any more." — the name kept with the chat
     /// when there is one.
-    func chatAgent(_ id: String, name: String? = nil) -> ChatAgent {
+    func chatAgent(_ id: String, name: String? = nil, signIn method: String? = nil) -> ChatAgent {
         if id == "pi" { return .pi() }
         let called = name ?? Agents.keptName(id) ?? id
         return ChatAgent(name: called, start: { [weak self] chat, session, hear in
@@ -237,13 +261,17 @@ final class Agents: ObservableObject {
                 throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.")
             }
             var signed = spec
-            signed.signIn = Agents.signIn(for: id)
+            signed.signIn = method ?? Agents.signIn(for: id)
             do {
                 let link = try await ChatAgent.acp(signed).start(chat, session, hear)
                 self.note(.ready, for: id)
+                // A method that worked is remembered now, so one the agent
+                // rejects is never kept to trap the next start.
+                if let used = signed.signIn { self.remember(signIn: used, for: id) }
                 return link
             } catch let wanted as AgentSignIn {
                 self.note(.signIn, for: id)
+                if wanted.stale { self.forget(signInFor: id) }
                 throw wanted
             }
         }, title: { words, page in
@@ -254,12 +282,11 @@ final class Agents: ObservableObject {
     /// Open the agent's own sign-in in a terminal: the login command (or the
     /// one given), as a .command file Terminal runs. False when there is none.
     @discardableResult
-    func openLogin(_ choice: AgentChoice, command: [String]? = nil) -> Bool {
+    func openLogin(_ choice: AgentChoice, command: [String]? = nil, environment: [String: String] = [:]) -> Bool {
         guard var words = command ?? choice.login, let first = words.first else { return false }
         // The agent's own program, found, rather than whatever the shell finds.
         if first == Agents.programName(choice), let path = choice.path { words[0] = path }
-        let line = words.map { "'" + $0.replacingOccurrences(of: "'", with: "'\\''") + "'" }.joined(separator: " ")
-        let script = "#!/bin/zsh -l\n\(line)\necho; echo \"Signed in? Go back to Search and press Try Again.\"\n"
+        let script = Agents.loginScript(command: words, environment: environment)
         let file = FileManager.default.temporaryDirectory
             .appendingPathComponent("Search sign-in – \(choice.name).command")
         do {
@@ -272,16 +299,35 @@ final class Agents: ObservableObject {
         return true
     }
 
+    /// The .command file's text: the variables it needs, then the command,
+    /// each word and value single-quoted.
+    nonisolated static func loginScript(command: [String], environment: [String: String]) -> String {
+        var lines = ["#!/bin/zsh -l"]
+        for (name, value) in environment.sorted(by: { $0.key < $1.key }) {
+            lines.append("export \(name)=\(shellQuote(value))")
+        }
+        lines.append(command.map(shellQuote).joined(separator: " "))
+        lines.append("echo; echo \"Signed in? Go back to Search and press Try Again.\"")
+        return lines.joined(separator: "\n") + "\n"
+    }
+
+    /// One word, single-quoted; a single quote inside is escaped as '\''.
+    nonisolated static func shellQuote(_ word: String) -> String {
+        "'" + word.replacingOccurrences(of: "'", with: "'\\''") + "'"
+    }
+
     // MARK: - looking
 
     private func look() {
         generation += 1
         let mine = generation
         Task.detached(priority: .userInitiated) { [weak self] in
-            let list = Agents.found()
+            let found = Agents.found()
             await MainActor.run { [weak self] in
                 guard let self, self.generation == mine else { return }
-                self.all = list
+                // The custom tail is read here, not in the snapshot: one
+                // added or removed while the look was away still stands.
+                self.all = found + Agents.customChoices()
                 self.looked = true
                 let waiting = self.waiting
                 self.waiting = []
@@ -290,8 +336,8 @@ final class Agents: ObservableObject {
         }
     }
 
-    /// Every agent to offer: pi, the known ones found on the PATH, then the
-    /// person's own. Worked out off the main thread; nothing shared is written.
+    /// Every agent to offer: pi, then the known ones found on the PATH. The
+    /// person's own are added on the main actor, when the look lands.
     nonisolated static func found() -> [AgentChoice] {
         var out = [piChoice()]
         for known in known {
@@ -303,11 +349,15 @@ final class Agents: ObservableObject {
                                        modelIsTheAgentsOwn: known.modelIsTheAgentsOwn))
             }
         }
-        for entry in customEntries() {
-            guard let id = entry["id"], let name = entry["name"], let command = entry["command"] else { continue }
-            out.append(customChoice(id: id, name: name, command: command))
-        }
         return out
+    }
+
+    /// The custom agents the person added, as choices.
+    nonisolated static func customChoices() -> [AgentChoice] {
+        customEntries().compactMap { entry in
+            guard let id = entry["id"], let name = entry["name"], let command = entry["command"] else { return nil }
+            return customChoice(id: id, name: name, command: command)
+        }
     }
 
     /// pi itself: always offered, whether or not it is installed, so a chat
@@ -320,12 +370,24 @@ final class Agents: ObservableObject {
     /// One the person added, as it stands now: its program found as the path
     /// says, and the rest of the command line as its arguments.
     nonisolated static func customChoice(id: String, name: String, command: String) -> AgentChoice {
-        let words = words(command)
+        let words = words(command) ?? []
         let program = words.first ?? ""
-        let path = program.isEmpty ? nil : path(of: program)
+        let path = program.isEmpty ? nil : customPath(program)
         let spec = path.map { ACPSpec(id: id, name: name, path: $0, arguments: Array(words.dropFirst())) }
         return AgentChoice(id: id, name: name, path: path, spec: spec, ownTools: .refused, login: nil,
                            modelIsTheAgentsOwn: false)
+    }
+
+    /// Where a custom agent's program is: a full path or a "~/" path used as
+    /// written (the home expanded), a bare name found on the PATH. A relative
+    /// path is refused (nil), and so is a bare name not found.
+    nonisolated static func customPath(_ program: String) -> String? {
+        if program.hasPrefix("~/") {
+            return FileManager.default.homeDirectoryForCurrentUser.path + String(program.dropFirst(1))
+        }
+        if program.hasPrefix("/") { return program }
+        if program.contains("/") { return nil }
+        return firstExecutable(named: program)
     }
 
     /// The name an id is known by, found or not: a known agent's, or a custom
@@ -340,7 +402,7 @@ final class Agents: ObservableObject {
     nonisolated static func programName(_ choice: AgentChoice) -> String? {
         if let known = known.first(where: { $0.id == choice.id }) { return known.program }
         guard choice.custom, let entry = customEntries().first(where: { $0["id"] == choice.id }) else { return nil }
-        return words(entry["command"] ?? "").first
+        return (words(entry["command"] ?? "") ?? []).first
     }
 
     /// The settings key an agent's remembered sign-in method is kept under.
@@ -390,8 +452,9 @@ final class Agents: ObservableObject {
 
     /// A command line, split like a shell's words: whitespace separates,
     /// single and double quotes group, and a backslash keeps the character
-    /// after it as part of the word.
-    nonisolated static func words(_ line: String) -> [String] {
+    /// after it — except inside single quotes, where a backslash is just a
+    /// character. Nil when a quote is left open: the line isn't valid.
+    nonisolated static func words(_ line: String) -> [String]? {
         var out: [String] = []
         var word = ""
         var quote: Character?
@@ -404,19 +467,16 @@ final class Agents: ObservableObject {
                 escaped = false
                 continue
             }
-            if character == "\\" {
-                escaped = true
-                continue
-            }
             if let open = quote {
-                if character == open { quote = nil } else { word.append(character) }
-                continue
-            }
-            if character == "\"" || character == "'" {
-                quote = character
+                if character == open { quote = nil; continue }
+                // Shell rules: inside single quotes a backslash is kept as it is.
+                if open == "'" && character == "\\" { word.append(character); started = true; continue }
+                word.append(character)
                 started = true
                 continue
             }
+            if character == "\\" { escaped = true; continue }
+            if character == "\"" || character == "'" { quote = character; started = true; continue }
             if character.isWhitespace {
                 if started { out.append(word); word = ""; started = false }
                 continue
@@ -424,6 +484,7 @@ final class Agents: ObservableObject {
             word.append(character)
             started = true
         }
+        guard quote == nil else { return nil }
         if started { out.append(word) }
         return out
     }

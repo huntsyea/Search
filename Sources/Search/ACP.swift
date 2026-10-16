@@ -38,10 +38,43 @@ struct AgentSignIn: LocalizedError {
         /// The command to run in a terminal, when the method is one the
         /// person runs themselves; nil when the agent does it itself.
         let terminal: [String]?
+        /// Variables that command needs set, when it has any.
+        let environment: [String: String]
     }
     let agent: String
     let methods: [Method]
+    /// True when the method Search tried was rejected: the agent's remembered
+    /// sign-in no longer works, and is forgotten.
+    var stale = false
     var errorDescription: String? { "\(agent) needs you to sign in first." }
+}
+
+extension AgentSignIn {
+    /// How the agent says it can be signed in, from initialize's `authMethods`:
+    /// a method the agent runs itself (asked with `authenticate`), one run in
+    /// a terminal, or one that only needs a variable set.
+    static func methods(_ raw: Any?, path: String, arguments: [String]) -> [Method] {
+        (raw as? [[String: Any]] ?? []).compactMap { method in
+            guard let id = method["id"] as? String, let name = method["name"] as? String else { return nil }
+            // The client runs the agent's own program with the same launch
+            // settings it starts it with, plus the method's own args.
+            let terminal = method["type"] as? String == "terminal"
+                ? [path] + arguments + (method["args"] as? [String] ?? [])
+                : nil
+            return Method(id: id, name: name, description: method["description"] as? String,
+                          terminal: terminal, environment: AgentSignIn.environment(method["env"]))
+        }
+    }
+
+    /// A method's `env`: an object, or a list of `{name, value}`.
+    static func environment(_ raw: Any?) -> [String: String] {
+        if let object = raw as? [String: String] { return object }
+        var out: [String: String] = [:]
+        for pair in raw as? [[String: Any]] ?? [] {
+            if let name = pair["name"] as? String, let value = pair["value"] as? String { out[name] = value }
+        }
+        return out
+    }
 }
 
 /// One ACP agent's process, spoken to in JSON-RPC 2.0 a line at a time, on a LineProcess.
@@ -339,12 +372,18 @@ private final class ACPAgent: AgentLink {
             let answer = initialized as? [String: Any] ?? [:]
             let capabilities = answer["agentCapabilities"] as? [String: Any]
             agent.loadSession = capabilities?["loadSession"] as? Bool ?? false
-            methods = ACPAgent.signInMethods(answer["authMethods"], path: spec.path)
+            methods = AgentSignIn.methods(answer["authMethods"], path: spec.path, arguments: spec.arguments)
 
             // The method the person used before, when the agent still lists
             // it: signed in again, so this session opens without a card.
             if let wanted = spec.signIn, methods.contains(where: { $0.id == wanted }) {
-                _ = try await connection.request("authenticate", ["methodId": wanted], timeout: ACPTimeouts.authenticate)
+                do {
+                    _ = try await connection.request("authenticate", ["methodId": wanted], timeout: ACPTimeouts.authenticate)
+                } catch {
+                    // The remembered method no longer works: forgot it, and
+                    // ask the person to sign in again.
+                    throw AgentSignIn(agent: spec.name, methods: methods, stale: true)
+                }
             }
 
             var sessionParams: [String: Any] = ["cwd": folder.path, "mcpServers": [door.server]]
@@ -375,20 +414,6 @@ private final class ACPAgent: AgentLink {
             throw error
         }
         return agent
-    }
-
-    /// How an agent says it can be signed in, from initialize's `authMethods`:
-    /// a method the agent runs itself (asked with `authenticate`), one run in
-    /// a terminal, or one that only needs a variable set.
-    static func signInMethods(_ raw: Any?, path: String) -> [AgentSignIn.Method] {
-        (raw as? [[String: Any]] ?? []).compactMap { method in
-            guard let id = method["id"] as? String, let name = method["name"] as? String else { return nil }
-            let terminal = method["type"] as? String == "terminal"
-                ? [path] + (method["args"] as? [String] ?? [])
-                : nil
-            return AgentSignIn.Method(id: id, name: name, description: method["description"] as? String,
-                                      terminal: terminal)
-        }
     }
 
     // MARK: - what the agent says

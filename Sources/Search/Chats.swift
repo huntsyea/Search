@@ -26,17 +26,23 @@ final class Chat: ObservableObject, Identifiable {
     @Published private(set) var items: [Item] = []
     /// From a message sent until pi says it has settled.
     @Published private(set) var busy = false
-    /// A chat that has been written in: its agent is fixed, and a start for
-    /// its menu alone doesn't count.
-    var begun: Bool { busy || !items.isEmpty }
+    /// A chat that has been written in, or listed at all: its agent is
+    /// fixed, and a start for its menu alone doesn't count.
+    var begun: Bool { busy || !items.isEmpty || Chats.all.contains(where: { $0 === self }) }
     /// "Starting pi…" and the like, while there is no answer to show yet.
     @Published private(set) var status: String?
     /// The agent asked the person to sign in, and how: the card over the box
-    /// shows it, and the message that asked is kept to send again.
+    /// shows it. What was being done is kept to try again.
     @Published private(set) var signIn: AgentSignIn?
-    private var unsent: String?
+    /// What was interrupted by the sign-in, done again on Try Again.
+    enum Pending {
+        case send(String)
+        case open
+        case option(String, String)
+    }
+    private var waiting: Pending?
     /// Whether a message is waiting for a sign-in before it can be sent.
-    var hasUnsent: Bool { unsent != nil }
+    var hasUnsent: Bool { if case .send = waiting { return true }; return false }
     var session: String?
     var updated: Date
     /// The window whose tabs the chat's tools act on.
@@ -91,6 +97,9 @@ final class Chat: ObservableObject, Identifiable {
     private var link: AgentLink?
     /// The start whose agent the chat is listening to.
     private var current: UUID?
+    /// The send now under way, so one the chat has moved on from can't clear
+    /// a newer one's state.
+    private var turn: UUID?
     /// Why an agent ended before it was held, for whoever sent to report.
     private var endedStarting: String?
     private var opened = false
@@ -105,10 +114,11 @@ final class Chat: ObservableObject, Identifiable {
     private var history: [AgentSays] = []
     /// A session name heard before the link was held: given to it once it is.
     private var nameOnStart = false
-    /// This start is a new chat, not a reopened one, and this run hasn't
-    /// asked for the agent's remembered model yet.
+    /// This start is a new chat, not a reopened one: it may take the agent's
+    /// remembered model and fall back to pi.
     private var startedFresh = false
-    private var askedRememberedModel = false
+    /// For tests: the pi a fallback to pi starts, in place of the app's.
+    static var piForTests: ChatPi?
 
     init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask,
          agentID: String = "pi", agentName: String? = nil, agent: ChatAgent? = nil) {
@@ -128,9 +138,13 @@ final class Chat: ObservableObject, Identifiable {
 
     // MARK: - asking
 
-    func send(_ text: String) {
+    @discardableResult
+    func send(_ text: String) -> Bool {
+        // While the sign-in card is up, sending would lose the message kept
+        // for Try Again: it waits until the person deals with the card.
+        guard signIn == nil else { return false }
         let words = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !words.isEmpty, !busy else { return }
+        guard !words.isEmpty, !busy else { return false }
         if title == "New chat" {
             // The message's start until pi has named the chat, in a few words.
             title = String(words.prefix(60))
@@ -144,6 +158,8 @@ final class Chat: ObservableObject, Identifiable {
         }
         updated = Date()
         busy = true
+        let mine = UUID()
+        turn = mine
         Chats.remember(self)
         let message = context() + words
         Task {
@@ -151,18 +167,21 @@ final class Chat: ObservableObject, Identifiable {
                 let link = try await ready()
                 try await link.prompt(message)
             } catch {
+                // A send the chat has moved on from mustn't touch the new one.
+                guard turn == mine else { return }
                 busy = false
                 status = nil
                 if let wanted = error as? AgentSignIn {
                     // The person is asked to sign in; their message is kept to
                     // send again once they have. No error line: it isn't one.
                     signIn = wanted
-                    unsent = words
+                    waiting = .send(words)
                 } else {
                     items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
                 }
             }
         }
+        return true
     }
 
     func stop() {
@@ -281,7 +300,7 @@ final class Chat: ObservableObject, Identifiable {
                 let link = try await ready()
                 try await link.set(option, to: value)
             } catch {
-                if let wanted = error as? AgentSignIn { signIn = wanted }
+                if let wanted = error as? AgentSignIn { signIn = wanted; waiting = .option(option, value) }
                 else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
@@ -292,19 +311,6 @@ final class Chat: ObservableObject, Identifiable {
     func loadOptions() {
         guard options.isEmpty else { return }
         Task { _ = try? await ready(quietly: true) }
-    }
-
-    /// A new chat on an agent that isn't pi starts on the model that agent's
-    /// last chat used, when there is one: set once, as the menu would.
-    private func useRememberedModel() {
-        guard agentID != "pi", startedFresh, !askedRememberedModel,
-              !Agents.shared.modelIsTheAgentsOwn(agentID) else { return }
-        askedRememberedModel = true
-        guard let remembered = Agents.model(for: agentID),
-              let model = option(.model),
-              remembered != model.current,
-              model.choices.contains(where: { $0.value == remembered }) else { return }
-        choose(model.id, remembered)
     }
 
     /// A tab the agent opened goes in the chat's group, when groups are on,
@@ -349,7 +355,7 @@ final class Chat: ObservableObject, Identifiable {
                 status = nil
             } catch {
                 status = nil
-                if let wanted = error as? AgentSignIn { signIn = wanted }
+                if let wanted = error as? AgentSignIn { signIn = wanted; waiting = .open }
                 else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
@@ -377,27 +383,39 @@ final class Chat: ObservableObject, Identifiable {
     /// chats, and this one's agent built again so it signs in as it starts,
     /// then the message that asked is sent again.
     func signIn(with method: String) {
-        Agents.shared.remember(signIn: method, for: agentID)
+        // The method is tried, not remembered yet: the agent's wrapper keeps
+        // it only once a start that used it worked.
         close()
-        agent = Agents.shared.chatAgent(agentID, name: agentName)
+        agent = Agents.shared.chatAgent(agentID, name: agentName, signIn: method)
         signIn = nil
         retry()
     }
 
-    /// Try the thing that wanted a sign-in again: the message kept when it
-    /// failed, sent once more. Nothing when there was none.
+    /// Try what the sign-in interrupted again: the message, the open, or the
+    /// option that asked for it. Nothing when there was none.
     func retry() {
         signIn = nil
-        guard let text = unsent else { return }
-        unsent = nil
-        send(text)
+        switch waiting {
+        case .send(let text):
+            // Let the message go only once the agent has taken it again.
+            if send(text) { waiting = nil }
+        case .open:
+            waiting = nil
+            opened = false
+            if let browser { open(in: browser) }
+        case .option(let option, let value):
+            waiting = nil
+            choose(option, value)
+        case nil:
+            break
+        }
     }
 
-    /// The person said no to signing in: the card goes, and the kept message
-    /// with it.
+    /// The person said no to signing in: the card goes, and what it
+    /// interrupted with it.
     func dismissSignIn() {
         signIn = nil
-        unsent = nil
+        waiting = nil
     }
 
     /// pi let go of: closed, deleted, or idle. A chat closed while working
@@ -449,16 +467,26 @@ final class Chat: ObservableObject, Identifiable {
     private var startToken = 0
 
     private func launch() async throws -> AgentLink {
+        // The agent chosen for a new chat may not be on this Mac, or the
+        // first look may not have finished: a chat that has exchanged
+        // nothing falls back to pi before anything is sent.
+        if agentID != "pi" {
+            await Agents.shared.ready()
+            if items.isEmpty, session == nil, Agents.shared.choice(agentID) == nil {
+                agentID = "pi"
+                agentName = "pi"
+                agent = Chat.piForTests.map { ChatAgent.pi($0) } ?? .pi()
+            }
+        }
         let start = UUID()
         current = start
         endedStarting = nil
-        history = []
         // A chat with no session is a new one: this start may take the
-        // agent's remembered model, and hasn't asked for it yet.
+        // agent's remembered model.
         startedFresh = session == nil
-        askedRememberedModel = false
         // The history a start says before returning is the session's, kept
         // aside until the start succeeds: a start that failed shows none of it.
+        history = []
         replaying = start
         let link: AgentLink
         do {
@@ -474,26 +502,36 @@ final class Chat: ObservableObject, Identifiable {
                 self?.hear(said, from: start)
             }
         } catch {
-            replaying = nil
-            history = []
+            // Only the start that owns the buffer clears it.
+            if replaying == start { replaying = nil; history = [] }
             throw error
         }
-        replaying = nil
         // The agent ended while starting, or the chat let go of it meanwhile:
         // a start that failed, said once, by whoever sent.
         guard current == start else {
-            history = []
+            if replaying == start { replaying = nil; history = [] }
             link.stop()
             defer { endedStarting = nil }
             throw PiProcess.Failure(why: endedStarting ?? "\(agent.name) stopped.")
         }
-        // The history once, when it succeeds: a step it began but never
-        // finished isn't left spinning either.
-        if !shown {
-            shown = true
-            history.forEach(handle)
-            history = []
-            for i in items.indices { items[i].done = true }
+        // The history once, when it succeeds, and only by the start that owns
+        // it: a step it began but never finished isn't left spinning either.
+        if replaying == start {
+            if !shown {
+                shown = true
+                history.forEach(handle)
+                history = []
+                for i in items.indices { items[i].done = true }
+            }
+            replaying = nil
+        }
+        // A new chat on another agent starts on the model its last chat used,
+        // set before the link is handed out so the first message waits for it.
+        if startedFresh, agentID != "pi", !Agents.shared.modelIsTheAgentsOwn(agentID),
+           let remembered = Agents.model(for: agentID),
+           let model = option(.model), remembered != model.current,
+           model.choices.contains(where: { $0.value == remembered }) {
+            try? await link.set(model.id, to: remembered)
         }
         self.link = link
         if nameOnStart {
@@ -546,6 +584,7 @@ final class Chat: ObservableObject, Identifiable {
     /// are unmarked.
     private func settle() {
         busy = false
+        turn = nil
         acting = false
         dropAsks()
         release(false)
@@ -607,7 +646,6 @@ final class Chat: ObservableObject, Identifiable {
             status = text
         case let .options(list):
             options = list
-            useRememberedModel()
         case .tool, .cancel, .exit:
             break
         }
@@ -683,11 +721,14 @@ enum Chats {
     private(set) static var all: [Chat] = load()
 
     /// A new chat, not listed until something is sent in it. It starts on the
-    /// agent chosen in Settings › AI, when that one is found; pi otherwise.
+    /// agent chosen in Settings › AI, pi otherwise. The choice is taken even
+    /// before the first look has finished — whether it is hidden needs only
+    /// the settings — and a chat whose agent isn't found falls back to pi
+    /// when it starts.
     static func make() -> Chat {
-        if let chosen = Store.settings.string(forKey: agentKey),
-           let choice = Agents.shared.visible.first(where: { $0.id == chosen }) {
-            return Chat(agentID: choice.id, agentName: choice.name)
+        let chosen = Store.settings.string(forKey: agentKey)
+        if let chosen, !chosen.isEmpty, !Agents.shared.isHidden(chosen) {
+            return Chat(agentID: chosen, agentName: Agents.shared.choice(chosen)?.name ?? Agents.keptName(chosen))
         }
         return Chat()
     }

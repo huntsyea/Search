@@ -933,6 +933,7 @@ private struct AgentsCard: View {
     @State private var adding = false
     @State private var name = ""
     @State private var command = ""
+    @State private var addError: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -954,7 +955,7 @@ private struct AgentsCard: View {
                 HStack(spacing: 6) {
                     Quick(agents.looked ? "Refresh" : "Looking…") { agents.refresh() }
                         .disabled(!agents.looked)
-                    Quick("Add Agent…") { adding = true }
+                    Quick("Add Agent…") { addError = nil; adding = true }
                     Spacer(minLength: 0)
                 }
                 .padding(.horizontal, 14)
@@ -996,11 +997,22 @@ private struct AgentsCard: View {
                 .textFieldStyle(.roundedBorder)
             TextField("my-agent --acp", text: $command)
                 .textFieldStyle(.roundedBorder)
+            if let addError {
+                Text(addError)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Palette.unsafe)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             HStack {
                 Spacer()
                 Quick("Cancel") { close() }
-                Quick("Add") { agents.add(name: name, command: command); close() }
-                    .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
+                Quick("Add") {
+                    switch agents.add(name: name, command: command) {
+                    case .success: close()
+                    case .failure(let error): addError = error.errorDescription ?? "That command line couldn't be used."
+                    }
+                }
+                .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
         .padding(20)
@@ -1011,6 +1023,7 @@ private struct AgentsCard: View {
         adding = false
         name = ""
         command = ""
+        addError = nil
     }
 }
 

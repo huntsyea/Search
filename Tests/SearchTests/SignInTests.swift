@@ -47,6 +47,7 @@ final class SignInTests: XCTestCase {
         for id in added { Agents.shared.remove(id) }
         added = []
         Agents.searchPathForTests = nil
+        Chat.piForTests = nil
         Store.settings.removeObject(forKey: Agents.customKey)
         Store.settings.removeObject(forKey: Agents.hiddenKey)
         Store.settings.removeObject(forKey: Chats.agentKey)
@@ -94,7 +95,7 @@ final class SignInTests: XCTestCase {
         try JSONSerialization.data(withJSONObject: scenario).write(to: scenarioFile)
         FileManager.default.createFile(atPath: log.path, contents: nil)
         let command = "/usr/bin/env python3 '\(Self.script.path)' '\(scenarioFile.path)' '\(log.path)'"
-        guard let agent = Agents.shared.add(name: "scripted", command: command) else {
+        guard case let .success(agent) = Agents.shared.add(name: "scripted", command: command) else {
             throw XCTSkip("the scripted agent couldn't be added")
         }
         added.append(agent.id)
@@ -215,7 +216,9 @@ final class SignInTests: XCTestCase {
 
         let method = made.chat.signIn?.methods.first { $0.id == "t1" }
         XCTAssertEqual(method?.name, "Sign in in a terminal")
-        XCTAssertEqual(method?.terminal, ["/usr/bin/env", "login"])
+        // The agent's own program and arguments, plus the method's args.
+        XCTAssertEqual(method?.terminal?.first, "/usr/bin/env")
+        XCTAssertEqual(method?.terminal?.last, "login")
     }
 
     func testAModelIsRememberedForTheNextChat() async throws {
@@ -234,14 +237,22 @@ final class SignInTests: XCTestCase {
         await until(10) { first.chat.option(.model)?.current == "b" }
         XCTAssertEqual(Agents.model(for: first.agent.id), "b")
 
-        // A new chat on the same agent starts on the model the last one used.
+        // A new chat on the same agent starts on the model the last one used,
+        // set inside the start, before the first message is sent.
         let before = logged(first.log).count
         let second = chat(on: first.agent)
         second.chat.send("hello")
-        await until(10) { logged(first.log).dropFirst(before).contains { message in
+        await until(10) { logged(first.log).dropFirst(before).contains { $0["method"] as? String == "session/prompt" } }
+
+        let fresh = Array(logged(first.log).dropFirst(before))
+        let setAt = fresh.firstIndex { message in
             guard message["method"] as? String == "session/set_config_option" else { return false }
             return ((message["params"] as? [String: Any])?["value"] as? String) == "b"
-        } }
+        }
+        let promptAt = fresh.firstIndex { $0["method"] as? String == "session/prompt" }
+        XCTAssertNotNil(setAt)
+        XCTAssertNotNil(promptAt)
+        if let setAt, let promptAt { XCTAssertLessThan(setAt, promptAt) }
     }
 
     // MARK: - switching agents
@@ -292,6 +303,95 @@ final class SignInTests: XCTestCase {
         // The new agent starts, whatever the old start is still doing.
         await until(10) { logged(made.log).contains { $0["method"] as? String == "initialize" } }
     }
+
+    /// A remembered method the agent rejects is shown as a card again, and
+    /// forgotten so it can't trap the next start too.
+    func testARejectedSignInMethodIsForgotten() async throws {
+        let made = try made(["auth": ["methods": [["id": "m1", "name": "One"], ["id": "m2", "name": "Two"]],
+                                       "accept": "m2"]])
+        Agents.shared.remember(signIn: "m1", for: made.agent.id)
+        made.chat.send("hello")
+        await until(10) { made.chat.signIn != nil }
+
+        XCTAssertEqual(made.chat.signIn?.methods.map(\.id), ["m1", "m2"])
+        XCTAssertNil(Agents.signIn(for: made.agent.id))
+        XCTAssertFalse(made.chat.items.contains { $0.kind == .error })
+    }
+
+    /// While the card is up, sending isn't allowed: the message kept for Try
+    /// Again is the one that goes, and only once the agent takes it.
+    func testAMessageWaitingOnSignInIsKept() async throws {
+        let made = try made(scenario)
+        made.chat.send("hello")
+        await until(10) { made.chat.signIn != nil }
+        XCTAssertTrue(made.chat.hasUnsent)
+
+        XCTAssertFalse(made.chat.send("something else"))
+        XCTAssertTrue(made.chat.hasUnsent)
+
+        made.chat.signIn(with: "m1")
+        await until(10) { logged(made.log).contains { $0["method"] as? String == "session/prompt" } }
+        XCTAssertFalse(made.chat.hasUnsent)
+        let prompt = logged(made.log).first { $0["method"] as? String == "session/prompt" }
+        let blocks = (prompt?["params"] as? [String: Any])?["prompt"] as? [[String: Any]]
+        XCTAssertEqual(blocks?.first?["text"] as? String, "hello")
+    }
+
+    /// Opening saved history is what the sign-in interrupted: Try Again does
+    /// the open again, and the history loads.
+    func testSignInFromOpeningSavedHistoryRetries() async throws {
+        let made = try made([
+            "auth": ["methods": [Self.methods], "accept": "m1"],
+            "load": ["updates": [
+                ["sessionUpdate": "agent_message_chunk", "content": ["type": "text", "text": "Earlier"]],
+            ]],
+        ])
+        let chat = Chat(title: "Test", session: "s-1", agentID: made.agent.id, agentName: made.agent.name)
+        chats.append(chat)
+        chat.browser = made.browser
+
+        chat.open(in: made.browser)
+        await until(10) { chat.signIn != nil }
+        XCTAssertFalse(chat.items.contains { $0.kind == .error })
+
+        chat.signIn(with: "m1")
+        await until(10) { chat.items.contains { $0.text == "Earlier" } }
+        XCTAssertFalse(chat.items.contains { $0.kind == .error })
+    }
+
+    /// A send the chat has moved on from mustn't clear a newer one's state.
+    func testASupersededSendDoesNotClearTheNewOne() async throws {
+        let script = ScriptedPi()
+        let gate = Gate()
+        defer { gate.open() }
+        let starts = StartCount()
+        let agent = ChatAgent(name: "pi", start: { chat, session, hear in
+            starts.count += 1
+            if starts.count == 1 {
+                await gate.wait()
+                throw ChildProcess.Failure(why: "the first start let go")
+            }
+            return try await ChatAgent.pi(script.pi).start(chat, session, hear)
+        }, title: { _, _ in nil })
+        let chat = Chat(title: "Test", agentID: "pi", agent: agent)
+        chats.append(chat)
+
+        chat.send("A")
+        await until(5) { gate.waiting == 1 }
+        chat.close()
+        chat.send("B")
+        await until(5) { script.sentTypes.contains("prompt") }
+        XCTAssertTrue(chat.busy)
+
+        // A's start fails now; B stays busy and gets no error from it.
+        gate.open()
+        try? await Task.sleep(for: .milliseconds(200))
+        XCTAssertTrue(chat.busy)
+        XCTAssertFalse(chat.items.contains { $0.kind == .error })
+
+        script.emit(["type": "agent_settled"])
+        await until(5) { !chat.busy }
+    }
 }
 
 /// A start that waits until the test lets it go.
@@ -301,4 +401,9 @@ private final class Gate {
     var waiting: Int { waiters.count }
     func wait() async { await withCheckedContinuation { waiters.append($0) } }
     func open() { let waiting = waiters; waiters = []; waiting.forEach { $0.resume() } }
+}
+
+/// How many times a start closure has been called.
+private final class StartCount {
+    var count = 0
 }

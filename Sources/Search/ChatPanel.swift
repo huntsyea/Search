@@ -339,7 +339,7 @@ private struct ChatBody: View {
         return chosen.name
     }
 
-    private var sendable: Bool { !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var sendable: Bool { chat.signIn == nil && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     /// A chat in the bar's list, with its agent when it isn't pi.
     private func chatLabel(_ other: Chat) -> String {
@@ -503,9 +503,11 @@ private struct SignInCard: View {
                         methodButton(method)
                     }
                     // The one the agent runs in a terminal: a method's own
-                    // command, else the agent's login.
+                    // command and variables, else the agent's login.
                     if let terminal = terminal, let choice {
-                        Quick("Open in Terminal") { Agents.shared.openLogin(choice, command: terminal) }
+                        Quick("Open in Terminal") {
+                            Agents.shared.openLogin(choice, command: terminal, environment: terminalEnvironment)
+                        }
                     }
                     Quick("Try Again") { chat.retry() }
                     Spacer(minLength: 0)
@@ -519,10 +521,13 @@ private struct SignInCard: View {
         }
     }
 
-    /// The command to run in a terminal, when there is one.
-    private var terminal: [String]? {
-        chat.signIn?.methods.first { $0.terminal != nil }?.terminal ?? choice?.login
+    /// The command to run in a terminal, when there is one, and the
+    /// variables it needs.
+    private var terminalMethod: AgentSignIn.Method? {
+        chat.signIn?.methods.first { $0.terminal != nil }
     }
+    private var terminal: [String]? { terminalMethod?.terminal ?? choice?.login }
+    private var terminalEnvironment: [String: String] { terminalMethod?.environment ?? [:] }
 
     /// A method the agent runs itself, with its description as the tip.
     @ViewBuilder
