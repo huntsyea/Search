@@ -679,6 +679,7 @@ struct SettingsPanel: View {
     private var versionDetail: String {
         switch updater.stage {
         case .none:
+            guard Updater.updatesItself else { return "This build isn't Office Commun's, so it doesn't update itself" }
             return updater.lastChecked.map { "Checked \($0.formatted(.relative(presentation: .named))) — every hour on its own" }
                 ?? "Checked every hour on its own"
         case .fetching(let next):
@@ -695,6 +696,8 @@ struct SettingsPanel: View {
     @ViewBuilder
     private var versionControl: some View {
         switch updater.stage {
+        case .none where !Updater.updatesItself:
+            EmptyView()
         case .none:
             Pill(updater.checking ? "Checking…" : "Check now") {
                 updater.check { found in

@@ -113,6 +113,20 @@ final class Updater: ObservableObject {
         Int(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "") ?? 0
     }
 
+    /// Whether this build updates itself from Office Commun's feed: only one
+    /// Office Commun signed. Signed by anyone else — this repository's
+    /// build.sh under another Developer ID — the next official release would
+    /// take its place, and whatever that build adds would go with it. A test
+    /// run pointed at its own feed still checks.
+    static var updatesItself: Bool { overridden || signedByOfficeCommun }
+
+    /// Read once: the signature of the bundle that is running.
+    nonisolated static let signedByOfficeCommun = isOfficeCommun(Swap.teamID(of: Bundle.main.bundleURL))
+
+    /// Whether a signing team is Office Commun's — nil, an ad-hoc signature or
+    /// another team is not.
+    nonisolated static func isOfficeCommun(_ signer: String?) -> Bool { signer == team }
+
     private var lastKey: String { "update.checked" }
     nonisolated static let installKey = "update.install"
     /// Settings › About › Install updates on its own. On unless switched off.
@@ -133,6 +147,7 @@ final class Updater: ObservableObject {
     func checkIfDue(then say: @escaping (String) -> Void) {
         self.say = say
         Swap.sweep()
+        guard Updater.updatesItself else { return }
         // And again every hour for as long as the app is up — a browser that
         // is left open for a week would otherwise never look.
         if clock == nil {
@@ -149,6 +164,7 @@ final class Updater: ObservableObject {
 
     /// Every hour, give or take the clock's tolerance: one small signed file.
     private func checkIfDue() {
+        guard Updater.updatesItself else { return }
         let last = Store.settings.object(forKey: lastKey) as? Date ?? .distantPast
         guard Updater.overridden || Date().timeIntervalSince(last) > 60 * 50 else { return }
         check { _ in }
@@ -167,6 +183,10 @@ final class Updater: ObservableObject {
         default: break
         }
         guard !checking else { return }
+        guard Updater.updatesItself else {
+            say?("This build of Search isn't Office Commun's, so it doesn't update itself")
+            return
+        }
         say?("Checking for updates…")
         check { [weak self] found in
             guard let self else { return }
@@ -180,6 +200,7 @@ final class Updater: ObservableObject {
     /// is said through the line handed to `checkIfDue`.
     func check(then done: @escaping (Release?) -> Void) {
         guard !checking else { return }
+        guard Updater.updatesItself else { done(nil); return }
         checking = true
         Task { [weak self] in
             let found = await Updater.fetch()
@@ -552,7 +573,7 @@ private enum Swap {
 
     /// The team that signed a bundle, as the system reads it — nil for an
     /// ad-hoc signature, or none.
-    private static func teamID(of bundle: URL) -> String? {
+    static func teamID(of bundle: URL) -> String? {
         var code: SecStaticCode?
         guard SecStaticCodeCreateWithPath(bundle as CFURL, [], &code) == errSecSuccess, let code else {
             return nil
