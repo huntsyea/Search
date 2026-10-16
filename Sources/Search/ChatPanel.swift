@@ -234,6 +234,14 @@ private struct ChatBody: View {
             if model?.choices.isEmpty ?? true {
                 Text("Starting \(chat.agentName)…")
             }
+            // An agent may name no provider: those choices come first, plain.
+            ForEach(model?.choices.filter { $0.group == nil } ?? []) { choice in
+                Button {
+                    chat.choose("model", choice.value)
+                } label: {
+                    if choice.value == model?.current { Label(choice.name, systemImage: "checkmark") } else { Text(choice.name) }
+                }
+            }
             ForEach(providers, id: \.self) { provider in
                 Section(provider) {
                     ForEach(model?.choices.filter { $0.group == provider } ?? []) { choice in

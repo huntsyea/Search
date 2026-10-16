@@ -573,6 +573,94 @@ final class ChatTests: XCTestCase {
         XCTAssertNil(chat.option("thinking"))
     }
 
+    func testAPiStartedAgainOnANewSessionKeepsTheEarlierAnswer() async {
+        let (chat, script) = made()
+        chat.send("hello")
+        await until { script.sentTypes.contains("prompt") }
+
+        script.replay([
+            ["type": "message_start", "message": ["role": "assistant", "content": []]],
+            ["type": "message_update", "assistantMessageEvent": ["type": "text_delta", "contentIndex": 0, "delta": "first"]],
+            ["type": "message_update", "assistantMessageEvent": ["type": "text_end", "contentIndex": 0, "content": "first"]],
+            ["type": "message_end", "message": ["role": "assistant", "content": [], "stopReason": "stop"]],
+            ["type": "agent_settled"],
+        ])
+        script.exit(nil)
+
+        // A second pi on a new session: its message count starts at 0 again,
+        // so its own items must not land where the first pi's did.
+        chat.send("again")
+        await until { script.starts.count == 2 && script.sentTypes.filter { $0 == "prompt" }.count == 2 }
+        script.replay([
+            ["type": "message_start", "message": ["role": "assistant", "content": []]],
+            ["type": "message_update", "assistantMessageEvent": ["type": "text_delta", "contentIndex": 0, "delta": "second"]],
+            ["type": "message_update", "assistantMessageEvent": ["type": "text_end", "contentIndex": 0, "content": "second"]],
+            ["type": "message_end", "message": ["role": "assistant", "content": [], "stopReason": "stop"]],
+            ["type": "agent_settled"],
+        ])
+
+        XCTAssertEqual(chat.items.filter { $0.kind == .assistant }.map(\.text), ["first", "second"])
+    }
+
+    func testChoosingAModelBeforeTheListCameStillSetsIt() async {
+        let (chat, script) = made()
+        script.answers["get_available_models"] = ["models": []]
+
+        chat.choose("model", "p/x")
+        await until { script.sentTypes.contains("set_model") }
+        let chosen = script.sent.first { $0["type"] as? String == "set_model" }
+        XCTAssertEqual(chosen?["provider"] as? String, "p")
+        XCTAssertEqual(chosen?["modelId"] as? String, "x")
+    }
+
+    func testAFailedStateKeepsTheModel() async {
+        let (chat, script) = made()
+        script.answers["get_available_models"] = ["models": [
+            ["provider": "p", "id": "a", "name": "A", "reasoning": true],
+            ["provider": "p", "id": "b", "name": "B"],
+        ]]
+        script.answers["get_state"] = ["model": ["provider": "p", "id": "a"], "thinkingLevel": "low"]
+        script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
+
+        chat.loadOptions()
+        await until { chat.option("model")?.current == "p/a" }
+
+        script.refusals["get_state"] = "busy"
+        chat.choose("thinking", "high")
+        await until { script.sentTypes.contains("set_thinking_level") }
+        try? await Task.sleep(for: .milliseconds(100))
+        XCTAssertEqual(chat.option("model")?.current, "p/a")
+    }
+
+    func testAFailedReopenShowsNoHalfHistory() async {
+        _ = NSApplication.shared
+        let browser = Browser(record: WindowRecord())
+        browsers.append(browser)
+        let path = FileManager.default.temporaryDirectory
+            .appendingPathComponent("chat-\(UUID().uuidString).jsonl")
+        FileManager.default.createFile(atPath: path.path, contents: Data())
+
+        let script = ScriptedPi()
+        script.refusals["get_messages"] = "broken"
+        let chat = Chat(title: "Test", session: path.path, agent: .pi(script.pi))
+        chats.append(chat)
+        defer { try? FileManager.default.removeItem(at: path) }
+
+        chat.open(in: browser)
+        await until { chat.status == nil }
+        XCTAssertTrue(chat.items.allSatisfy { $0.kind != .user })
+        XCTAssertEqual(chat.items.last?.kind, .error)
+        XCTAssertEqual(chat.items.last?.text, "broken")
+
+        // The refusal cleared, the start's history comes whole: the half that
+        // failed is gone, and the session's two user messages are shown.
+        script.refusals["get_messages"] = nil
+        script.answers["get_messages"] = PiTranscripts.messagesData
+        chat.send("again")
+        await until { script.starts.count == 2 }
+        XCTAssertEqual(chat.items.filter { $0.kind == .user }.count, 2)
+    }
+
     func testRefusedCommandIsALine() async {
         let (chat, script) = made()
         script.refusals["prompt"] = "model not found"

@@ -82,10 +82,17 @@ final class Chat: ObservableObject, Identifiable {
     /// Why an agent ended before it was held, for whoever sent to report.
     private var endedStarting: String?
     private var opened = false
-    /// Whether the session's history is on screen: a new chat has none.
+    /// Whether the session's history is on screen: a new chat has none, and
+    /// a chat whose start failed has none yet.
     private var shown: Bool
-    /// The start whose history is being heard, so it is shown once.
+    /// The start whose history is being heard, kept aside until it proves
+    /// the start: a start that failed shows none of it.
     private var replaying: UUID?
+    /// The history heard so far during a start, held until it succeeds, then
+    /// shown once.
+    private var history: [AgentSays] = []
+    /// A session name heard before the link was held: given to it once it is.
+    private var nameOnStart = false
 
     init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask, agent: ChatAgent? = nil) {
         self.id = id
@@ -344,8 +351,9 @@ final class Chat: ObservableObject, Identifiable {
         let start = UUID()
         current = start
         endedStarting = nil
-        // The history a start says before returning is the session's, shown
-        // once: `replaying` marks whose it is.
+        history = []
+        // The history a start says before returning is the session's, kept
+        // aside until the start succeeds: a start that failed shows none of it.
         replaying = start
         let link: AgentLink
         do {
@@ -362,22 +370,31 @@ final class Chat: ObservableObject, Identifiable {
             }
         } catch {
             replaying = nil
+            history = []
             throw error
         }
         replaying = nil
         // The agent ended while starting, or the chat let go of it meanwhile:
         // a start that failed, said once, by whoever sent.
         guard current == start else {
+            history = []
             link.stop()
             defer { endedStarting = nil }
             throw PiProcess.Failure(why: endedStarting ?? "\(agent.name) stopped.")
         }
-        // A step the history began but never finished isn't left spinning.
+        // The history once, when it succeeds: a step it began but never
+        // finished isn't left spinning either.
         if !shown {
             shown = true
+            history.forEach(handle)
+            history = []
             for i in items.indices { items[i].done = true }
         }
         self.link = link
+        if nameOnStart {
+            nameOnStart = false
+            link.name(title)
+        }
         status = nil
         return link
     }
@@ -404,10 +421,15 @@ final class Chat: ObservableObject, Identifiable {
             // Answered where it was heard, so it still gets a reply.
             break
         default:
-            // The history once, and let go after: an agent started again
-            // says it again, into a chat already showing it.
             guard start == current else { return }
-            if replaying == start, shown { return }
+            // The transcript said during a start is held aside until the
+            // start succeeds; anything else — its session, its options — is
+            // this start's, said at once. A session already shown hears its
+            // history again when an agent starts again, and drops it.
+            if replaying == start, Chat.isHistory(said) {
+                if !shown { history.append(said) }
+                return
+            }
             handle(said)
         }
     }
@@ -424,6 +446,19 @@ final class Chat: ObservableObject, Identifiable {
         release(false)
         unmark()
         status = nil
+    }
+
+    /// Whether what an agent says during a start is the session's transcript,
+    /// which is held aside until the start proves it. The rest — its new
+    /// session, its options, its name, its status, its settling — belongs to
+    /// this start and is said at once.
+    private static func isHistory(_ said: AgentSays) -> Bool {
+        switch said {
+        case .user, .text, .done, .toolStarted, .toolEnded, .line:
+            return true
+        case .session, .options, .named, .status, .settled, .tool, .cancel, .exit:
+            return false
+        }
     }
 
     /// Everything the agent says that the chat draws, once it is the start
@@ -454,7 +489,9 @@ final class Chat: ObservableObject, Identifiable {
         case let .session(file):
             guard session == nil else { return }
             session = file
-            link?.name(title)
+            // The session can be said while the link isn't held yet: the name
+            // is given once it is.
+            if let link { link.name(title) } else { nameOnStart = true }
             Chats.remember(self)
         case let .named(name):
             title = name

@@ -99,12 +99,19 @@ extension ChatAgent {
 @MainActor
 private final class PiAgent: AgentLink {
     private let hear: (AgentSays) -> Void
+    /// This pi's own, so a pi started again can't name an item an earlier one named.
+    private let run = String(UUID().uuidString.prefix(8))
     private var link: PiLink?
     private var session: String?
     private var messageCount = 0
     /// Content blocks of the assistant message streaming now, by index.
     private var streaming: [Int: String] = [:]
     private var models: [(provider: String, id: String, name: String, reasoning: Bool)] = []
+    /// What pi uses now, as its answers last said: kept so a refused or
+    /// failed ask doesn't clear what was known.
+    private var current: String?
+    private var thinking: String?
+    private var levels: [String] = []
 
     private init(hear: @escaping (AgentSays) -> Void) {
         self.hear = hear
@@ -218,7 +225,7 @@ private final class PiAgent: AgentLink {
     /// message it belongs to and its place in it, so an item reopened is the
     /// same item.
     private func put(_ index: Int, _ kind: Chat.Item.Kind, _ text: String, whole: Bool, done: Bool) {
-        let id = "\(messageCount)-\(index)"
+        let id = "\(run)-\(messageCount)-\(index)"
         streaming[index] = id
         hear(.text(id: id, kind: kind, text: text, whole: whole, done: done))
     }
@@ -297,10 +304,16 @@ private final class PiAgent: AgentLink {
         switch option {
         case "model":
             // pi wants the provider and id apart, not the menu's one value.
-            guard let m = models.first(where: { $0.provider + "/" + $0.id == value }) else {
+            if let m = models.first(where: { $0.provider + "/" + $0.id == value }) {
+                _ = try await link.request(["type": "set_model", "provider": m.provider, "modelId": m.id])
+            } else if let cut = value.firstIndex(of: "/") {
+                // The list may not have come yet (the menu still shows the
+                // last pi's): the value itself names a provider and an id.
+                _ = try await link.request(["type": "set_model", "provider": String(value[..<cut]),
+                                            "modelId": String(value[value.index(after: cut)...])])
+            } else {
                 throw PiProcess.Failure(why: "pi has no model \(value)")
             }
-            _ = try await link.request(["type": "set_model", "provider": m.provider, "modelId": m.id])
         case "thinking":
             _ = try await link.request(["type": "set_thinking_level", "level": value])
         default:
@@ -331,12 +344,9 @@ private final class PiAgent: AgentLink {
         await learnState()
     }
 
-    /// What pi uses now, said as the chat's options. Every ask is `try?`: a
-    /// pi that doesn't answer leaves the options as they were.
+    /// What pi uses now, said as the chat's options. Every ask is `try?`, and
+    /// an ask that didn't come leaves what was known in place.
     private func learnState() async {
-        var current: String?
-        var thinking: String?
-        var levels: [String] = []
         if let state = try? await link?.request(["type": "get_state"]) {
             if let m = state["model"] as? [String: Any], let provider = m["provider"] as? String, let id = m["id"] as? String {
                 // A model pi uses that its list didn't name — an earlier
@@ -346,10 +356,11 @@ private final class PiAgent: AgentLink {
                 }
                 current = provider + "/" + id
             }
-            thinking = state["thinkingLevel"] as? String
+            if let level = state["thinkingLevel"] as? String { thinking = level }
         }
-        if let data = try? await link?.request(["type": "get_available_thinking_levels"]) {
-            levels = data["levels"] as? [String] ?? []
+        if let data = try? await link?.request(["type": "get_available_thinking_levels"]),
+           let list = data["levels"] as? [String] {
+            levels = list
         }
         var options = [AgentOption(
             id: "model", name: "Model", category: .model, current: current,
