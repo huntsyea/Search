@@ -24,6 +24,9 @@ struct AgentChoice: Identifiable, Equatable {
     /// True when the agent keeps a model chosen over ACP as its own default
     /// (cursor-agent): Search never chooses or remembers one for it.
     let modelIsTheAgentsOwn: Bool
+    /// The ACP adapter that carries it, for an agent that doesn't speak ACP
+    /// itself (Claude Code, Codex). Nil for the rest.
+    var adapter: Adapter? = nil
     var custom: Bool { id.hasPrefix("custom.") }
 }
 
@@ -56,6 +59,13 @@ enum AgentState {
     case unknown
 }
 
+/// The agent's ACP adapter isn't set up yet: Set Up installs it.
+struct AgentNeedsSetUp: LocalizedError {
+    let agent: String
+    let adapter: Adapter
+    var errorDescription: String? { "\(agent) needs its ACP adapter set up first." }
+}
+
 /// One known agent: the program that carries it and how Search starts it.
 struct KnownAgent: Sendable {
     let id: String
@@ -68,6 +78,12 @@ struct KnownAgent: Sendable {
     /// True for an agent that keeps a model chosen over ACP as its own
     /// default.
     var modelIsTheAgentsOwn = false
+    /// The adapter that carries it, when its program doesn't speak ACP
+    /// itself (Claude Code, Codex). Nil for the rest.
+    var adapter: Adapter? = nil
+    /// Config options to set as each session starts, by the option's id:
+    /// the agent's sandbox, say. One the session doesn't list is skipped.
+    var startOptions: [String: String] = [:]
 }
 
 /// The agents Search knows, finds and lets the person add; and which ones they hid.
@@ -100,9 +116,18 @@ final class Agents: ObservableObject {
 
     /// The known table, in the order the picker offers them. Every one was
     /// checked to start over ACP against a real `initialize` on 15 Oct 2026.
-    /// Claude Code and Codex come as their own ACP adapters (phase 5), so
-    /// they are not listed here yet.
+    /// Claude Code and Codex don't speak ACP themselves: an adapter carries
+    /// each, run with the person's node.
     nonisolated static let known: [KnownAgent] = [
+        KnownAgent(id: "claude", name: "Claude Code", program: "claude",
+                   arguments: [], environment: [:], ownTools: .off, login: ["claude"],
+                   adapter: Adapters.claude),
+        // Codex's sandbox, whatever its own default: a patch it writes is
+        // refused by it, not only by Search. Its shell is off, but code mode,
+        // apply_patch and a few others remain, so its own tools are refused.
+        KnownAgent(id: "codex", name: "Codex", program: "codex",
+                   arguments: [], environment: [:], ownTools: .refused, login: ["codex", "login"],
+                   adapter: Adapters.codex, startOptions: ["mode": "read-only"]),
         KnownAgent(id: "opencode", name: "opencode", program: "opencode",
                    arguments: ["acp"],
                    environment: [
@@ -257,8 +282,13 @@ final class Agents: ObservableObject {
             // still be in flight: wait for it before calling an agent gone.
             guard let self else { throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.") }
             await self.ready()
-            guard let spec = self.choice(id)?.spec else {
+            guard let choice = self.choice(id), let spec = choice.spec else {
                 throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.")
+            }
+            // An agent that needs an adapter Search set up first: the chat's
+            // card offers to install it.
+            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                throw AgentNeedsSetUp(agent: called, adapter: adapter)
             }
             var signed = spec
             signed.signIn = method ?? Agents.signIn(for: id)
@@ -341,15 +371,40 @@ final class Agents: ObservableObject {
     nonisolated static func found() -> [AgentChoice] {
         var out = [piChoice()]
         for known in known {
-            if let path = path(of: known.program) {
+            if let adapter = known.adapter {
+                if let choice = adapterChoice(known, adapter) { out.append(choice) }
+            } else if let path = path(of: known.program) {
                 out.append(AgentChoice(id: known.id, name: known.name, path: path,
                                        spec: ACPSpec(id: known.id, name: known.name, path: path,
-                                                     arguments: known.arguments, environment: known.environment),
+                                                     arguments: known.arguments, environment: known.environment,
+                                                     startOptions: known.startOptions),
                                        ownTools: known.ownTools, login: known.login,
                                        modelIsTheAgentsOwn: known.modelIsTheAgentsOwn))
             }
         }
         return out
+    }
+
+    /// One an adapter carries: found when the person's own CLI — whose
+    /// sign-in the adapter uses — and node are both on the PATH. Node runs
+    /// the adapter; each agent is given its own tools off.
+    nonisolated static func adapterChoice(_ known: KnownAgent, _ adapter: Adapter) -> AgentChoice? {
+        guard firstExecutable(named: known.program) != nil,
+              let node = firstExecutable(named: "node") else { return nil }
+        var environment: [String: String] = [:]
+        var sessionMeta: [String: Any]?
+        switch adapter.agent {
+        case "claude": sessionMeta = Adapters.claudeMeta
+        case "codex": environment = Adapters.codexEnvironment()
+        default: break
+        }
+        let spec = ACPSpec(id: known.id, name: known.name, path: node,
+                           arguments: [Adapters.script(adapter).path],
+                           environment: environment, sessionMeta: sessionMeta,
+                           startOptions: known.startOptions)
+        return AgentChoice(id: known.id, name: known.name, path: node, spec: spec,
+                           ownTools: known.ownTools, login: known.login,
+                           modelIsTheAgentsOwn: known.modelIsTheAgentsOwn, adapter: adapter)
     }
 
     /// The custom agents the person added, as choices.

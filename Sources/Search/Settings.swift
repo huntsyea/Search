@@ -934,6 +934,8 @@ private struct AgentsCard: View {
     @State private var name = ""
     @State private var command = ""
     @State private var addError: String?
+    @State private var settingUp: String?
+    @State private var setUpErrors: [String: String] = [:]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -942,6 +944,14 @@ private struct AgentsCard: View {
                     if index > 0 { Rule() }
                     Line(choice.name, detail(choice)) {
                         HStack(spacing: 6) {
+                            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                                if settingUp == choice.id {
+                                    Quick("Setting up…") {}
+                                        .disabled(true)
+                                } else {
+                                    Quick("Set Up") { setUp(choice, adapter) }
+                                }
+                            }
                             if choice.custom {
                                 Quick("Remove") { agents.remove(choice.id) }
                             }
@@ -970,18 +980,38 @@ private struct AgentsCard: View {
     }
 
     /// What the row says under the name: where the program is, what happens
-    /// to its own tools, and how its last start went.
+    /// to its own tools, its adapter when it has one, and how its last start
+    /// went. A failure setting the adapter up is shown here too.
     private func detail(_ choice: AgentChoice) -> String {
         var parts = [choice.path ?? "Not found"]
         parts.append(choice.ownTools == .off
             ? "Its own tools are switched off"
             : "Its own tools are refused when it asks, and it runs in an empty folder")
+        if let adapter = choice.adapter {
+            parts.append(Adapters.isSetUp(adapter) ? "ACP adapter \(adapter.version)" : "Needs its ACP adapter")
+        }
         switch agents.state(choice.id) {
         case .ready: parts.append("Signed in")
         case .signIn: parts.append("Needs you to sign in")
         case .unknown: break
         }
+        if let error = setUpErrors[choice.id] { parts.append(error) }
         return parts.joined(separator: " · ")
+    }
+
+    /// Install the agent's adapter, off the main thread: the row's button
+    /// waits, then shows what happened.
+    private func setUp(_ choice: AgentChoice, _ adapter: Adapter) {
+        settingUp = choice.id
+        setUpErrors[choice.id] = nil
+        Task {
+            do {
+                try await Adapters.setUp(adapter)
+            } catch {
+                setUpErrors[choice.id] = error.localizedDescription
+            }
+            settingUp = nil
+        }
     }
 
     private func shown(_ choice: AgentChoice) -> Binding<Bool> {

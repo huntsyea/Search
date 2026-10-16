@@ -1490,6 +1490,8 @@ final class Bench {
                 chat.signIn(with: method)
             case "retry":
                 chat.retry()
+            case "setup":
+                chat.setUpAdapter()
             case "answer":
                 guard let choice = (request["choice"] as? String).flatMap(Chat.Choice.init(rawValue:)) else {
                     answer(["error": "answer is once, chat, always or deny"]); return
@@ -1514,6 +1516,7 @@ final class Bench {
                 "agent": current.agentID, "agents": Agents.shared.visible.map(\.id),
                 "agentMenu": Agents.shared.visible.count > 1,
                 "signIn": current.signIn.map { ["agent": $0.agent, "methods": $0.methods.map(\.id)] } ?? NSNull(),
+                "setUp": current.setUp?.adapter.package ?? NSNull(),
                 "mode": current.mode.rawValue, "acting": current.acting, "paused": current.paused,
                 "model": current.option(.model)?.current ?? "", "thinking": current.option(.thought)?.current ?? "",
                 "levels": current.option(.thought)?.choices.map(\.value) ?? [],

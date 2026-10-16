@@ -34,11 +34,16 @@ final class Chat: ObservableObject, Identifiable {
     /// The agent asked the person to sign in, and how: the card over the box
     /// shows it. What was being done is kept to try again.
     @Published private(set) var signIn: AgentSignIn?
+    /// The agent's ACP adapter isn't set up yet: the card over the box offers
+    /// to install it, and what was being done is kept to try again.
+    @Published private(set) var setUp: AgentNeedsSetUp?
     /// What was interrupted by the sign-in, done again on Try Again.
     enum Pending {
         case send(String)
         case open
         case option(String, String)
+        /// The menu's start, before anything was sent.
+        case load
     }
     private var waiting: Pending?
     /// Whether a message is waiting for a sign-in before it can be sent.
@@ -141,8 +146,9 @@ final class Chat: ObservableObject, Identifiable {
     @discardableResult
     func send(_ text: String) -> Bool {
         // While the sign-in card is up, sending would lose the message kept
-        // for Try Again: it waits until the person deals with the card.
-        guard signIn == nil else { return false }
+        // for Try Again: it waits until the person deals with the card. The
+        // same while the adapter needs setting up.
+        guard signIn == nil, setUp == nil else { return false }
         let words = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !words.isEmpty, !busy else { return false }
         if title == "New chat" {
@@ -175,6 +181,11 @@ final class Chat: ObservableObject, Identifiable {
                     // The person is asked to sign in; their message is kept to
                     // send again once they have. No error line: it isn't one.
                     signIn = wanted
+                    waiting = .send(words)
+                } else if let wanted = error as? AgentNeedsSetUp {
+                    // The adapter is offered; their message is kept the same
+                    // way, and no error line is shown.
+                    setUp = wanted
                     waiting = .send(words)
                 } else {
                     items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
@@ -301,16 +312,31 @@ final class Chat: ObservableObject, Identifiable {
                 try await link.set(option, to: value)
             } catch {
                 if let wanted = error as? AgentSignIn { signIn = wanted; waiting = .option(option, value) }
+                else if let wanted = error as? AgentNeedsSetUp { setUp = wanted; waiting = .option(option, value) }
                 else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
     }
 
     /// The menu wants the list before anything was sent: the agent started
-    /// for it.
+    /// for it. A start that needs a sign-in or its adapter shows the card, as
+    /// a send does — the menu is the first thing a chosen agent does. Any
+    /// other failure stays quiet: nothing was asked for.
     func loadOptions() {
         guard options.isEmpty else { return }
-        Task { _ = try? await ready(quietly: true) }
+        Task {
+            do {
+                _ = try await ready(quietly: true)
+            } catch let wanted as AgentSignIn {
+                signIn = wanted
+                waiting = .load
+            } catch let wanted as AgentNeedsSetUp {
+                setUp = wanted
+                waiting = .load
+            } catch {
+                // Quiet: a menu is no reason to show an agent's failure.
+            }
+        }
     }
 
     /// A tab the agent opened goes in the chat's group, when groups are on,
@@ -356,6 +382,7 @@ final class Chat: ObservableObject, Identifiable {
             } catch {
                 status = nil
                 if let wanted = error as? AgentSignIn { signIn = wanted; waiting = .open }
+                else if let wanted = error as? AgentNeedsSetUp { setUp = wanted; waiting = .open }
                 else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
@@ -395,6 +422,7 @@ final class Chat: ObservableObject, Identifiable {
     /// option that asked for it. Nothing when there was none.
     func retry() {
         signIn = nil
+        setUp = nil
         switch waiting {
         case .send(let text):
             // Let the message go only once the agent has taken it again.
@@ -406,6 +434,9 @@ final class Chat: ObservableObject, Identifiable {
         case .option(let option, let value):
             waiting = nil
             choose(option, value)
+        case .load:
+            waiting = nil
+            loadOptions()
         case nil:
             break
         }
@@ -415,6 +446,31 @@ final class Chat: ObservableObject, Identifiable {
     /// interrupted with it.
     func dismissSignIn() {
         signIn = nil
+        waiting = nil
+    }
+
+    /// Install the agent's ACP adapter, then try what asked for it again.
+    /// The box says what is happening meanwhile; a failure is an error line.
+    func setUpAdapter() {
+        guard let wanted = setUp else { return }
+        setUp = nil
+        Task {
+            status = "Setting up \(wanted.agent)…"
+            do {
+                try await Adapters.setUp(wanted.adapter)
+                status = nil
+                retry()
+            } catch {
+                status = nil
+                items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
+            }
+        }
+    }
+
+    /// The person said no to setting up the adapter: the card goes, and what
+    /// it interrupted with it.
+    func dismissSetUp() {
+        setUp = nil
         waiting = nil
     }
 

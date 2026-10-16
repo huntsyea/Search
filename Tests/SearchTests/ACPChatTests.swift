@@ -68,7 +68,7 @@ final class ACPChatTests: XCTestCase {
 
     /// A chat on the scripted agent, with a browser for its tools.
     private func made(_ scenario: [String: Any], session: String? = nil, mode: Chat.Mode = .ask,
-                      browser given: Browser? = nil) throws -> Made {
+                      browser given: Browser? = nil, startOptions: [String: String] = [:]) throws -> Made {
         let scenarioFile = folder.appendingPathComponent("scenario-\(UUID().uuidString).json")
         let log = folder.appendingPathComponent("log-\(UUID().uuidString).jsonl")
         try JSONSerialization.data(withJSONObject: scenario).write(to: scenarioFile)
@@ -78,7 +78,8 @@ final class ACPChatTests: XCTestCase {
         if given == nil { browsers.append(browser) }
         let chat = Chat(title: "Test", session: session, mode: mode,
                         agent: .acp(ACPSpec(id: "scripted", name: "scripted", path: "/usr/bin/env",
-                                            arguments: ["python3", Self.script.path, scenarioFile.path, log.path])))
+                                            arguments: ["python3", Self.script.path, scenarioFile.path, log.path],
+                                            startOptions: startOptions)))
         chats.append(chat)
         chat.browser = browser
         return Made(chat: chat, browser: browser, log: log)
@@ -294,6 +295,43 @@ final class ACPChatTests: XCTestCase {
         XCTAssertEqual((sent?["params"] as? [String: Any])?["modelId"] as? String, "m2")
     }
 
+    /// An agent that wants a config option set at every start (Codex's mode)
+    /// gets it, before any prompt, when its session lists that option.
+    func testStartOptionsAreSetBeforeTheFirstPrompt() async throws {
+        let made = try made([
+            "new": ["sessionId": "s-1", "configOptions": [
+                ["id": "mode", "name": "Mode", "category": "mode", "currentValue": "code",
+                 "options": [["value": "code", "name": "Code"], ["value": "read-only", "name": "Read-only"]]],
+            ]],
+        ], startOptions: ["mode": "read-only"])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let received = logged(made.log)
+        let sent = received.first { $0["method"] as? String == "session/set_config_option" }
+        XCTAssertEqual((sent?["params"] as? [String: Any])?["configId"] as? String, "mode")
+        XCTAssertEqual((sent?["params"] as? [String: Any])?["value"] as? String, "read-only")
+        let setAt = received.firstIndex { $0["method"] as? String == "session/set_config_option" }
+        let promptAt = received.firstIndex { $0["method"] as? String == "session/prompt" }
+        XCTAssertNotNil(setAt)
+        XCTAssertNotNil(promptAt)
+        if let setAt, let promptAt { XCTAssertLessThan(setAt, promptAt) }
+    }
+
+    /// One the session doesn't list is skipped, not sent and refused.
+    func testAStartOptionTheSessionDoesNotListIsSkipped() async throws {
+        let made = try made([
+            "new": ["sessionId": "s-1", "configOptions": [
+                ["id": "model", "name": "Model", "category": "model", "currentValue": "a",
+                 "options": [["value": "a", "name": "A"]]],
+            ]],
+        ], startOptions: ["mode": "read-only"])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        XCTAssertFalse(logged(made.log).contains { $0["method"] as? String == "session/set_config_option" })
+    }
+
     // MARK: - failures
 
     func testSignInNeeded() async throws {
@@ -351,6 +389,86 @@ final class ACPChatTests: XCTestCase {
             return outcome?["optionId"] as? String
         }
         XCTAssertEqual(outcomes, ["r", "r", "r", "r"])
+    }
+
+    /// Codex calls Search's tools under its own names and asks to run one as
+    /// a command; the structured server and tool say it is Search's own, so
+    /// it is let through whatever the kind, and shown as the browser tool it is.
+    func testAStructuredSearchToolIsAllowedWhateverItsKind() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]]]],
+                ["ask": ["toolCall": ["toolCallId": "t1", "kind": "execute"],
+                         "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                     ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let permission = logged(made.log).first { ($0["result"] as? [String: Any])?["outcome"] != nil }
+        let outcome = (permission?["result"] as? [String: Any])?["outcome"] as? [String: Any]
+        XCTAssertEqual(outcome?["optionId"] as? String, "a")
+        XCTAssertEqual(made.chat.items.first { $0.kind == .tool }?.text, AgentTools.label("browser_tabs", [:]))
+    }
+
+    /// A command merely titled like a browser tool, with no server and tool
+    /// of Search's behind it, is refused: the title is the agent's words.
+    func testACommandTitledLikeAToolWithoutItsServerIsRefused() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending"]],
+                ["ask": ["toolCall": ["toolCallId": "t1", "title": "mcp.search.browser_tabs", "kind": "execute"],
+                         "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                     ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let permission = logged(made.log).first { ($0["result"] as? [String: Any])?["outcome"] != nil }
+        let outcome = (permission?["result"] as? [String: Any])?["outcome"] as? [String: Any]
+        XCTAssertEqual(outcome?["optionId"] as? String, "r")
+    }
+
+    /// A structured call for another server is not one of Search's tools.
+    func testAStructuredCallForAnotherServerIsNotABrowserTool() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "kind": "execute", "status": "pending",
+                            "rawInput": ["server": "other", "tool": "browser_tabs", "arguments": [:]]]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        XCTAssertEqual(made.chat.items.first { $0.kind == .tool }?.text, "A tool of its own")
+    }
+
+    /// Codex nests a browser tool's own arguments under rawInput.arguments;
+    /// the step ends on the catalogue's summary of that same call, not the
+    /// label it started with.
+    func testCodexAStructurallyNamedToolKeepsItsArguments() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]]]],
+                ["mcp": ["name": "browser_tabs", "arguments": [:]]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t1", "status": "completed"]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let expected = await summary("browser_tabs", for: made.chat)
+        let tool = made.chat.items.first { $0.kind == .tool }
+        XCTAssertTrue(tool?.done ?? false)
+        XCTAssertEqual(tool?.text, expected)
     }
 
     // MARK: - items

@@ -247,6 +247,9 @@ struct ACPSpec {
     /// What session/new and session/load carry as `_meta`, for agents that take settings there (Claude's adapter:
     /// its own tools off). Nil: none.
     var sessionMeta: [String: Any]? = nil
+    /// Config options to set as each session starts, by the option's id (Codex's sandbox: "mode" read-only). One the
+    /// session doesn't list is skipped.
+    var startOptions: [String: String] = [:]
     /// The method the person signed in with before, when there is one: after initialize, Search asks `authenticate`
     /// with it before a new session.
     var signIn: String? = nil
@@ -258,6 +261,7 @@ extension ACPSpec: Equatable {
     static func == (a: ACPSpec, b: ACPSpec) -> Bool {
         a.id == b.id && a.name == b.name && a.path == b.path
             && a.arguments == b.arguments && a.environment == b.environment
+            && a.startOptions == b.startOptions
     }
 }
 
@@ -265,6 +269,8 @@ extension ACPSpec: Equatable {
 enum ACPTimeouts {
     nonisolated(unsafe) static var initialize: TimeInterval = 30
     nonisolated(unsafe) static var session: TimeInterval = 60
+    /// A start option set after a session opens (Codex's mode, say).
+    nonisolated(unsafe) static var startOption: TimeInterval = 30
     /// A sign-in may wait on the person in a browser: minutes, not seconds.
     nonisolated(unsafe) static var authenticate: TimeInterval = 300
 }
@@ -294,6 +300,10 @@ private final class ACPAgent: AgentLink {
         /// What the agent said the tool does ("execute", "read", …), as its
         /// first word on it or any later one.
         var kind: String?
+        /// Whether one of Search's tools was identified structurally (the
+        /// agent named its server and tool, or Claude's prefixed name): a
+        /// permission request for one is let through whatever kind it calls.
+        var structural = false
     }
 
     private let spec: ACPSpec
@@ -318,6 +328,9 @@ private final class ACPAgent: AgentLink {
     private var tools: [String: ToolState] = [:]
     /// Summaries from an earlier run, by tool call id, for a reopened chat.
     private var keptSteps: [String: String] = [:]
+    /// Every config option id the agent listed, the categories Search hides
+    /// ("mode", say) included: a start option may name one of those.
+    private var configOptionIDs: Set<String> = []
 
     private init(_ spec: ACPSpec, _ hear: @escaping (AgentSays) -> Void) {
         self.spec = spec
@@ -405,6 +418,7 @@ private final class ACPAgent: AgentLink {
                 if let id = agent.session { agent.hear(.session(id)) }
                 agent.learn(answer)
             }
+            try await agent.applyStartOptions()
         } catch {
             connection.stop()
             door.close()
@@ -493,9 +507,10 @@ private final class ACPAgent: AgentLink {
     private func startTool(_ id: String, _ update: [String: Any]) {
         let browser = browserTool(update)
         let title = update["title"] as? String
-        let rawInput = update["rawInput"] as? [String: Any]
+        let rawInput = ACPAgent.toolArguments(update)
         tools[id] = ToolState(browser: browser, title: title, rawInput: rawInput, content: update["content"],
-                              kind: update["kind"] as? String)
+                              kind: update["kind"] as? String,
+                              structural: ACPAgent.structuralBrowserTool(update) != nil)
         if let browser {
             hear(.toolStarted(id: id, name: browser, args: rawInput ?? [:]))
         } else {
@@ -507,11 +522,25 @@ private final class ACPAgent: AgentLink {
     private func mergeTool(_ id: String, _ update: [String: Any]) {
         guard var state = tools[id] else { return }
         if let title = update["title"] as? String { state.title = title }
-        if let rawInput = update["rawInput"] as? [String: Any] { state.rawInput = rawInput }
+        if let rawInput = ACPAgent.toolArguments(update) { state.rawInput = rawInput }
         if let content = update["content"] { state.content = content }
         if let kind = update["kind"] as? String { state.kind = kind }
         if state.browser == nil, let browser = browserTool(update) { state.browser = browser }
+        if !state.structural, ACPAgent.structuralBrowserTool(update) != nil { state.structural = true }
         tools[id] = state
+    }
+
+    /// A tool call's own arguments: Codex names the server and tool in
+    /// `rawInput` and nests the arguments under "arguments" there; every
+    /// other agent's `rawInput` is them. Nil when there is no rawInput.
+    private static func toolArguments(_ update: [String: Any]) -> [String: Any]? {
+        guard let rawInput = update["rawInput"] as? [String: Any] else { return nil }
+        if rawInput["server"] as? String == "search",
+           let tool = rawInput["tool"] as? String,
+           AgentTools.names.contains(tool) {
+            return rawInput["arguments"] as? [String: Any] ?? [:]
+        }
+        return rawInput
     }
 
     /// A step finished: its line from the browser tool's own answer when it was
@@ -575,11 +604,13 @@ private final class ACPAgent: AgentLink {
         Disk.write(Chats.stepsFile(session)) { try? JSONEncoder().encode(snapshot) }
     }
 
-    /// The browser's tool name an update names, if any: Claude's adapter says
-    /// it under `_meta`, the rest in the title (or a tool name). It must be
-    /// exactly one of Search's tools: a title that merely mentions one is the
-    /// agent's own words, not the tool.
+    /// The browser's tool name an update names, if any: a structurally
+    /// identified call first (the agent named its server and tool, or
+    /// Claude's prefixed name), else an exact name in the title or a tool
+    /// name. A title that merely mentions one is the agent's own words, not
+    /// the tool.
     private func browserTool(_ update: [String: Any]) -> String? {
+        if let structural = ACPAgent.structuralBrowserTool(update) { return structural }
         var candidates: [String] = []
         if let meta = update["_meta"] as? [String: Any],
            let claude = meta["claudeCode"] as? [String: Any],
@@ -594,10 +625,33 @@ private final class ACPAgent: AgentLink {
         return nil
     }
 
-    /// A candidate without the server's prefix, so "search_browser_tabs" and
-    /// "mcp__search__browser_tabs" both come out as the tool's name.
+    /// Whether an update is structurally one of Search's own tools: Codex
+    /// says `rawInput` server "search" and tool one of Search's names;
+    /// Claude's adapter says `_meta.claudeCode.toolName` as
+    /// "mcp__search__<name>". The agent named the tool itself, so this holds
+    /// whatever the title says.
+    private static func structuralBrowserTool(_ update: [String: Any]) -> String? {
+        if let rawInput = update["rawInput"] as? [String: Any],
+           rawInput["server"] as? String == "search",
+           let tool = rawInput["tool"] as? String,
+           AgentTools.names.contains(tool) {
+            return tool
+        }
+        if let meta = update["_meta"] as? [String: Any],
+           let claude = meta["claudeCode"] as? [String: Any],
+           let tool = claude["toolName"] as? String,
+           tool.hasPrefix("mcp__search__") {
+            let name = String(tool.dropFirst("mcp__search__".count))
+            if AgentTools.names.contains(name) { return name }
+        }
+        return nil
+    }
+
+    /// A candidate without the server's prefix, so "search_browser_tabs",
+    /// "mcp__search__browser_tabs" and "mcp.search.browser_tabs" all come
+    /// out as the tool's name.
     private static func stripped(_ text: String) -> String {
-        for prefix in ["mcp__search__", "search_", "search/", "search."] where text.hasPrefix(prefix) {
+        for prefix in ["mcp__search__", "mcp.search.", "search_", "search/", "search."] where text.hasPrefix(prefix) {
             return String(text.dropFirst(prefix.count))
         }
         return text
@@ -626,6 +680,9 @@ private final class ACPAgent: AgentLink {
     /// What the agent offers, from either `configOptions` or the legacy `models`.
     private func learn(_ result: [String: Any]) {
         if let raw = result["configOptions"] as? [[String: Any]] {
+            // Every id is kept, not only the categories Search shows: a start
+            // option may name one it hides, as Codex's "mode".
+            configOptionIDs = Set(raw.compactMap { $0["id"] as? String })
             let parsed = raw.compactMap { option -> AgentOption? in
                 guard let id = option["id"] as? String,
                       let category = option["category"] as? String,
@@ -649,6 +706,19 @@ private final class ACPAgent: AgentLink {
             legacyModels = true
             options = [option]
             hear(.options([option]))
+        }
+    }
+
+    /// Set the config options an agent wants at every session start (its
+    /// sandbox, say), each only when this session listed that option. A
+    /// session that doesn't is left as the agent started it.
+    private func applyStartOptions() async throws {
+        guard let connection, let session else { return }
+        for (id, value) in spec.startOptions where configOptionIDs.contains(id) {
+            let result = try await connection.request("session/set_config_option",
+                                                      ["sessionId": session, "configId": id, "value": value],
+                                                      timeout: ACPTimeouts.startOption)
+            learn(result as? [String: Any] ?? [:])
         }
     }
 
@@ -767,11 +837,17 @@ private final class ACPAgent: AgentLink {
         // The kind the request says, else the one the step was begun with:
         // a request that leaves it out doesn't make a command harmless.
         let kind = toolCall["kind"] as? String ?? tools[id]?.kind
-        // A title is the agent's words and could be a shell command's; only an
-        // exact name of one of Search's tools, of a kind that isn't running or
-        // changing anything of the Mac's, is let through, and only once.
+        // One of Search's own tools identified structurally — the agent named
+        // its server and tool, or Claude's prefixed name — is let through
+        // whatever kind it calls it: the kind is then the agent's label for a
+        // tool the catalogue asks the person about itself. One identified
+        // only by an exact name in a title is let through only when its kind
+        // runs nothing of the Mac's; a title that is the agent's own words is
+        // never enough. Allow once only, as the catalogue asks itself.
+        let structural = ACPAgent.structuralBrowserTool(toolCall) != nil || (tools[id]?.structural ?? false)
         let harmless = kind.map { ["other", "read", "fetch", "search"].contains($0) } ?? true
-        let browser = harmless && (knownBrowserTool(id) || browserTool(toolCall) != nil)
+        let named = browserTool(toolCall) != nil || knownBrowserTool(id)
+        let browser = structural || (named && harmless)
         let available = params["options"] as? [[String: Any]] ?? []
         let allowed = browser ? firstOption(available, kinds: ["allow_once"]) : nil
         let chosen = allowed ?? firstOption(available, kinds: ["reject_once", "reject_always"])
