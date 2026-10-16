@@ -1,0 +1,204 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:42b231493965e478523ed3916783c5aaaff399fe17fcd69c12d21f5a17067a5c",
+  "claims": [
+    {
+      "id": "claim_56c6e101fd0a429fb33a0d68430889a8",
+      "statement": "State shared by every window (Preferences, Bookmarks, History, Curtain, Loot, Float, Fetches) lives in the Shared enum; each window's Browser holds only its own tabs and overlays.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L9-L22",
+          "version": "repo-lines-v1:sha256:ac034583a02ff7fbf9183f5ff8ba6f9ecf51a7e988fecf2252e14d17da707b35:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyOGViY2EwMzdkMWJlOWU4MGJjYjBjM2U3NWRiMzU2ZDk3OTYxZWUwNWI4OGI3ZDA4ZTg2YjQ1OTc5NDViMjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5YmY3MDFkMjRjY2UzZWY5NTZlZWFkOTdmYzcxNDBiZGMwZjNkZTcwZTlkYmFmZTFiZDU1YWNlZDJhNGNkYWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU3YjQ5M2U5ZDI0OTAyOGFjMzRjNTNmNWEwZjE4YWMzODgzMTY4MmJiMjk2YzNlMjY4ZDYzZDk1Mjk2MDUxYjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_90ab9c3f66e245e79fb53b5c1cb9f947",
+      "statement": "Browser.tabs is the row in display order and re-applies tab-group ordering on every change, so keyboard shortcuts, the switcher and extension indexes agree with what is drawn.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L36-L44",
+          "version": "repo-lines-v1:sha256:5667de3268859dfd9532a023b9235cefb78bf850aae91b3723759ecef6952392:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmMDY5NDE0ODNhNDMxZTk5YmI2YTBlMWU5ZTFkZjBkMmYzMDljMTNiNzQwNGJiY2ZiMWIzOTI5NzhmNGE4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWNjYjQ4NjRiYmYyMWRjYTE3ZWVhYzExOWYwOGZiMDJhNzZmM2RmMzE2MjMyYjA0NTkwZmE1MTk2OWQ3YzkxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2NiMDE4MDAzZWM3NzAxNGI0MDQxNzViOTExMWVlOTA2MGZmODAzYTE4MTNjMmY4MDRmYzVhOTBhMDFiMWY5MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_3bcee731570545d1ba513a09d778bacd",
+      "statement": "A Tab builds its PageView lazily on first access to web; built returns the view only if it already exists, so restored sessions create no web processes until a tab is opened.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L234-L245",
+          "version": "repo-lines-v1:sha256:2e6d3e50aaf4f7e1736a108302466a4489547e6ed1f68d49d9896be8708aeeb0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNzJjODE2YTA0MjI5NjVmM2EzNjI0ZTdjNDM0MWMzYTgyOTdkMThiY2VlZmE0OTdiN2RhZDA3NWVlZGU0YzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzMTI4ZmRlZTQ5ODZlMjA2MWYyNGQzZDFmMDljY2MwZWM5NWE5MjFiMzcwOGU5ZDVhYzM3MjU0ZjBmM2RiOWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMzYjRlOTAxN2I0NjYyM2IwMDI1MzU0MzYyM2NmODA0MjlmNDAzNTRjZjgzZjJmMTI2YzNkNjI5MjIxYjcyNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5MGQ5OWYzM2IxMDcwNGJkYjc3ZGViMTFmOGQxOGI1ODEyZjU3MmIzNTBhNjEzMWYyODdlZTE5NzdhMjU0OTAifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L547-L551",
+          "version": "repo-lines-v1:sha256:2142aecebe3a347c5246781eac8f80ae9c6f8b7304793bf5b05124e39f117489:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTExZGVjM2YxZDNiOWU5MzVjOWJkOGJkN2MyNmQ4YjdjNDgwYTBmODI3YTk5NGJiNGEwNzE1MWY3Y2RiMTI3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTIyYTU4YWMxMTgzOGFmMjQyMWM0MGM3NjAwOTcyY2E0YmJiNjVhYTVhNjJiNzExN2EzYmI1ZmMxODJjMThlNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmVkOWI1ZWEyNDdmMTFkMjk3MmRhY2I2ZGZlMGM0ZjEyODY4NmVlMGMzZTJkNTRmMjE2NTY2M2FhMDhjN2ZkMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWU1ZWRmNTZiMjNkOWY2YjQ4NWFhNTNmMzMwNmRkMjU1YTM1NTIzYTRiZjRlYThmMGI1OGQxMmZmOWJjOWM1ZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_90b3e982e3c144e79fd1e43272f6e6f0",
+      "statement": "Web.configuration uses the space's persistent data store or a non-persistent store for private tabs, a single shared process pool, a Safari-version user agent, disables automatic window opening, and attaches the extension controller only for non-private tabs unless allowed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L66-L122",
+          "version": "repo-lines-v1:sha256:02c8ae8739bbcddb931da6c32dc0b5b0ce90aae554fd9abbd15ffb80061c540a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcwNWMxZDA0MjhkYjEwZjQ0NWE4ZTZiMjIzOWUyY2MwZTZiN2EwYWRmODY2YzFhNmZlYmUyMzExOGI5NTVlZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ3YTMyMGU2YmU5NWQ0ODUxN2RlOTViZjNhZGM5NzNkNzBiYmJmYmZhZjQxYTBmOWEwMjM1ZTRiOTBkZDFkN2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4ZWEzYzkwNTIwMWQ1ZGMxNDM1N2ZhMTQzNWRmZjU1ZTFlNWQzMTlkNjBkYjgwMjc2YmM2MDE3MmIzZjdiY2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1d19ea5ace2a4f58a9457f6f238e7779",
+      "statement": "Search's scripts and message handlers run in a dedicated WKContentWorld named Search so pages cannot see them or window.webkit; only the passkey patch runs in the page world.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L14-L23",
+          "version": "repo-lines-v1:sha256:5d8c21c770b2c2f34cc7dadc29ab684f795099767f1e49f3fb5c8c2d448c2eeb:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlNTZlMzIwYmY2YjE4MmZkYzBkODZjZmJkZTc4YmVhZTZlNjQ5MzQyMzg4NGY5Yzg1YzNiNDRhMTFiZTNkZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3ODgwZjU1Mzk1YjBjM2EzMjBlNmM4N2U1NjIzMjMzMGViOTI0YzY2OGM2ODQwYTg4YTczMjY3OWYyZTMwYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjAyY2QxYmZjODZlMzYwOGE3OGZjYTEyNDZiMWJhYzczMDI3OWI3MzU0YzZmZDNlYmVlMzk2YzJlYTZhNDU0ODkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2M2MxODk5NGFhYzA4MmIwZWI0ODc5MmU3MTY4Mzc0NTQ1NWIxM2UzYWUxYTI3MzEzMzhiMWM2ZjE1OGZkMjQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L626-L642",
+          "version": "repo-lines-v1:sha256:1dc33c33f3f5e8f4c1b1c21cfa07a3c1afcb63bcd6172af3afd8459451d0a4de:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczNDEyMjg4MGY5NGZlMTE0ZmNjOTc2NTIyMWRiYjUwZjk5OWJhNWUwMTk3NGU5YTFkODBiNzFhZTk4MzQ0YzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjM2E3OTI0ZjYxNGFhMGE2NThhMWNkZTNhMzFhY2RjMGJmYTg4NTY2YWUwZWViMmZmYmMyMmNkOWJlZTBhNGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5NTIzMGNhYWE2MzJiOTQ1MzFmZjVhNzliMzk5YTk0MzdiOWQ3OTQ3NDgwMzUzMTkyM2VlMmViN2U2ZDJmZDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ZmEzYzQ1ZTZlMjY3OWE0NzY3MGJlMzNmNTA5MzY0ZTM1ODFhZDAyMTRiOWVmOTY1MDg0MzFjMmNkNDRlNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c79bcd3995b34e868d9a8a8214413e53",
+      "statement": "Message handler names are removed in both worlds before being added because double registration crashes, and pages opened via createWebViewWith receive a fresh user content controller rather than the opener's.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4399-L4432",
+          "version": "repo-lines-v1:sha256:bd267d388cb1781e66c6674026d1aac23cab2017fed5781bf325870cdeb710d9:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZjYyZDliZWFhMWRiZjU4ZjM4ODQ0YWJhYmE5NzhmNmQ0YWVlYTg3MWJiMmUyOGJmZDQ1MjZhZThhNzczNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ1N2EwZWNkYTdmMzUyNjE3MDU5OWVmNDYxODI2ZmUzNzczNTgwOTQzNTg3YWQ3ODg2YTY1NzdmODE3ZDE5MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY2YWM5MDQ4OGYxMmE1YTNjODc4MzU2YjBkY2EyMmQyOGNjNzU1NzA2YzhjYWZmZTQ0ODdlM2Q2Y2RlYzUxM2IifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L25-L36",
+          "version": "repo-lines-v1:sha256:fea9a81f3ab1316d061e3b6fae2d8a4d4d2485c00e950c79e7de2726cee33d3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyNTI0NGJiMDA3ZWZhNTE3M2ZjNjQxM2QwOTVmYzcwZDEyODYyYzI2YjQ4ZThkODNhY2IxZTRjMWU3YThhNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFiNTdlMWZmYWFlNjE1NWI5Y2ViYTg2NTJjOWM2MGRiODk0NzEwYjYwMjcxOWU0Y2RjZTU0ZDVjMDE1ZjYzOGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0YTQ5NTEwNmI0ZGQ3YjcxNTYyZTQwMDczYTEwMmY2NDExYTJlYjVlNmUyOWY1M2RmMWQ4NWM1NjkxZGE1NjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d90efee2f6248c887ba26013caad60b",
+      "statement": "Navigation policy intercepts extension and AI OAuth callbacks without loading them, opens Peek on shift-click when enabled, opens command-clicked links in new tabs, arms hidden-element CSS and ad-block tuning for main-frame loads, and hands non-web schemes to other apps.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4193-L4303",
+          "version": "repo-lines-v1:sha256:6264e3a3e083600cdfd8266c97ccb2b135336d1e59f3fdd74bc2236b4acb6228:eyJzZWxlY3RlZExpbmVDb3VudCI6MTExLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMWRkMDlmNzQ0Y2M4OWRjYjNjYTA1ZjYzMjBlMmZmMmEyNjdkMjA1MTkwMDk4ODkxMDg4M2VkZGVlYmViZDYxIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjNzBjYzI5NDRiY2Y0ZThhOGRiMzE2OGIzMzM1Y2E1M2IzNWRiNDU4ZjkyNzk5ZDFjMWZiMzI4ZmFiYmU2YmU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3YjZhZTk4ZjQzMjQ4ZWNlMDljYTQyZWQ4MmJmYmQ3NjkwYjFjMzEwN2U5ZDk2NzE4Yzk3YTY2NWE4NTVjMGUwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_16ad2b41cdd74e12803d7b770ec6674c",
+      "statement": "Handing a URL to another app requires a main-frame target, a click, or a same-registrable-site frame, and asks the user with a sheet except for clicked mailto and tel links.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4355-L4394",
+          "version": "repo-lines-v1:sha256:aacc29bea70713174b7279e76d5d6216c413e6052c5a49409ddfb6f4772eca38:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg5ODU3Y2ZhZDY5ZjUyOTJmNjRjOGY3ZjI5MTMzZTgzZDdlYjg3YWRmZDk3YjkzNWNmNjFlOTY2OTJmNjBlODEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJhMmZiZGFlYzJkMjJlZWUxOWJhNGY3ZTFiMGMzNjZlZjZmMjU2MGNlN2MzODI0MWY3MzA3MDQ3ZmE3ZmFkMzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4ZGEzOWU3MTE2ODlmMmFjMWE3ZjA5NGNkZWY0ZDFhNjQ2ZWQyYjY1MmRjZWVjMDNmMmQyNDk3NmIxYzEwMjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a540499897eb449bb8f5eb70b8a28710",
+      "statement": "Responses that are redirects are always followed, Content-Disposition attachment becomes a download, and any MIME type WebKit cannot show becomes a download.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4435-L4459",
+          "version": "repo-lines-v1:sha256:131a4edee9870e1703e776a9747488c9b89646a1f2611cb9b1bb1f3c51d466d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEyZjYyZDliZWFhMWRiZjU4ZjM4ODQ0YWJhYmE5NzhmNmQ0YWVlYTg3MWJiMmUyOGJmZDQ1MjZhZThhNzczNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5NWY2NGExZDQxZmNmMTQ0MGMyOGFkZTRiNzhiMGVlOThmZTRhYTNhMzUyODkxMmY1ZjljNWExOTcxMWEzMmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQzOWZkZjg2MDkyM2Y0ZjE0NDIyODY5NGI3ZTM5ODI1MDg1YWY3NjlmZDE5NjExZGEwMjMzMGFkY2YwYTIxZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_68fa6c1b437f4ac487cee7c66fcef2ac",
+      "statement": "Load failures other than cancellation and WebKit error 102 set a short human-readable tab.failure shown in place of the page.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4888-L4920",
+          "version": "repo-lines-v1:sha256:0c8854be4c0cfc8748d715ab3b2918d00424f894696b70e7c828b5eec6747962:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZjU0YzhlNTExNDE2NzM5MWVkMzZkYTY1ZWU5NWNkZWQ4MzczNGJiNTA4MTc4ODBmMWYyZmRlNDBjNTY1ODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0NDUwZmEzN2NhMGI5Y2Q0ZDcyOTAxZWZjYmJiNTdiYmU0YWQ2NzYxYWRmOGNkZjQ5YzgwM2NjZWJkZTEzZWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a671e969bd945b488e54af9a536ed62",
+      "statement": "History is recorded on didFinish only for non-private, non-bench tabs.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4857-L4886",
+          "version": "repo-lines-v1:sha256:a9287c77ba72fff3439b5ffff7bd1d252b2c13c9ccaebdca59b4afa638fb3528:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxYmExMzdmMzk2ZjZlNjBiNTY5NDBjMmUzMDIwYTMzYWE0ZmU5YTE1OTRjNmYyNGM5NmEwMTJkMTQ0ZjRhMDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjNWY2OGU1ZGM3NDI2NDU1MDJkNWU0MTk2NGIyNWYxMWE1ODVhZTUyMmU4NzQ5NDhlNmJlNWJiZDVkNTAzNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyMjhhZjg3MTY3NzM0MjQ2ZjhiOWFhOTg0YjgzOWQxNjViOTJmY2JhYjcwOTg2MGJlOTM2OTczYzM0NjM2ZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_436ab6fe43c14965be5c4a17402426dc",
+      "statement": "Closing a pinned tab puts it down (view released, address kept) instead of removing it; closing the last ordinary tab leaves a blank tab, and closing that blank tab closes the window.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L2701-L2763",
+          "version": "repo-lines-v1:sha256:ae8094be830d98c60b51a9f22fe7ffc5ab1a409e26fc3bec6e7d9ada52041cec:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0ZmI3Y2JhYTViMWFkOTEzOWQxMzJkYmZlZTU2Njc1MTY3NmI4MTE4NjgzYzYyNTRmZDNlMTAyYThlYWQyYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4MDU1NTIyN2IxNGM1ZmEwYTQ0NTA1NjhmM2U0N2RmNzAxMDg1NjFlZDU4NjM3ZTZiODlkZDc5ZmVhOGE3NzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFhMjA3MDk3OGJmNWIwMzc0M2MyMDJjNWQ5OGIwNDUwZDBmYzk0NjQzNjZkZGExNTcxOGJhNmI3YzUwZGY4MTkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L1023-L1044",
+          "version": "repo-lines-v1:sha256:32a8f742196d41834dd80d4985dd850c621a7e529b6252d4b7a57356d2b8b605:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkZjczNTcyNGQ2M2I2YzkwNzMxYWNhZTI0ZTU4MTNmOGJjMDYxZDU2OTIyNmU1OGMwYTMxZDUzZmJlOGEzZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1NjUyYjJiZDc2NzA5NTQ0MmQzOTFlYWNiYzk5NDAyMjlhN2Q5MmNhMTA2MTViZDhlNzMwYWFlNTBmNTg3YjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2NWRmMjBhMjRlMDBjZjFlZGZkODhjODc3YTFlOWRjMzMyYThlZmI2MDQxOWVlNDIwZDIyNjQxZTFjZTQwMjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3ce678f0e99a4ae1be70073901538050",
+      "statement": "Idle tabs sleep after 30 minutes by default (5 minutes on memory warning, immediately on critical), keeping interaction state and a snapshot; tabs on screen, pinned, playing audio, recording, downloading, holding a dialog, or holding unsent typing stay awake.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Sleep.swift#L1-L121",
+          "version": "repo-lines-v1:sha256:f605b233ad095fed1f3f083688e3282a4ea3720ef5844b258a6c935821b524ff:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhYzM2MmRkNDY1MDA4MmQzNDdkYTExYzJkZWM3NDIwYzQyYzZjMGQxMzM2MDUwM2I4ODhmYzk4MWZlNzY5N2QwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0ODkzZjQwZTM3ODFlYjg5NmM4MmQwNDZhMDgwNjdhMTFlMzVjZGYyZjFkZmFmMjZmZWE5MGI4ZGI2Njc2NDEzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MSwiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIn0"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L1050-L1058",
+          "version": "repo-lines-v1:sha256:8ae88466bb4b117bd926f7d4175f234b15350514118c158355c198ae7287e4fd:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTIxOGNjMjYyODAzOGZmMTQ1M2YxYzRhM2U1ZjAxZWYwYjE5NGE3MGQwOGE0NTJkMWZkNjIxZTdhOWMyNzA0OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTNjOGRjMWI5OTExNDhkYTVmYTk5NzI1MmNlMmUzNWQ5Njc4MTE1ZTI3MDlkMWQ2M2U2MWJhMmMyYTQzNTJiNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGYxNjQ1ZGVlMzI0Mjc0NjZmMmFmZTZkN2VmY2E1Y2U3MzkxOTk3NTQzZjU0OGFkYmQzYmVmODIyYjMyYzg1YiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_dfc801da35a44597838f7270885a4fd1",
+      "statement": "When a web content process dies, the active tab is reloaded from its address immediately and a background tab is marked stale and recovered when next selected.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Dialogs.swift#L355-L371",
+          "version": "repo-lines-v1:sha256:e94a4c7c953c2368bb1461fcf1af7afb9c2c244c5c5dbc52a0cb8907b148f6e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NDgyODdmNWU5Zjg4N2NhNDM4ZDg3ODExMTg0MmM0MjJiYjM0NTgyYzEyNGMyYmM2MDY4ZmQxZmQyMWY5NWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiZTNjNjUxZGFhNjE3Mzg2NDk3MTY3N2ViMDZiODgwZDI3MWQyNGNiNjE3MjlkMmJmNDZjZTYyN2Q3M2Q2MWIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L1166-L1263",
+          "version": "repo-lines-v1:sha256:393271498a48014ba83d1cf406e2a4d7a9cc6eaf8426ed6693059be0317dd7a1:eyJzZWxlY3RlZExpbmVDb3VudCI6OTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0NDBiMjA1OTA0ODJhZDM3MmQxNTQwYTk2ODg0MGI3ZjQ3ZDM2ZGIzYzNiZTEwZTRkNDQwMzAzNzZkYWI2YjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiNmIxZmI1NzE0OWU3ZDNiYjI2NGEwMjllMzUwZmJlMmYzZGNkNWJlNTZiMTMxYTk3Zjc0NDNlMzBhZTI4ZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8cad25602ba44e8fad35245df787f150",
+      "statement": "StageView keeps only a single weak wanted view and re-asserts it on every layout, replacing earlier wanted/held reconciliation that produced white pages.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Stage.swift#L200-L252",
+          "version": "repo-lines-v1:sha256:be6c3d2a16876b477a7fd1d4ee330047b3949362b092866937fc3eb7ef7bf1d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0YTA1OTlkODUyNmFlMjNjNWE5YzA0N2JkY2VlZmQ0YjU5MWI0MzQwZmJjNzBmNmI1ZTRjMzdlMmE5MzkzODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4MjAxM2VjNjQ4ZWQ3NmVhNDhjZDcyOGQ4ZWZlNDNlNDNlNTVlMTdiZDc1MTEwNmI0ZjY2YmEwZDkyMWRjZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0abc8cfcdd9c4b3fa33f74a02ff2b6b2",
+      "statement": "Muting uses WebKit's private _setPageMuted: on the low bit of _mediaMutedState and per-site autoplay uses private _setAutoplayPolicy:, both guarded by responds(to:).",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L145-L204",
+          "version": "repo-lines-v1:sha256:1c2447e2c80b35e8b87f5bcb606f7e700f2f7f2a98f40d41c6110941b5f8583c:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZmM2NWRlNjNmZGQxZWQ1MzAwZTNlOWE0ZGY3YzA1OGJlMWE2NzcxN2FlZWEyZGI5ODU5NWRmYzlmYWIyZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIzODlmNGIwMmNiMzc0NWMwODM5ZmFkMjIzNjIwZGIxNjRlZDU3YzVhZTk1OGIxYmQzMWY4ZDY0YWM3ODE0M2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_02c95ad4465c480ebcb00b068c333695",
+      "statement": "Page zoom is remembered per host (never for private tabs) and a site at the default zoom stores nothing.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L391-L421",
+          "version": "repo-lines-v1:sha256:38ffd9caa9d3a6a115b67ea90e1273dff3ab350810b5deae96bd5150a74323cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhYmQ5MTNhNDY1OWY3YTg3M2YxNjc4MmRhOWQyYzZhYmM5M2Y2NWZhMTE5YzYwOTVmOTE3ZjEzZGU5MWYyMjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0YTAzNmRmOGRlNzI5YjljMjYyYzYxMjljMWZhN2YyODcyMTVhNjZjN2E0MzJkNDU3NGMxMzE4NGJhNmQxMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiZGY5M2NlZDdlMmRjZjBmYjEwOGVmOTkyYzE5YjVjMzFiZjFlMGQ5MjQ4MmMyZTVkNmIxN2JlNDUyNDI3YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4OWY5ZjdkOGI2MThhZjg4NTRjM2M3MWE5M2RkMWY4NzhjYzcxNTRjOTY4ZGRkZjUyN2YzNmJlMDFkYTRhMzMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

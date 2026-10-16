@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d61be25c87a05e1eb29596215ca1b49c425798b425c5be73f5e8e16c3a53362d",
+  "claims": [
+    {
+      "id": "claim_c831b08a284b4ad89141493da9ed4636",
+      "statement": "The AI add-on is compiled in but held back: AI.shipped is false, and Settings, Welcome, What's New, preferences and Browser.startAssistant all gate on it (test runs excepted).",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AI.swift#L13-L20",
+          "version": "repo-lines-v1:sha256:45df5d2ece7ec148018348115e0f3470ed87a1e9b15f78d6efb75a6baff28b09:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDU5ODFkMTI4NWJhYzZiN2Q5YzQ3OGM4ZjE2ZTY3N2I5OTFiMzkyNmQzODkyNTkxZDI4OWVhYTk0N2U3ZTJmYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiN2FlNWJmZTE1ODg5NjU3ZjViMzMwYjk5ZDFhNmUzODkxMTg0NjcwNGQ2ZDc2NjE5YjVhZTM4YjEzMGIwZDM5NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjIxNThkYmFhMmZjZThjMTE1YWY2YjM5ZDJiOTU4Yzk5NjVmZWYyMzZmYTYyNzhhMjlhMjgyMmFkYWY3MGVjMCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/AIAssist.swift#L187-L188",
+          "version": "repo-lines-v1:sha256:4fa86b249f34d706cf50931bb181ac42d220bd194c6146b9eaefc7983e2cf035:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQwNWM5YzI4NTllMzk1MGYwNzViYjg0MzdhZWMwODA3YTBmMzM5ZjZkMmFhZmU2NDAzMWNlNmMyZWNhZDZlMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmMzODRiNjEwZmU5ODhmZDYyZDJlMGZhZDY5NzYwM2QxNzgyMzdkNDJjN2NlMzhjYWE3OWM3YjM5YWM1MWRkMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmE1OGY2ZWNiZTZiNzI0NzRjNjhhOGU3ZTgxMDg0MDlhNTE0ZjJkNTc2Yzk1NjcyN2QxMDVmODJjMTg0N2Q2OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2Y5OWYzN2U0NWQ5ZjZhN2U5YTY5Zjg2MGVjNWU1NDUyNjkyMTQ0NWU0OWJiYWY4YmYwMjlmZWQyZmM2MDBiZSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Prefs.swift#L317-L319",
+          "version": "repo-lines-v1:sha256:276482e39c7c79cde4b07dd3f82ce0f0aab973b67c96af142c4b37435f279cd9:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjI4MjFlNWY3Y2I5MjVjZTc3NWNkYWM0OTM4MGIwNDljMmY3Y2UxMjVhNGNlNjVmNDI1ZmU1ODhiMjRlNmU3MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGJiYjI2YWY1NGM4NTVkMjljNjNmMTcyNGM5MjFmNDkyMTU5ZTVjYzgxNDVkNzJjNjk3NjE2ZTZlZjU5ZDU2OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWYzNjM4ZTFkYzFhZmQxYTM0NDZiMzI4YWU3YTUyN2RhMjU4NzdkNzkwZDAwNmEyYzdkOTExODEyZjQ4MTkzZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZmViZTc1YTRkZDlmYmYzYmNhODk3ZWMzYTI5MzQ1NzU4ZWRlMDIyYTlkYjUwNzM2NzkyOTY1MWFlMmRkZjkxZSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Settings.swift#L81-L81",
+          "version": "repo-lines-v1:sha256:5162d137375cc9697feea0ef87e570b59df44b32b52bbcf97b18a4e32737c476:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE2MmQxMzczNzVjYzk2OTdmZWVhMGVmODdlNTcwYjU5ZGY0NGIzMmI1MmJiY2Y5N2IxOGE0ZTMyNzM3YzQ3NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE2MmQxMzczNzVjYzk2OTdmZWVhMGVmODdlNTcwYjU5ZGY0NGIzMmI1MmJiY2Y5N2IxOGE0ZTMyNzM3YzQ3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmM5ZGZkZWU4ZjRlMmFjOTVkMTNiYjMyMWM0ZTZjYTM3OGVlOWI4ZDM5YzVmNGFiNWJkNGM2NDliZDEyZTRkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDU1NzcxYzk0MmY4ZDRiYzNmMjdjNTcyZmRmNWYwNzMzMTJhNDQ3YjJiZjU5ZTMzMTIwN2ZlZjQyNjAzMTJkMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2b2f44e647c64b5a887510cfda598b64",
+      "statement": "Each AIProvider has exactly one base host; remote providers use https API hosts while Ollama and LM Studio use loopback http, and the on-device provider never uses the network.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AI.swift#L46-L65",
+          "version": "repo-lines-v1:sha256:f94e976a40ddb6bec99cce9ca5118aa0b50a16f62ae46c028723e626554c0f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzMmJjMjBiOGNhZWEyNjVmNTQ2MjFkZGNjMDdlYTc1OTUwZWY5Yjk4NGNiMmE3MDQxMTZhODk0OGU3MDYzOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMzRjYzYzNzU5YWQ0NGRmY2MwMTdmZGFmNTk2N2M4YWNmMzJiMTRjOTUzMTMzNTY5MGZmYWJkZGQyNTc1ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJhOTRhYjcwN2ZjNDZhMmEwY2NhNjY4YzMwZWYwODY0OWFhZjhlMWFiZDU1MjgwNjA5YjFjOTg4NWE1Mzk2Y2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e46b6b0812c441d1bfc01a99fa567706",
+      "statement": "AI keys are stored only in the data protection keychain under service com.officecommun.search.ai, account provider@host, this-device-only and non-synchronizable, with only the last four characters kept as a hint; builds lacking the entitlement keep no key and test runs keep keys in memory.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AI.swift#L97-L177",
+          "version": "repo-lines-v1:sha256:ecb40fba3e35caa4b04bf0c4a3d25b6eb158fcb1ebb1a2fac3c204ab4ddfc600:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3MzgyMDZmNGZlMmEyMmVlNTk2ZDcxODE1MWQ3MjQwZTZjMmFjMGJjYTc1MGNlMjI0NWY1MmFlMGM5ODBhM2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMTczOTUzMzRjZDU4MGIxNDBhNGY0MGNlNGJiNmNjNGQ5MmMwMTU0ZTM5M2VhOWVkOWZjYTVlMGIyZjhhYjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4bb6bf0a382e49ae8fcba187685b4a39",
+      "statement": "AIClient uses an ephemeral URLSession with no cookies, cache or credential storage, refuses every HTTP redirect, and only allows https to the provider's host or loopback for local providers.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIClient.swift#L49-L81",
+          "version": "repo-lines-v1:sha256:891292173aa8d06b850a9195edf722e4255e7da631c097cf93c8842908b0ac92:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkNDRlYzBlZjI1YjIzZWFmOWFjMjBhM2EyMTIwYjM1Mzg5ZDlkYzMzZTVlYjczNmFkZjFjYTg0YWUzMjg4ZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc2NTY1OGI1YWUyOTJjZjhkMWVlZWRiMjAwMmMwMGYxZDE4MzUwZWNhOTYwNzhkNGI2MTcwMmFhNjczNzc2NzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhMTYzM2ZlYzg0NzZlMTc1MGY2ODZkMjU2MDI2MWEwNzk4ODVmYTE1NDBiOWZmOTkyYjBiODljYzUwYmJkZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc86973b6d114de2be1fc854e34b6b9d",
+      "statement": "Provider requests put the key in a header (x-api-key, x-goog-api-key or Bearer Authorization), never in the URL, and cap output at 2048 tokens; OpenRouter requests ask for zero-data-retention providers.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIClient.swift#L137-L191",
+          "version": "repo-lines-v1:sha256:2a0437fd37c3e74127fda2d95771ec67333ed205c46f54bf8be33190834bf074:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYxZDQxNmJmMzViNDIzNmUxNjNlYjExMjc4MDg4ZjY3NzUzZGE1MTI5Y2E3Mzg3YTRlMWViMjQ0MzBmZTA3NTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiMzMxYjNlZjYxZTIxYTlhMTJmN2E3ODQyZDQ0ZDk3MTcxYmZlMzlkMzE2NmRkOTMzN2NlNjJjNWQwMzM2MGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxMGVjZjA2Y2ZhMGJhYTFhZjQ4ZjgwZjQ2MTZmNGI1OWU0MWQxMWY1NTdhNDMxNTIzM2VmNDU2MzQ3ZWQ2MTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_58341582f5e44102925269f383776d21",
+      "statement": "Page text for the model is read by a script in Search's own content world, keeps only visible text, and is truncated beyond 24,000 characters to its first two-thirds and last third.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIPage.swift#L4-L64",
+          "version": "repo-lines-v1:sha256:89592f0028c37436fb132cdc11df0123f589ef4db6a7fe567995303928f74fd7:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRiMjBhNzM3MTllMGVmNjQ5ODZiZjc5MDZkOTZiMmEyYzk5YjE0OTY4MGRhMThkMzliOWMzNDFkOGRhMDJjZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExMWU2MzUzYWRjNzlmYTM1ZWZlNGM4NGQ4YjdkNWFlZGI5NDNmNmFlNDE3ZjExYzczMzA5MGIwYTVlYWJlNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyM2MyODYzMWRhMjRkNTEzYjViOGZlNzAyNDExOTdhMWJiMzcwZGYzMWM5MmI1MzU5NWZkYWNkZmI4ZjIyMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f02782fe675446a79453936ee7272f0e",
+      "statement": "The page is fenced between per-conversation random markers that are stripped from page text, and the system prompt instructs the model to treat fenced text as website material and never follow its instructions.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIPage.swift#L85-L146",
+          "version": "repo-lines-v1:sha256:6a5afb9d54f1adcb5d57ea00a9206fd94913950d8670853d54f0123f4bc756fc:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3NWIzM2IyNjA4MDU2N2RkZWE1YjJhODM4NmVkNjA4ZDNiMWVlOTUyNmRlMDI0NDk2ZmVhOWFjYTg1MWE5ZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkNWI3MzA0ZGM2NjAxYmEzYzQxMTA4MzdkMmRiNGM0NTY1NDBjZmFlNTdlYTk0MGQ2MDg1ZDRhNzA1NjFkNWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdiM2YyNWI3NWU0MDE2ZmMzNjhhNWFlNWJlMTA4ZDMzZjExNDhjNDUyYjE1NmJlZjMyYTgzZjhhY2FhYjk3ZWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_678269b6c3cb401982f67c52d0246f47",
+      "statement": "Answers are post-checked for web addresses, emails and phone numbers absent from the page, and the page is flagged when it contains text addressed to an AI.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIAssist.swift#L134-L156",
+          "version": "repo-lines-v1:sha256:64a494f494c5f51bdad1cd249601c8eca907776f9c30cd613b909a4bd5a769c8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3NWI3ODFkNTJkOGMyYjAwODYxM2IwMjMwMzQzMzYwMGJlYTgzMGVlM2Y4NzhlNjViYWJkYmE1NWMwMDhmMDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0NThmN2I4NWRmYTViZjc4NWQ1ZjIwYzBmNzg5ZmM1MWZlMGI0ZDVkNjg5MTU1OTVmZjgwMGUzZjkyZDhmZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwZTA0YTJhMTdhNGUxYTExMjVlNjc3MjU3NDM3MmJiYjlhNmNmNGU2ZDk5YzY1ZGQxMzk5MGFmMmI3OTM4YjAifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIPage.swift#L149-L160",
+          "version": "repo-lines-v1:sha256:08ed9aab93cd92e443939a8a8348ce61cb90131a6378af5c335db079b39b3342:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1MDQ5OTAwMDBmNWU1MzUzNzliZmExZmQ2NDZiMDc1YmFkZjZkMWVmZTUzOWYwMDAwNWE0N2IzY2IwNjU2NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZlYzllNmFkNzMzZTlmNDViYWQzMzNiMGZhOTExMmE5MDM4ZDA4NmMyNDY4NDgzODY3YmI5NzRmMDg3NWIwZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3ZTU4ZjgxOTBhMTY1ZGJmZGI1ZThhNTRmYjAxNmZkMmVjMTkzMDNlOGNiMjgxYjIyNDE5MTJhNWY5MDk1OWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg0NWQ1NWEwMGUwOTBlYTkzNzkzMTlkODYzY2I4NDAzODYwZGU2YTZiODY0YjBjYTA3YTExOTc4YWMwZDM4NDkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIPage.swift#L66-L79",
+          "version": "repo-lines-v1:sha256:b319e12c69b68a5d64627e8d016800b29d4bba6e45674ff2b5578fd9f0851d46:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2MWI4NDEwNzE5YmFlYmY0ZmE0YWUwMjRjNjk1MGIwNWQ4ZTQ3Yjg1MDljZWRkOTZmNDY5YjFmNmRjZjRlNDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQwYjYyYjcxM2MwZjVhMTE3N2YxMzI2MTJlNDEyNDJkOGY5NmVjZTA1ODQzNmMxYzVkZGEzNWY3MDY5YzJhNDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzOGIwNDY2YjhmYmRiNDljMmZlNTU0MDY3NjY4NDlkMGE0OWVmMTFmMzc1YWQ1MTIzMmJkODQzNDVmOTExMDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a526fbba12044551b975a8852941a428",
+      "statement": "Remote providers require a one-time per-provider notice to be agreed before anything is sent, and private tabs may only use a local provider.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIAssist.swift#L200-L205",
+          "version": "repo-lines-v1:sha256:172937cd729ab8fab87dbb6d3d4d60fe4efacbee7851158be60262dcf0eb3776:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWM1NzEyOTRiMGI0ZmQzNWRjMjlmNTM4Y2MwYTQyYWNmM2NiMGRlZjI3Y2U3YmY5ODk0ZDY3MDJkZGUzZTlhYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjhhMjA1YWQ4NWQ0YWNjODBiY2U3YTE1ZjNhZDlhMGFlZTYwM2VmNWYyODQ3OGIwZTZkNjhjMGEwOTJmOWRjZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjQyZjQyMTU0ZTIxMThiOTg2YzE0MDI3OTE4NDFjNjY2OTJlZWM2YjJiYjNkYzJmZWZkZjM5OTY5ZDk3MGFmNyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/AIAssist.swift#L84-L99",
+          "version": "repo-lines-v1:sha256:3b3511663d8ecc13ababdef68f5d7477da147f50b2755be2096ae93a2789216f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRlZDQ5MjQ1ZmQyODdkNzM2ZDViOGQ4NDE4NTA2YzVkZDI4OTM3ZTFiMDc3NGYyNWQ4MDAwNjczNDBlNjU1YmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA0NWExMjIyOGVlYmQzNzYyMjEzZWJiMTdlYTRiNmE3ZjU0YmRlNzc4MGRhNGUwYmZhMWJmNzYzYTRkZTY2MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUwNDQyNDE5ZGRiY2RiMjM4OGFjZTA1Nzk4NjliNzliODE2YTBhN2M2MjM0ZTY0ZTlmMDVjODU5NmQ4OWM5NWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ee26a4a802474279a7b8b1fd7455d315",
+      "statement": "OpenRouter sign-in uses OAuth with PKCE; the callback is intercepted (never loaded) only in the flow's own tab, from openrouter.ai, within ten minutes, and the code is exchanged for a key saved like a pasted one.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AISignIn.swift#L44-L98",
+          "version": "repo-lines-v1:sha256:b658e683c356db15ed060d5d02bb4bd9b2436cb81dd07ddabab0549a8b6f773f:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3NDY5NzRlODliMzZkMmRjODg5YjE5ZTI2Yjc4NmMwZjI5ODMyMDczMzI1MGRmYjNlNWY0NzU1MWNkYjhjMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ3MmVlZTFjMTJiZTVhYTc3YjE0ODFmMTUxMTdjYTVmZTg5MGQ5ODMzOWM0Zjc1MzQyMjdlZGNkZjkxY2VkYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_df5a98c4dfd7452bb12e7e211337cc44",
+      "statement": "The on-device engine and the pinned Qwen3 1.7B model are downloaded on demand; the engine must carry Office Commun's Developer ID for its identifier and only the app-sandbox entitlement, and the model is hashed on the opened descriptor handed to the engine as fd 3.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L205-L230",
+          "version": "repo-lines-v1:sha256:fc055dee0d843859b88273a4efdc4553b7d86fb81cd9124513d2c6b6e110e475:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkOTQ2MzY0MzU0ZWU2YTdjY2JlYzdlNzhlMDUyYTQ5ZWRkZmM2ZjZmNWEzZjY1MzU0N2RmYzZiYmVkODNiYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2MWI4NDg4ODczNzM2Y2MwODdlZTI2YzYzYWQ5MmY5YzIxYzgxNWMyMjRkZjljZjcyMTU3NTQ3Y2JiZTA2NWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI4MjQ1Y2ZkYTM2NGVmZjMzYjg0OGJlNzllMzY5MTcwZDZhY2ZmMDBlYTJjMjUwY2Y4NzQwY2I2OTY4MjI3MDIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L296-L312",
+          "version": "repo-lines-v1:sha256:5fc1365a4df1db2745cff67fa90220bd8d553a76602703e3039068d045151c95:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjNTBjZTBiZGQyZjE1NTg3NmQzNjRiNWFjMDZlZjY2ZTI5NjU4MThkNmIyMDc5ZDQ4MWRjOTE0ZTVmNDVmNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZjA0MWIxMTQyYTAyMmUxMDA3MWZlYjI0NzhmMWY4MDRmOWNmYzYyM2MxMmNiYTViOTQyZTBlYjI1YjE3OTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY1MzhhNjM2NDMxZWE4MTI3YWQ1NTcwYzI5ZGI3MTZkNDFiZDMwMGNmNGZkNTFmZmEzNjQ2NjI3ODY3NzQzMGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhNTk0OGUzNzIxOTY0ODlhOTc1MGMxZWZhYzY0NGYwNzRlNjI1MDI3YjlmNzk3ZmI2YTBlYjlmYzk0M2ZmMzMifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L4-L45",
+          "version": "repo-lines-v1:sha256:a8ed564748f83f76ebaaa665d502dbeb76fbc5201afe3d89f9f0f392dae3b760:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MWZiNTg3ZDU4MjE3N2Y1YTAwMzlmYzdkNjUzODg4OTc2MTNlODQwMzMxMDNlMGUwNTcxYmQ5YzcxY2Y5MWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwYzFmMTg4ZjE0MmVkN2E4MjQ2ODBiMjA3MTcyYzU1MTliYzYxNGE0OGZkYTdjZjE2N2VkYjhkZGY3OTk1NmMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4N2M5YWFkZDkyZmMwNDIyN2Y1MWFkNWZhNjUxZDFhYzQxMTlhNmM5N2U3NTUyOTAxNTRhMmIyNjAwMmY3NzQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmMWM4Zjg3NjdhNDE5M2E3Y2YxZTU0ZTJmZGM5M2M0OGUwMDI4ODcyOTc3YzU2MzUwYWFiMzY3ZDQ4YjAzNzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a655ddc62e2444dba8405a859192a7f0",
+      "statement": "The engine is spawned suspended with only stdin, stdout, /dev/null stderr and the model descriptor and no environment, re-verified as a running process before SIGCONT, and stopped after five idle minutes.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L325-L364",
+          "version": "repo-lines-v1:sha256:bfcaea2a9f0a301ae3095b63fce07ae93b6d9e2120bfdd6fe0ab348dfbdfc588:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyMjdjYTJjOWI4MjU0Y2I3ZjEwNTVlMjJlZDdjYmJjNWVmYjNhNjQ2MGU1NTEyYWZiMzljODkyMjFhOGY2YmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlMjcyZTc3ODk1Y2JlZjk4MTAwMzgzOWRmZjZhMTQxMzdlNTNkNTBhNjc3NWViODFhNmM2ODM4N2NjOWY1ZTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNiNjhjOGNkMmU2MzJmM2YyNGNhMjJjNWFhMTQzM2Y3NWMwODQ2MWQ2YWQ2OWE5YWRmMDQ5MzE5OTBiNzhiODkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L493-L502",
+          "version": "repo-lines-v1:sha256:2703c142c833bdcfbf2fcc7dc795b7ff885eed9e75315d91cafebf56f7f6d11d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyNTk2ODc2MGIyMDFiNDJkODc4YTMwN2M3OTRmNGMzMTE2MmQ4NWY5NWNhM2ZkOGVlZTZjMWFiMTBhZWEyNTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMTVmMmU5ZjE0N2FhZDFlOGVhOTk5YjNlY2NlZTJkNzA4YmJmMjEwNzgxYjZiYmIzZjc0YjhlNDNlNTExMDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c469658ab51048f59c477d28cd5438b7",
+      "statement": "The engine speaks newline-delimited JSON over stdio and tokenizes page and user text as plain text rather than control tokens so ChatML markers in a page cannot end its turn.",
+      "evidence": [
+        {
+          "resource": "repo://Engine/search-ai-engine.cpp#L1-L26",
+          "version": "repo-lines-v1:sha256:2264267d15dedd74966b4339945786fa9e93b69ec99def27e902d29e9dc5c7aa:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2ZTY4YmFiMjY3ZDg5MGEwODMwNzk3NGM2MTdkZTk1NjZhNTY3ZjEzMTkyNTdkOTdkM2QwMzUyYThmYTYxODQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwN2FjMTM3ZmI1MGEyMjYwMmRmMzkyNGI2NTAwNTcwNTVhMTY4MjdhOWM5NWRjNTg2ZmI0NzQ0ODJhMTlmYTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2NmIwYmI2MzY3YzY4MTQxZjY2NmEyNWE2MzkwMzFhOGVjNzlhMGVkMTZiODhlZTAzODhhNzFiYjNhMjIwNTkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/AIEngine.swift#L461-L491",
+          "version": "repo-lines-v1:sha256:72013abec00b87c6425ac0cfe29dbcfc8337bf22cae208f3a8a63a5cd6685254:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNTU0YWE5NjFlYWE5ZDU2N2U4MmI3MDVjMDZlZDA0MmEwM2YzMGI1YjQwNWRkODE4NjZiMmNjYzQ0NWI3ZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwYTM3ZWI3NWVmMDMzNWExMzIxM2FkYTY2MWYzY2U3ZDc0ZDZlZjFlMTExYTU5NWEwOGNjYzVhODE3YTNiZDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyZDk1NzVhYWIzMjYwMjhmYTlmNTQwNWM1ZTJlNzg0NDAzNzBmYTY0NzJjNjU0ODdjMmU0Mjg2YTI2ZTliZWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4790859a8e814e379e2dc1352dab4f9e",
+      "statement": "engine.sh builds the engine from llama.cpp at a pinned tag and commit, signed with hardened runtime and the App Sandbox; ad-hoc signatures are accepted only in test runs.",
+      "evidence": [
+        {
+          "resource": "repo://engine.sh#L1-L24",
+          "version": "repo-lines-v1:sha256:e2173ea7adf38bfb47945ef6e7372f3f5865378c3387723fa862785b698f96c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NzVmOTI4NTQ2YWVlNzg1NWNiMWRiOWFmYzhhYjNmMWE4YTM0ZDQzZGU1YmJkNjJmNzA3NmQ3YmE5ZjM5MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRjODc5OGRjNzI1Zjc2MDg1MmFmMjNhNjc0Y2NjZDEwMzAxYjk3MWM2NTU3M2QxMGNmN2U5NTkwYTIyNWZlNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllMzRkMjkxMjI5MzJiNzMzYTMxOGQ4NjZiMTYxYWE2NmNlNWZhNzhiMjE3Y2QzZjE2ZDgwMGQ4MDVkYTVlOGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ebfe35414f84015a8543ae5da41d4d4",
+      "statement": "The update feed may offer an AI engine (version, https URL, SHA-256, size under 64 MB) which Updater hands to AIEngine.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L329-L340",
+          "version": "repo-lines-v1:sha256:4d96692c2997ac513e3157dfb1bde92e00ab4f5d15dbb38aa66e32156418bcf1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYWUyMzQyYjU0YmJhZjEwM2U3MWIzY2I3MDg4YzdlMTg0YzczNTYxZTNjOGUwODRkZjE3ZTA3N2MzYjNmYWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0MWEyYTRjZjQwM2U5M2YzMmExMzE0YzdlYWE0NDg5OTRjN2RkNGZiYmM4N2I5MGJhYTEwMmVmNmUxOGEwZTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlZWRhMjcyYWZlZTFkMzY1NWQwNjA2YjM0Nzg3MGU0N2E5ODU3ZTM4NmVhODM2MDlhYWI0YmIxMDI0YWEzNDQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

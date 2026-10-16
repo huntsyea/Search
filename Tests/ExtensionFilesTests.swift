@@ -51,7 +51,7 @@ private struct ExtensionFilesTests {
         try makeExtension(at: staged, version: "1.0", asset: "first install")
         try require(!FileManager.default.fileExists(atPath: target.path), "fresh-install target unexpectedly exists")
 
-        try ExtensionFiles.replace(staged, at: target)
+        try ExtensionFiles.swap(staged, at: target)
 
         try require(!FileManager.default.fileExists(atPath: staged.path), "fresh install left staging behind")
         try verifyExtension(at: target, version: "1.0", asset: "first install")
@@ -61,7 +61,7 @@ private struct ExtensionFilesTests {
         try makeExtension(at: target, version: "1.0", asset: "old asset")
         try makeExtension(at: staged, version: "2.0", asset: "new asset")
 
-        try ExtensionFiles.replace(staged, at: target)
+        try ExtensionFiles.swap(staged, at: target)
 
         try verifyExtension(at: target, version: "2.0", asset: "new asset")
         try verifyExtension(at: staged, version: "1.0", asset: "old asset")
@@ -74,13 +74,13 @@ private struct ExtensionFilesTests {
         try makeExtension(at: target, version: "1.0", asset: "kept asset")
         try require(!FileManager.default.fileExists(atPath: staged.path), "staging unexpectedly exists before missing-stage test")
 
-        try expectFailure("missing staging") { try ExtensionFiles.replace(staged, at: target) }
+        try expectFailure("missing staging") { try ExtensionFiles.swap(staged, at: target) }
         try verifyExtension(at: target, version: "1.0", asset: "kept asset")
-        try expectFailure("repeated missing staging") { try ExtensionFiles.replace(staged, at: target) }
+        try expectFailure("repeated missing staging") { try ExtensionFiles.swap(staged, at: target) }
         try verifyExtension(at: target, version: "1.0", asset: "kept asset")
 
         try makeExtension(at: staged, version: "2.0", asset: "retried asset")
-        try ExtensionFiles.replace(staged, at: target)
+        try ExtensionFiles.swap(staged, at: target)
         try verifyExtension(at: target, version: "2.0", asset: "retried asset")
         try verifyExtension(at: staged, version: "1.0", asset: "kept asset")
     }
@@ -91,7 +91,7 @@ private struct ExtensionFilesTests {
         try makeExtension(at: staged, version: "2.0", asset: "staged new asset")
 
         try withImmutable(target, clearPaths: [target, staged]) {
-            try expectFailure("immutable target") { try ExtensionFiles.replace(staged, at: target) }
+            try expectFailure("immutable target") { try ExtensionFiles.swap(staged, at: target) }
             try verifyExtension(at: target, version: "1.0", asset: "protected old asset")
             try verifyExtension(at: staged, version: "2.0", asset: "staged new asset")
         }
@@ -105,7 +105,7 @@ private struct ExtensionFilesTests {
         try makeExtension(at: staged, version: "2.0", asset: "protected staged asset")
 
         try withImmutable(staged, clearPaths: [target, staged]) {
-            try expectFailure("immutable staging") { try ExtensionFiles.replace(staged, at: target) }
+            try expectFailure("immutable staging") { try ExtensionFiles.swap(staged, at: target) }
             try verifyExtension(at: target, version: "1.0", asset: "old asset")
             try verifyExtension(at: staged, version: "2.0", asset: "protected staged asset")
         }

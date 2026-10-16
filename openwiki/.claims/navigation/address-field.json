@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d1c66d3898fb59ed618c92930a0c024d5520f64f8b099852420dd8d3bc8bff4e",
+  "claims": [
+    {
+      "id": "claim_65e071149b82410abdec04f56a594d20",
+      "statement": "Address.url accepts text with a supported scheme or text whose host looks like localhost, an IPv4 address, [::1], or dotted labels ending in an alphabetic TLD, and never returns a search URL.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Address.swift#L3-L90",
+          "version": "repo-lines-v1:sha256:cc796c42b00f4baff77acab68a6cf0303eb9f9ad32343fcfc9f8be380b3f055c:eyJzZWxlY3RlZExpbmVDb3VudCI6ODgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxNTk5ZDhhMTRmMDMxZThjY2JhOGEyOTExMmRmMzhkOGYzMWMyM2RlZWNmZjQ4ODU3ZTI5YWE1ZWY5N2VhNzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjExOGJmY2MwNWRhNWVkOWI1NWRjNTcyNWE0ZmNkYWVjNWMyNTc1ZmRmNGNlMjJhMTk5MDliMWIzZjRkZTgxZmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5YjFjOWU3MjUyNGEwZGUyY2M3MGM2MTUxYTAyZWM5MmVmOTc0N2I4OTczZjcyNzEwYTUwMGQyYzNiZDEyY2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_147a20e92d6440fc95c7bf7790c485e8",
+      "statement": "Typed local and private-network hosts are given http:// while other hosts get https://.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Address.swift#L36-L56",
+          "version": "repo-lines-v1:sha256:3aca5e1aafcc538066ed4a18305a3a19cc88a0f6d4f899fb1e5994cf8bbfdeba:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyNTM2MWM3NjAwNGUxZDAzYmIzNTRkYzhmM2M4NGFkZGM5MjliMjMyN2ZhZmE2ZjlhZTc3NDhmMzQxODU5MmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4Y2M4MzdhZjI3ZGQwODFiYzIwMTk2MmE3YTk0YjgwZGFhMWMyMWNjNzZjNTM4MjUyZTNkMDI1ZjlkNzhmNjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUyODc5ZWZmNzY1OWU4YmNlZGZjODU1M2MyZDYwOWVkYWY5NTNjOGZiNmZjMzk3MThiMDQxZDJlMmE0NWE3MDUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9780ed2f74144610ac16927b407e10c2",
+      "statement": "0.0.0.0 URLs are rewritten to localhost at navigation time because WebKit will not load them.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Address.swift#L58-L68",
+          "version": "repo-lines-v1:sha256:f55c25cd2a0dc498a4f1d2d3b867a7bacc3e5d118ebc16622c25753280755cd1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlYzg3YjE0MzAzZDMyZDFiMjdhYjg4ZGZjNDU3NzAxZjFkZmQwMTMxODhjNmIzNTliODA5ZDRiNDZiNjAzYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5ZGVlMzU0YjM2NjNkMzIxMmQzY2NkMGYwYTY0ZWNhZWM2MWY2ZjBlNTE5YWQxNjZjYzJmZDEzZDMyYWRjNWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZjNjQ1OTVmMGY0YTQ2MTNiYWE5OWZiYjAwYzQ2YTI5ZGIxZjk1NWYzYzY0Y2E2ZTI2MTQ0NWRmMDc3NzRhNWQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4225-L4231",
+          "version": "repo-lines-v1:sha256:9fbcff0c64bfcfe48a8f47149a407188a6f73f6c1b502cd300e9eafab417f184:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzNkMGVjZjJkNzNiMDM5NWUzYTMxOGNlNmM4NmMwMjM2NzBlZTQwY2VhZWE5YzAwNDJhNDYzY2ZlZjM5MjljYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGJhODRhMDc3OThmMjc5ODY5YjQzNWU3YmRlNjJmZGM4NmQ0YWY5MzcyZGE3MjJmOTVjNjI2OWEyYWI5MDNlNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOGEwYWFkYThkMmJmOTgxODJjOWFmZGNkNjZiMmYwYzdkOThjMWM1NTYyY2MwMmI1NDU0MWVjMTI0OTJmMWYzMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a7de52a95bd4837a9e2bd39fdb8eb62",
+      "statement": "The suggestion list shows nothing for an empty field, up to three history places, a search row only when the text cannot be an address, and an address command first when enabled; open tabs are excluded.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3896-L3958",
+          "version": "repo-lines-v1:sha256:87c485025bcc8084cbcdbcf3c17db2a20ff34b5c66b954aadf401265e62d5aa8:eyJzZWxlY3RlZExpbmVDb3VudCI6NjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2NjIyNWE3OWNkYTQ4MjA0NWU5ZGE0M2IxZTUxYzI0MDM3NjA4YzY1YzdlZWRiNmQwNzkwNTVlMmUyZDVlOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxZWEyOWI3NGUyOWFiZTdiNTU4YTNlYTgyODBiMTI0MWZmNTI3YjJlYTJlOTQwMDJkZTk4MjQ4MGMyNTFiZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVjMGY3NWU3N2M4OWQwOWM5M2Y2OTZlOGMwZDdhYzU0OGY3YjlkODQxMjM3ZTQ2YmU5YTRlMGNhN2EzYmE3ZDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a89963c22a534365b537f0b8415c1e1b",
+      "statement": "Cmd-K turns the field into a switcher listing only open tabs in the window by most recent use, with the most recent preselected.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3887-L3903",
+          "version": "repo-lines-v1:sha256:d4732ab55894444a27e31e611335467b835750586293aadb65b648f5078583c9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY1ZmM4MWYyMTU2MDE0YmVhYWQ0YmQyY2EyMjc2ZTA4OTg1ZGQzY2VjMjcwN2M2YzU4ZjdjZTM1YjE1YzMzMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlN2JjZDM2ZWY1M2I0NDUyM2U2NWU5OGQxOTQ0OTkzZTBmZjE3NDZmNTUzNmMxYTUxMTc0NmYzZTAxZTc1NmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjliMTFjNjQyYTFkY2EyMjc4ZDIwMTFjYjBkZmY4ZjQ5YjcxNTFiMWZkOGFlYmI0YmQxODU1YzNmZjA2MGMxOTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1ZjEwMDZiZTY4MDUxNDdiZDA4NTA2OTUzZjE0ZjViNWYwMTlhZTU5ZjI4OTRlYTQ1ZTllNjNlNThiYTNiNzYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3960-L3984",
+          "version": "repo-lines-v1:sha256:8a3acb42813c6d2a29b69965cfa726dff60171353cb82982fef951489315ae7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkwZmNkN2EwYTc5Mjg2ZWY5OTI2YmY3MTRlOTQ5NTUyMDgyODRjYWFjYjVhZTE0MTJmMDBhZGFmMzI4MzE4YzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2ZDIwZGFkOWU5NTU4NDZjOWEwODE4MmQ3NzVlNzQwN2M5Y2RjMWYwZDFjNTRkMjI3ZWQwMzJjYWM3MmQxYzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiN2NlNTAzZmZjZWY4ZmI3YTA0NTY0NWU3YTQxZjI5Nzg0NGY3NGVmNzQ2YWQ3ZDAwZDhiNmY3OWIzZDgxNjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a420b55ba4fd40b291a6a0408b372f74",
+      "statement": "Address-bar commands match only the whole typed text and are offered only when the setting is on.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/AddressCommands.swift#L1-L70",
+          "version": "repo-lines-v1:sha256:d67442d28cc2d361b708fb43afc029ab90cd6e1c80092bc35137083cb6b37b5b:eyJzZWxlY3RlZExpbmVDb3VudCI6NzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b21d006bbcc47faa7dee523820a239b",
+      "statement": "Keyword shortcuts send the words after a matching first word to that keyword's search template regardless of the default engine.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Keyword.swift#L1-L73",
+          "version": "repo-lines-v1:sha256:43312511467f58a270ffac2b437e23c618353111eba3cb71889a29be4a1ca1f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6ecdcfdae1544942926137e41db16b75",
+      "statement": "Site search matches built-in sites by name, address or alias, and learned sites only by address, requiring at least two letters and no space.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SiteSearch.swift#L78-L95",
+          "version": "repo-lines-v1:sha256:5f310342462351761ba64612586e1a3353c73aec64bb1737c202ab0ed313a089:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ZGRjYzkxNzM2MmVlNTJlYzFhOWM1YjVjMmEyMTIxMzY4Yjg0NjI3ZjA3MmIxZGJiZTRlZjllMmZkNTE5ZGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI5NzU3MDNjM2Q4YjRhM2Q1MGNiMjAzNWQ0Yjk4ODBjM2I3YWRlYjEyMWUwYWYyMWYyZWY3M2Y3ZWM5Nzc2YWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_424c6d86ab7244e08a733db72b9d52ca",
+      "statement": "OpenSearch descriptions are learned only from a visited site's https home page, on the same registrable domain, fetched without cookies up to 64 KB with redirects kept within the site, and at most 40 learned sites are kept.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L4878-L4885",
+          "version": "repo-lines-v1:sha256:5c90840d7f1819b9011052bbae1e611faea56f5cfb28e5d3cd67758b735d1de9:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDUzNTUwN2JlMzgwZjM3ZmQ4YjAzZmYwNmM2MjUzZjcxNWRmYWU4MmNkYTNlYmI5ODA4MzNjNTJlMTEwODA4NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjgxY2U4OTRiMjk1Zjc0Nzk4MjFkM2JlODMwMWYwYWJhNGI0YThhZmRmZDIxNGNmZDFmZjZkOGQ5NTRmOGJhMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzA0ZWM3NzA0OGY3NGNjN2JiMWU1ZTdjYmRiNmFhNWRmMzEyNDM3YjcxOWMxN2NlY2IzYTQwZTc0YzQwMzFlMyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/SiteSearch.swift#L96-L190",
+          "version": "repo-lines-v1:sha256:4929a1566a2caa839ef8f8c90e667062de286f617cf0c58ce1f8ee28d7dfa12b:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJhMDgxZWNhNDVjZjZiY2VmNGJlYWU4MzdiOGUwMTkwMGEwMThjYmYyMTNmZjhkMjFhZTEwYWZhMTUyZGMyNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkMGQwYjExMTNlMTc3NmJlNzQ5OTk2MjA3Y2RjMWM2OTA2ZGZmNmVhMjM1NmMzMDFlMDQwNWI1NTg4YzYwNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ZjBiOTkyZWYyYTI2ZWM4MmI4M2ZmN2U5NmYyYmE4M2EwYTdjYjUwYmVhZjA2YmUxMjVmZWY1ZWQ2OGE2YzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b0c1e71b955f4fb28a613d296817460b",
+      "statement": "Learned search sites are named by their address, never by the name the site declares.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SiteSearch.swift#L149-L160",
+          "version": "repo-lines-v1:sha256:263180d8002b142fce2641c9196ee19612b420acad60f193a9355f9e0a4a907d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4NDQwYmNiY2ZkZmZmMDg5MzJlYTAyZjY1NDE2OTg1M2JjNGFlMDhjZDdiOWVkNTIyYjU3YmNkNjE3MWViODAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImFiYThmMzcxZTk5NzRiNTAyZTVjMGI1MzRhMTdjNGI3NGYwNTZkNTJlNGU5MjVhYTk5YTI4ZDhlY2Y5NzA5ZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA2NzkxNzQ2ZDA0N2YzMWJkOThkODU4NWQyYTc3MTFkM2UwMGYyZWFjMWQ2MjBkM2MyMmNjMGIxMGU2YjUwYTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_81d7522ed0af4b13a3a3291415c5ecbb",
+      "statement": "The site card shows connection privacy and per-page controls under the active tab's address and never takes keyboard focus.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SiteCard.swift#L1-L30",
+          "version": "repo-lines-v1:sha256:f0b03b28a28e9137646be651e9c2353e82219825c1e75f38545073b12e3c439f:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU0ZjY0YjdjYWQ4ZGU1MjMxNmY1ZWZiYjAyMzFmNGUwZTgwZDU3MDlkM2I2ZDBlN2RjMGEyMTM0MGYxYTAwN2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5NjNkZDZiNmQ5NmZlZjJlMmM1N2Q5YzIzYjJmYzIwYjM4Mjg2N2YyMTI0NTdkNzkwOWY2MzYxMTQ2NjRiNGQifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

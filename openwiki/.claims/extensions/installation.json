@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ff79a6c36f9185d29a83fc408b934d2ca00b2c7d87d5a44da7bc30571fbc273b",
+  "claims": [
+    {
+      "id": "claim_ace5bbb44ee44d5f819687555c918069",
+      "statement": "Store extensions are fetched from Chrome's public update service while claiming Chrome 140, because the store refuses extensions whose minimum version exceeds the reported one.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L35-L103",
+          "version": "repo-lines-v1:sha256:44da01b66e875405a3aedd7f60549ca0ec73391557603d1790f445056e11db6d:eyJzZWxlY3RlZExpbmVDb3VudCI6NjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxOTI5YTU3ZmM3ZDFjZTk2MWU4ZWE3NmZkNmFiYTk0MmJjN2MzZWVmMTZmYTI2YjczMTczNDYyMThhNmYxNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRhNTM5NzkzZjA5Yjg0Y2U0ODM4OGUyOTE1OTlhZTVjNmEzZDI4NTUxZGY0ZWI4MzlhZTI2YzgwNzc2MzY0ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_24a84b0f820d4f29ad0b25c2e999add8",
+      "statement": "A CRX3 is accepted only if its signed header's crx_id equals the requested id and an RSA proof whose public key hashes to that id verifies over the signed header and zip.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L105-L146",
+          "version": "repo-lines-v1:sha256:bc7364178e724e01870e466b9a85daaa7994bf042ebf8c2be248978e2811e9af:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkYzIxMWQ0YTllZGJkMTI2YmMxNjQwMWNjNDZhYWQ1OTg1ZjA3NDI2YzkzYmY1Zjg2N2U2YWYwNTllNjlhN2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUwYzdhMGYwNjJhZTRjYTZlODU3Y2VmMzZiOGU0YTUzMjNiMGU5YjVlYzlkNzY2YzA2ZWY3NzAwZTRlZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUxMWJhNzQ0OWViZjJmMWRiMTEwMTYxNDJkNjE5NzJjODA4NTY5ZTRkMGQyMzNmYWM1OTY0MmM5NTA5NDhiZGUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L12-L17",
+          "version": "repo-lines-v1:sha256:1260fb55ed5466485e783c347eb1c9131d1658c42d2e48be1f34d36fc534ad7c:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMWE3NTBhY2VkMDE3YmU5NzM5YTIwYjZiYWVhMTk1NTk0ODdjNDdiYThmNjJhZDZmNTI2OWNhMzE5MDU1NDc0NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzIwOTkxYjMzMzMyNTYyYWViNThmOWMzOWQ4N2JjNGY0OGQyYzYyNTljZjVjYmFjNWJkZjA4NDg5OWVhNzllZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzJhYzI0OGViMzM3NzAyZDAyOWJhMGVhNDMwOTUxMWFiOWYwYjM0OTU3ZDc4MDUwODJmMGQzYTNmYTEyMGJkZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTFhMDc0ZDI0ZTJlY2EzYTg0Y2MwMjQwMDc4NTE2YWNiYjkyZTNmZWRkNDY5NDNiODNlNWIyMzM5Y2QwMjQ3NiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L222-L235",
+          "version": "repo-lines-v1:sha256:f3f9b92fd4b27d1ad6ffe24c6105ed1be266646f31604fed0e7357b3a492f243:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkMzcwM2Y3ZGQ5MjU5OTYwZjlmM2YwOThjZjIwOTI1ZmU1MDdmYjZjNmQxN2ViNDMwMWE5Y2FjOWE5NmNmZmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMDdmM2QyMzMzODA0NDcxY2NmNTQ0MTMwNTUwZjE1NjYwMzkzZDVlZjE2NjQ1OTgzYTNkNjEwN2YwNDllYzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d0869625390a4f5393945b42efead91b",
+      "statement": "Packages are extracted with ditto, must contain manifest.json, and any symbolic link in a store package causes it to be rejected.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L148-L177",
+          "version": "repo-lines-v1:sha256:f2bdfd19cdc14bf4b2c75af337dc3734b6309c2702f3bc00187380c4c3533d49:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhZmI4ZjQ2OWFkOWRjZWQzYTIyMTczNDQ4Njg1NTliYTRmMjRjMTY2ZTA1MzVlOTI1NjRkYzQzOTcyZTAwMmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM2ZGI3OTFlMTAwYmUwNDgzZDU0Nzc0YzljMDg1ZDEwNjRmMzY4MzJhMDg2YzdmZmQ3YWExOWU0MTcxMjlkMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAyZWE2NjY3YjY2MTRlNmVkMmM1NmE2YzlhNGU1NDk1YzI0Nzc3NDg0NzU5MzdjYTE3ZmQ3NGU5NDk0OTA4OGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_db8986b185ce4dec8c3152dafcb6d3ce",
+      "statement": "An unpacked extension's id is derived from the SHA-256 of its real path, ignoring the manifest key, so a folder cannot claim another extension's id.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L40-L51",
+          "version": "repo-lines-v1:sha256:8d29d60651e5b8552f2ed893febd986fb438263cdb4da59039dac714e9592321:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2ZTJhNmVhYmExMDk2Y2M1MmFkZTU1ZDQ1YWE4NmE3ZWQ5NGYzOGI3NzBhZmRmMmFmOWQyYWQ3OWU1ZGJkNzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmMjg5NDZlYjA1OTlhYmUzNjRmMjJjNWIzYTcxZTY5MzY3NGQ3ODc3Zjk1MGMyODhjYjU0NWYzY2Q5ZmVlYTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFlZDNhNzJhZjQ1MGM4NzlmNmM5MGJjODAxZTg3OTM3NzlhNzc4YTk4YTg3OTdmNTgzNmU0ZDE1ZDcyNThiMDkifQ"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/UnpackedIDTests.swift#L30-L60",
+          "version": "repo-lines-v1:sha256:cfa9905151101bbef3e2ae0301f4fa192816409a8d209dc65bead9bf1a124654:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwYTcyM2RhYjFlOTNiZTQ0OTY3YjUxZGI5NWJkNDhiNDMzYTQwMDIyNzk2MjgxMzU1OTkwNzgwZWYyNGI2NTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE4NTBjYWQ5NjJiYTA3OWIyMmEyOWNlMjAxODFiYTUxNDllNjFmOTg0OGI3ZjM1YzI5NTg5NTdhOWI0NmVlN2UiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyNDM5NzMzOTYzNWRjZWYyNzc4NjczNzhjZmQyNDkwNWZkNzhjMTNkNjYzMmNkMmI4M2Q3ZjU5Mzc2NTczNjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_633df60467d843a99153ee3d03122d4d",
+      "statement": "Folder installs copy the folder into a staging area and remove symlinks that lead outside the package or nowhere before shimming and admitting it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L131-L152",
+          "version": "repo-lines-v1:sha256:2687dfdea18e4e90f19bc8b9026a2b20984786def27677e62261cb96dc74576e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhYzY3NTZmMWI5NmFlNjJmODllZmFjYjhmNzc5ZWJhMWZiNTMxMjJhMmM1ZjU1OTAxODQ1NzQ4N2Q5ZGI1MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNjI0MzFkMGY3YjYwMWEzNWM3YTYzYzFlYjBiNWQ0NDYyNzdkZTRlMDI3YTM3MzAxMjQyMDk2NjNhZWI1MGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBlNWJjNGYxMjdhMzU4ZDc1NWEzNzY5M2VkOTc2MmRkMDljZWRlMTg1NWUyZTY2ZTdiMGJmYjJlMmE4NjM1NWIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L576-L601",
+          "version": "repo-lines-v1:sha256:42b4db86d7b61a6f5ca499c5077ce994ff36a15944ecf1dc2e23f4a2415292a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5NjRkNjdlY2FlOTJmODdiYjc4MzY0YTdlNjUwYWNkNmU5ODE4M2RmNjhjODNkZGRjYmM0ODdjODc5Y2I5MTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVjYmI1YmIyN2RhMzJhMGE3MTVmZGQ2ODE5MzQ2YzUwZGRhY2YyOTQzYzE5OTZlNGMwZmEzMjkzZWY4MzU2OGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVmNTQ2OWVkNjA3MWE3N2RjZDJjYWI0MjMzMTU5MWRlOWVkZDU0MGFiZWM5MmYyNjUxZWU4MTcyNWMxZTYzZDMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ab8171e340ab4ba68e423c465b1654e1",
+      "statement": "Reload re-copies an unpacked extension from its source, refuses when the source now resolves to a different id or is missing, and asks again if it needs more permissions.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L41-L47",
+          "version": "repo-lines-v1:sha256:4628cb085135e0a4392ea39cdd63f0c7c001cea7333251f4799d303737ed44ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2IwYjgzNDU0ZWY0M2ZkMjQxNTdhODU2NjlkOGJlZWUzZDA2ZjE1NjhhOWVmNDc5OWQ5ODExZGUxZGZhYmQ4ZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmZiNTFlNDgxOWIyMWUwOTY1OTA3MGEwMWRlODA1MmI2ZmQ5MDRiZTZjOTY5OTlkNDExZTQ0ODQxMzA3Yjc4ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzZmZmQxNTdmMjYyNzRmOWU1YmU5ZjMyNmI4M2JiZGRhZDA5NjI3OGRiM2Y4NDgzOWQ1NGRmMGRkYTUzNjc0NyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L603-L677",
+          "version": "repo-lines-v1:sha256:4da698faf5227f81ad4bf9f61f9e942b658d7bb551ccbdbc43a7b7c5053dc19c:eyJzZWxlY3RlZExpbmVDb3VudCI6NzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ4MTcyNDE4ODhhZTdlODEzNWQwNzJiM2Q0OTFkY2FkZjM4MWEyYjA2NTg5N2YzZTgzMWVlY2UzOTgwMjgyY2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYxYWIzODhkN2FiMzZiZTEyMzExYWE5MjIzMzI3Njc2ZmVlMDQ3ODYwMzFmMjkyOWRjNWU1ZWM5M2FmNGU1MTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_daa8b1e3beb34466973f8cf7abae2381",
+      "statement": "admit asks the user with a description of capabilities, records the grant set, atomically replaces the folder, writes the Installed record and loads the extension; declining leaves nothing behind.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L738-L764",
+          "version": "repo-lines-v1:sha256:f80d2ecfaeadffd117e178763ce3d06a0688a6ace73d5392e6a7eb5b619ede14:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2MDgxMmQzZWYzODBiOTAyNDBkYTYwZDRjYjc1OTk0NDg3OWUxMmRhOWI4ZDZhOGE1ZGY2ODkxMDhhMzBjZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2M2U5ZTA2YWY2MGQxODAwMmJlMjk3ZGU4MGZmZTE3YzE0MTU2MjA2ZjZjOGNhYTRjZTVkMmY5ZWEwOWUzNjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlMjViNTIyZDhkNjZiYzJiN2MzYjY0ZjBhZWIzZjk3MGM0ODY0YjY2ODg4NjA3MWJiM2ZlNmY5ZDM3OTFlMDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3896f1cdbb854b799779a4a87ea44fb5",
+      "statement": "ExtensionFiles.replace uses renamex_np with RENAME_EXCL and falls back to RENAME_SWAP on EEXIST, so the installed copy is never deleted before the new one is in place.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionFiles.swift#L1-L42",
+          "version": "repo-lines-v1:sha256:6470aa53b028c11d9f58df31b4e69cf9dff2f4dba2f08ab02a899072544ae389:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_46f86782b9634928af6226969aa4df9d",
+      "statement": "On the Chrome Web Store, an injected script hides the Switch to Chrome banner and replaces the disabled Add to Chrome button with an Add to Search button, re-applied on DOM mutations.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/StoreRelay.swift#L4-L161",
+          "version": "repo-lines-v1:sha256:4b49eb9b1215b1b26d0ba96835e86ff1f91a1524db3db5755dd7082475db0e92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU4LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhYmVmNTRjNWM4YjM4ZmM0ZDhkZjNhMWU3NmVhMmRkYmUwOGRiMmViMWI4ZWE5Njg4YWNiOTM4YjViOTM2MTg2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJhNmE3MTUyNTcyZWU4NGYxMDkwNmM3NGI5ZjJhOTI0MzRkZGFiMGUzYzQyODEzYjA0ZTU5N2VmY2VjOTUxYjI2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlY2VhNmZlOGY5MzQ1NGEyYzU2OWZlZjVmYzYzZTQ0MWE3MGIyZmY5MzcyZjM5OGJiODcyOTI4NmY5MWMyMzJkIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5ZDlhM2E4NzUyZjY5ZmEyMDlkZTBhMzQ0ZDg2OWZkNGNhYzY0ZjVhNWFmYjAxNmNmMjcwNjViMjRiMWFkZDVkIn0"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L760-L766",
+          "version": "repo-lines-v1:sha256:ba6f163f125cd1b68c4b09ab6720bb9b755ef4a0a8f838fbfb5b116591299c64:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOWFjNjkyYTk3OGYwOTcxM2Y5ODIzYWZmZTQzYjgyYmZjYTljNzI4ZDlkNmEwYjQzMmQ2ODI3MDRlZjE4ODMzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUwMzJlOTY0ZDA5MzIzNTFlNWQxODUyNjkyODFiMTcxYTNhMDliMDhiMjg2ZTY2MWVhNDcwMzIzYzgyZWI0ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMmNmNTVlN2M4NmYxMjVmOTA4YjExZGUyZmIwODYzY2RmZTliNDZmZjM3NGY0N2FiMDAxNDA3ZjI1MzhiYzBiMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjc0OTVhNzM1Y2M4NWI4Y2MxY2FjMGZhOWJmMjI5NjNlYzY4YzljNzc4ODFjOWFiY2MzNmNiNTFkOTBmNDE2NiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_395b4a4216044478a2113760a1691ecb",
+      "statement": "Which extension Add to Search installs is taken from the tab's own store URL, never from the page's message.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Crx.swift#L64-L81",
+          "version": "repo-lines-v1:sha256:8769fd3b585d6f3cb9eedbb1004d337a1843f267ae041c518f0e52d8adb4157d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkYTdlN2ViMWYxNTllMjVjZWVjY2ZhNzFmNmZmYmIxMDYxZjU5MTBjZTU3ZjVlMWQwZjc5ZTYxZjAwY2I1M2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU2YmU5NDFkNjVlMTMyYjQ0ZThmMGEzZDIwYTY0YWZjNTRlMTJmMzJmMThkY2M4YmY1OWU1MTkxOWJjNTkzYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxYjJkYzZlNThiOWFkNDcxYTZkYTMwZWQ5Mzg2Y2Y1ZDUwZThiMTY4ZDM1YTVhMDc1MTM4ODY1MTE0MzkwNTQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/StoreRelay.swift#L164-L172",
+          "version": "repo-lines-v1:sha256:dac598d846be5c1c13081f9ee7500575aa8c529fd0eb6d997052a08fdf4f9733:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2YyYjdjNzc0Yjg0MjlmMmE3NmM1YTgxNGNkNGIzOWU3OWI0NTBhMmEzMzA0ZmQ3YjI4YmVjOTc2OGEzNTk2YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjhlZDNiYTdhNzllYTY2ZDFjMzI2ZTUyODIxZDk2ODIwZjZkNTNhMTdmNTA3NTA3ZjM1NGNlOGIwZTE4NDA1ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMWNlZjY3N2QzZDRkMWFmNTdhNzg3YzNlMmMwZTgwMGVjMDY0YTFlNzExODUyOGU4MjliMWVkMDgwMWJmZDliMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_89fdd4afdf6447d691c28e2ebce6d5b4",
+      "statement": "Removing an extension clears its records, settings, grants and folder, and its WebKit data clearing is tracked under extensions.forgetting until it succeeds, retried at next launch.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L766-L800",
+          "version": "repo-lines-v1:sha256:c0167ee197bfed3ce48e200d3d446f6bf126de3ac559ce15caa38ac9df2e206c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4ZTkyMWQ2NDYwYjQzZGJlOWQ0YTJjOGYwMTIxNjA1ZGMxMWJhNWIyZWU1MmYyNzI3OTM5YzQ5OGFhZmMwZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZkYzM2ZjZmZDZhYzE4Y2FkZTU3MDJkNGMzOWQxYmI2YmYyOGE3MmZjZTBjOGM3Y2QzZjA4ZmUwNDRmNjhhZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a0121b16b40e45b1a8ca4a8f9c21023c",
+      "statement": "An extension whose background fails to load is automatically unloaded and reloaded at most once a minute.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L679-L729",
+          "version": "repo-lines-v1:sha256:b8ab574eb806c15ec7400327eacf61d3c6e07865cb9441f01cab83c294f5914a:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MzE5Nzg4ZTY1NGI3ZGU0OWQzMGRhZmU5NDkwNWIxYTNhYWEzZTY5MjZjZDFjNTlmNTM0MDFlYTgzNmMyZTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQwNDA2YTgxNjA5ZGRjNmUzYjc4MjA5NjBmNGQ0MmJjODdmOTlkZGUxZGQwZDU4NjRlNjdmNzM0ZThlZTNiOTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7254d266257b44b7a1b80ba911daf30b",
+      "statement": "ExtensionFiles is tested by a standalone harness compiled by Tests/run-extension-files-tests.sh.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/ExtensionFilesTests.swift#L50-L110",
+          "version": "repo-lines-v1:sha256:31158400f1f25e9ea570756f4f2864885c147e39b634ea6e10cb3e4d6ca914d6:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3ZTk0NjY3YThlOTlkZjllYmIyYWU1ZGM3M2ExYmMwZTJjZjljMDYwMWRmOWE1NzlkYmE2ZmY4MWQ2YjRmZTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmYzNiOTE2ZTJkZDVhMzI0ZGM0OGIwNzI0YWIxOGI1YmM0ZTFjNzEwYTA3OTQwZWRjZWM2ZGYzYjFkOTQwZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4ZTJiNmEwMjc4MzM0YjY1OTg4ZmZkZDI3ZWEyZGE0YWMxOTk4NjcyZTY4YzMyOGFiNzc2Y2EwZTNhNTYzMDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjNDU4NmQzNGZiZTRiMTllMTQzZGVlNDU2ZDlkOWNlNGI4Zjg0MWU0MWQwYjFkYjQ3OTZiOGI2MDkwMDYzNjIifQ"
+        },
+        {
+          "resource": "repo://Tests/run-extension-files-tests.sh",
+          "version": "repo-file-v1:sha256:1be13c9f7bcef47011c26a7126b842fe882d2adcd62a576dfea0c63ddc8b48ff"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

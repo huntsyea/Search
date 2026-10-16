@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d2f81155481879339f59403a682c1d899885b7981ab8d84cf41737fc78fe456a",
+  "claims": [
+    {
+      "id": "claim_20bb9e0a64fb42d298af9e3d6f8851b7",
+      "statement": "build.sh writes an Info.plist that claims the http and https URL schemes and the public.html, web-internet-location and public.xhtml document types, allows arbitrary loads, enables AppleScript with Search.sdef, and provides camera, microphone, location and Downloads usage descriptions.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L129-L194",
+          "version": "repo-lines-v1:sha256:63ae1facb193d944ca254a1aefcec3d1c51d822fe0f73349ddb8369be854d2ad:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxOTE0Y2I1MmY5NGFhY2MzOTNiNDQxNTY2YjFlM2UyOWNmMzM2M2ZmYWI0NWEwYWE1ODE0MDlmNmY4YzdkZjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyMDJiZGQ3YWZiZjkxNWM0Y2YwZTliNTBlZGU5NTcxZDdkYzJkY2JlZGY4ZjU0NjdiMmVmZDg3OTNiYmNkYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ1YjBjYjkxMTgxMjNlNTYyMWJlMDE3NjI3MmNkMzVlODA3Y2Y4OGE2MTI2OTI5OTgzYTNiY2IyZDUwYTE4YTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNmY2M4YTRiZmY1YWI3MmNjNDgwNTE0NTYwN2E5NDYwY2QxNTYwMTBhZDA5M2E0Nzc1ZWFjYTJiZjc5Nzk1NWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3b0577c1245340f793a07d3a8dd2c23e",
+      "statement": "The default entitlements grant camera, audio input and location; the passkeys entitlements add the web-browser public-key-credential entitlement and identifiers, and are used only when a provisioning profile is present.",
+      "evidence": [
+        {
+          "resource": "repo://Search.entitlements",
+          "version": "repo-file-v1:sha256:452c373b5fc2202a02288ced0b80df25d3e89e3da6d023d2a7a00370fbc42e73"
+        },
+        {
+          "resource": "repo://Search.passkeys.entitlements",
+          "version": "repo-file-v1:sha256:4ba86f0a9b4e6c47722efcbd82898c8bbbc31c8f7b54d88257b40a5e3a6789af"
+        },
+        {
+          "resource": "repo://build.sh#L196-L213",
+          "version": "repo-lines-v1:sha256:2187fe0701cf2b16a6fc4d562605a741f04325e94cc2d0aec40cf120de0fbfda:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2MzA1MzI4ZWU4Y2IwNjAxMjgzNDNhNWIzYzE4ZWRmMTlmNjFiM2MxZDhiMWZiNDAzMTAyMGE2NjhiMmYwYjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyMmRlODc3ZGY1M2FlNjg2MTJiOWQ2MWJiZjIyODY4MGQ1MmE4YmU1NzNlNDk0M2JlMzI5M2M4YWUxZTMzMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0MmIxZmExM2Y4NzRlY2U1OTMzMjliNjVmZjg2MDcyOWU5YWMzN2ZhMDQwOTA5YjRkYzQ4Mjc5ZDgyYzAzMGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5a68d0cf244147308a8bb9ce6db332c4",
+      "statement": "Links from other apps are received through a kAEGetURL Apple Event handler registered directly with NSAppleEventManager, and test runs ignore outside links and files.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L80-L131",
+          "version": "repo-lines-v1:sha256:509c0c86eac4156f585713c5475100e5f81b345f58961459af20216e99be5f17:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFiZWQ2N2M1NjdlMmFjZDhlOWIwMmNiMGY0OWQ1NGRlZjc5MDJjNTQwMzY0Yzg5OGNjNThiNzk0ODU4MGViZjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjNTdlNzViMGUyYThjMmZmYmJiZTg2M2JkZmE3MjRhNzk2YTYzNDgzMGEwNzg1ZjRkZjEyNmM5NDk3MzExYjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c0e29f0eddda491f8bef923785bc1ac3",
+      "statement": "URLs arriving before a window exists are queued; once a window is visible the first goes into the blank tab and the rest open behind it 0.15 seconds apart.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L163-L218",
+          "version": "repo-lines-v1:sha256:45f88cd617baa3fa7989a6a69fe516a4da2b71f7b5ac5c5712a8589c2e2f5884:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkxOTUzNTNjMjkyYTZjMDE3NDczNTZkODE0NDY2ZTA2YzhhNzFiNjVmNDIxMWU3NjZjZDM3ODk5MTI5NGQ5ZTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMxYmY5ZTA1YjJkMGVkNTRlYTk4Yjk4MzZmM2I1ODk1ODc4MTA1MzRiYzMyZTBlNDdlZjkyNGMxMmNkMjlhNWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyOGYzYjNkZGFkMjM4MjkzZWNiOTQ0ZjExNmFlZmYyNWEyZTNiMzNlNGExN2MyOTg3ODgzZWM4ZWY1Y2I5OTgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Links.swift#L245-L266",
+          "version": "repo-lines-v1:sha256:409c73af67c66b3a181c46b7b4f087d79a74818ea220ec21b9b5d625d077eac0:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxNDEyNTNkNjU0ZGM0YWE5NGZjOTY3ZTc4OWM1MTZlYmM2ZjQxZWYwMzgzMDMzOWZjY2EyYWQ1NjY1NzU0MGIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ0NDdkYzQ0M2VjY2QzOTMzMzdiMzExYWNiODVlNzQwOGVjYzM5NWE4NDM5ZjMyY2RkOGM1MTgzMjU0YWY1MTIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5Yjg1MTJlODdhNjdhM2VhYzY2NDVlMTkxYmI5ZjdlNDQzNTE0YjQ5MzY2NmE2MjBkNmRiZDhjODk0MWYwZjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_06f1a3fc52164dee885469d332e3d77c",
+      "statement": "After a link arrives Search activates itself and retries with activate(ignoringOtherApps:) if it is still not active 0.25 seconds later.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L220-L240",
+          "version": "repo-lines-v1:sha256:62438a65675fedfd983827cf5d8b95eed57198ffc099133d7cea68f9f85eb559:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3YjBhNzM3ZDExYmRhOWEzMTA3NGE4OThmOWEzODA2YWJmNzU0N2JiYTZkNjlkMjE5NWVlYmY2MjVkZDI0YjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVkOTAwZTgxMmI5NmU4NGFlZDdhNDc5YTkyMzFlMzg5ODgzYzk1OGE5MzRlNDdhZjlhNGE5YjYyNmRhNzAyM2IifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_64a167c68a4045bf916b0cde55281e48",
+      "statement": "Closing the last window does not quit the app, clicking the Dock icon restores a window, and the Dock menu offers New Window.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L133-L161",
+          "version": "repo-lines-v1:sha256:6329c546568e3d4dfb699fec4e7cd170887e120d2a6cc3a452dcfe45e9aabeb2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYwOGVmODQyMjJlY2JlMTMwMGMyYjBjZTE4YzVjY2UwMzgyNWM3N2UzODM4ZjNjYjE3MjgwOTUzZDcxYWRjNWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkwMGQzODBmMWZiYWM4YTRlMzI2MGFkZjBlYjk2NWEyODlkODk5MDEwNGVjYjBmNmYyNTc1Mzg2M2Q1YjU1ZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ef188a7fa3424d1eb29fdb27ca43c403",
+      "statement": "Becoming the default browser sets this bundle as the handler for http and https via NSWorkspace, and isDefault compares the handler for https://example.com with the bundle.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L283-L307",
+          "version": "repo-lines-v1:sha256:75e1b7b22a2f90f4e36fa6f71818e046a2fbbe2e9697e1a033c040a190b6b432:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMDM4ZjUzMGM0ZGMyNzdkZTk4MDllMTYxOTljMjVmMTUwMWFjY2Y5NGY5Y2NiNThiN2Y5MDczYzY4YWU1MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk0Mzk5Y2I2ZmU5MzgwMzBmODA4ZjU0NzJlZGNlM2IxM2Q1OTVjMjA3ZGI4NThiYmY2NTAzYWMwYWZjYjNjYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f5a3fb0cba274dedbe7d7656f5a2ddaa",
+      "statement": "With the Little window setting on, outside links open in a small window whose page can be kept into the browser's row.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Links.swift#L180-L184",
+          "version": "repo-lines-v1:sha256:915154c5874d04be8748737bf0c43049ddfb726192e86c0778c5899a8fea6634:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDliNWRmMzYwYTQ5YmZlZGVjZGI4Y2VlY2YxNzQ3NWQzMDE1OTcwMGNhMjdlOTQ4M2U5ZmU0NjJkMzJlZTE3OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTUyMmM0MmNkMTljNmQwM2Q4MDhjNDUyNzIwNTUyODI1YjdlYTFjNWI0OTFiMjE4NTExY2FjNzQxNWNmOWQ5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGViNTdlYzk1MTFjZTY3OWRkMDU2ZmNjOGIyZTRkZTE3MzcwNWI5MjNiNTliMjdhYTA4YTU0MTlhOWM3ZTQ4OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjU3NDMxMmI1OWY2OThjY2U1NWZiZDZlNGU4YTQyNjAwMTc3MTVjMDA5M2NjOGNkOTUzMDkxNjg5N2NiZTViOCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Little.swift#L1-L15",
+          "version": "repo-lines-v1:sha256:820bcb683d482b92845b0c60aeda5258dea9b02846d4028eb309dbd7ce7da194:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZTk4YzUxYzFiYjZlZGVkZmIyY2JlNzQxMjE2NzZmN2E3NDU3OTEyMDlmOTY0YTNiYWU4YWNhNTM4OTU3ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3MTJmY2M1ZmViMDY0ODBkYzE1MDc4YjFkMWQ5MWNjOTU2NjhlNWQ1YWJiMGZhY2NlMmZkZGJlMDM0M2JhZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bd776ce407ab4fa8a7edf7c537cb166f",
+      "statement": "AppleScript access is read-only (windows, tabs, current tab, URL, name), private tabs are never listed, and URLs have credentials removed.",
+      "evidence": [
+        {
+          "resource": "repo://Search.sdef",
+          "version": "repo-file-v1:sha256:f6c01c25659659d32ccb03a08623549a4d55bd82dbdd297663213a5ee4bcdd8b"
+        },
+        {
+          "resource": "repo://Sources/Search/Scripting.swift#L1-L80",
+          "version": "repo-lines-v1:sha256:f9329a0e28ce59bba56e70ea7e2a4aed9030ff249bb0b1bdd7383c636aa2e1de:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4c11f867a1c2484ca950ff6317fb6cbe",
+      "statement": "File > Share shows the system sharing picker for the active page's URL anchored near the page's top-right corner.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Sharing.swift",
+          "version": "repo-file-v1:sha256:e47e1efbc97cad3745a2aaf8e3b89c27f38685d471c93006fc129a5ab3050360"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

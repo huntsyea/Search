@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:6c0f4186caed8a6d4ce829337700169c3745e025c4c3908be7670a11c815ba90",
+  "claims": [
+    {
+      "id": "claim_d3cbc1c6c19742c1962973ac3e4dc8b0",
+      "statement": "Passwords are stored only as keychain internet passwords labelled Search (or Search (<world>) in test runs), and every query is scoped by that label.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L5-L49",
+          "version": "repo-lines-v1:sha256:a9f8f64232904c221b7c83e9939f5e8be1358e87e552784050cc07d3313ceca7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYTVkNjE1ZDJmYTBhMTQ0ODFmMTkwZjk4MGQ3OWU5NjJiNmY5YTc2YzAyYjQ3MzdiMDg0MWFjYzQwNzkyZjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3YmU5Mzc1MTFkMjk1NTc4MmM5OGU1NjRkN2UyNTdmZDdiY2Y4YWNjNjMzOTM5NDAxN2UyNjE2YWNhZGVhMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjczNzNmYmFhNmU2YThhY2E1Nzc3Y2UyMGVhODdlNThjZGZmY2E2MGNhODVlZWJlNTVjNGMzOTVjMTJjM2QxZWUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L85-L103",
+          "version": "repo-lines-v1:sha256:ffc87fabd0dac3ef14da2ef3c4b4926768d3dda91a53cc5cfb0ccdf058c0e4e7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkMWNjZjJhYmQ4ZDVmN2RlN2MyYmE4MDBlNjUzZTQ5NzkzOTQ2ZjU2NzZkMTk0ZmZjOTJlYmQ2MmQ4ZmEzMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY2YTIyNWQzYmRiZmEzNmMxODM3N2Y1ZjEyMGQzZmE1MDA2MjRhZDAzNGI1MzFmYWRkZDhlZTE3MzQwZGI4M2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlOTA0ZjE2NTRlNTczOGE3ZmJkZGJhNGQ0OGViZGNjMjNmOGQyYjQ4YTMzZDIxM2JmMmRkNGUwNjJmYmM3MTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cc89e6c8701d4637b0c23933c3d00f8a",
+      "statement": "Keychain listing never returns secrets; each secret is read individually and lists use a Kept type without passwords.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L28-L44",
+          "version": "repo-lines-v1:sha256:2841a7e7335befeee2a0afa48a529a90659d1f27bdf521f7942c75762f657e1b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImUwZGZhNjdmNzk4ZWM3NWQyOTBmYTFkNDk2OTkyZWM0ZDFmODRiZTI4ZjE0NTNiOGQwOGU4ZTM1NzJlNDJkYTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwYjdlMzlkZWEyZGUzYTVjNzg4MTJkMjgzNzdiOTYxYTk2MWI1ZGE0Y2JhZDk5ZjYyMmNkODZkZjE3ZmRlZjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1NTk4Y2E2NDZkNDIwZjE1ZGVkMDEyYmVjNzc3YzBmMjc0NzAxMzBlMDJiMzc5MDQzYzgwYTUxNWRjYmRiYjYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L50-L125",
+          "version": "repo-lines-v1:sha256:071445c398589b28f78928647d822743b2c23ccfe585224eb1ccc7953ebc139a:eyJzZWxlY3RlZExpbmVDb3VudCI6NzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzNzQ4OWQ4YzI3MjIxZjMxMDQ1ZGE0NWRlOTk4YzRkNTAxOGU1MjA3ZDY0NTMzZTQ4MjhlZjQ4MDg5MmFkZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMTVlMDg3YzNlMTI2MWU4YzE4ODU0MzgxZWM1NGJhNjJjYTAxMzRlZWMxNGQwMmZhYTg2MDc0YTM5MDJiYTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkZTA5MDQxYmIyNTc3Nzc5M2UwYjAzNTE0ODc0YzJlY2U1MDI1ODY2MjUzOTZmZWVmZmE3ZjY3NTI3OTE2OTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJjY2EwZjA2ZDE4MmVmNGE4NWE0MWI4MzFmNWExNGUxMGRlNzMwM2U1MjZhMjMwYWY3ZTM1NDlmNTg3MjcyZmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9a145215951445d18a6990b4e3de918b",
+      "statement": "Saved items record whether they came from plain http via the protocol attribute and the last-used time in the comment attribute, and use the HTML-form authentication type to stay distinct from other apps' items.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L127-L135",
+          "version": "repo-lines-v1:sha256:a2a250d3ab116ef17b5ab657383b9400af7cee272f59c12428474c69a9c6c870:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWIzMGNlOTBhZmVkZmQ4NTIwNDg0ZDJjZDYxYmMyYjU3N2UxOTM5MDJiYjNhYTIzOTlkMDdmNWMyM2QwNjc4NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmU5YzM1YjBlNmE0MDM2NWYxZjExZTY2OWYwMWYxMWIyNjI0MWNhYzExODE0Yjg0OTlmYTE4YzEwOTE4MDkxNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTk2MjBiZjQ2NTVkOWM5YjVkYmI2M2Q4MmMwMzkxNDNmNGRkZTgzNTk4ZGEzNzEyZDcyN2U4N2JlMGYxNGI4OSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L167-L200",
+          "version": "repo-lines-v1:sha256:64d9ff51a6481d2baec45e647fe1ec2b443b6124d27ca7cedc9d513cac424342:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZDUzYmFhYzE4Nzg1MmI0MzFjMjMyZTA1MTYwNjFkNDk2ZjdhMjE1NmVlNGJmN2RlYTY0N2ZjNjY0OTg2NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZGQ0NDE3MWI0ZDIxNzRjMDk0YzA1Mzc5NzViMDBjMjk4YzdhNTAwZWM0YmIyOTEwYmYzMDhkZTYxOGE1ZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE0ZTIxZTI3OWVjODA0ODg0NGQwOWM1M2NmMGZiMzUwZWQ2NmYwMGMwY2IwOTFlMGRiMGZjNzIyZGNkYWMzNTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_05128861770346739f8d51e67f8c68fa",
+      "statement": "Logins are matched for a host exactly and across its registrable domain, newest first.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L246-L266",
+          "version": "repo-lines-v1:sha256:2af6ff0bb275fda2245b7cc50064f03292a9a1a65a256a42b0f798d24460f988:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU4YjNlM2JmYTdlN2NmNjUwNmFjMjMwNDFhNDIyOGRjZWMzYmY3MmU4OTFlOGFiNmVlM2ViNDRiODdiZThlNmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdlMDE1ZWYyYWViNGY3ZjU2YTUyNDI1NTA4ZGU3ZGM5YjZkZTlkMmY5ZWM2NmZhZDBjZjU0MTU5NDc4YTMxOTUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L64-L75",
+          "version": "repo-lines-v1:sha256:93f551270038ed7b11bd8f36d8bf02f7ef158fd568783b1220af7d028059f4f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiYmNiMjUxMWMxMzc1YzEyYjJjOTE5MWUxNWRjN2FkODkyZWE3ZDkxOWM5MWExYTY2NWZjNWI3NjI0ZWE3MGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxMjkxYmQzNjIyYzBjNzU1Y2E5NjNmYzc3OTkzNzk1ZjIxYWFhZDAxOGJhYzJlNDBmODQzODZmYzRkYmM4YzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImMyNWNiYjdjMmYwZGMyOWI1MmRjNDdiZDliYjMyZGQzOGZmZjQ0YzYxNDJmOWNhM2U3Y2IwOWZjNWJiZWUyMTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f94cc1b339ff43bd819a60a7a949ef9b",
+      "statement": "Form filling uses the field's native setter and fires keystroke events so frameworks register the value.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Forms.swift#L3-L10",
+          "version": "repo-lines-v1:sha256:51977f8fecb6b205bc5964bae077a6ed23ee3ba3b2cc1a92f8749e7741f33e8e:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjE3YWMxY2VmYTg1ZGRkMGYwNTRkNzU5YjhkMzQyNjExNDIwNGJhZjlhMDc3ODFiOTljYmY2YWU5ZmEyYmUyMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDY5ZDNkN2JmMTZmMjI1MjRmNjUxY2Y4MGE0MzlkZThlNDEyYmU0YTVkMmZlZjhjZjY4NjZjZDQ0Y2I4NzViZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTU2NzdkMjBlZGRiMTI1ODA5Y2ZmMzRmOTcxYjJhZmM4MGIyMWM4M2ZjMmVkNjJhZDA5MjA3M2RkNWI3ZGMzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDAyY2UyZDUxMzI3OTIwNmZkMjEwYTk5NzRhZWUyMDEyYTllNGRiMWEwNzljOTI2MzBlNmE0NWIyZTBmMmM0MCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_00308c5926ad4ee1a821f018aa60b0e3",
+      "statement": "A sent sign-in is held and offered for saving only after a new document loads or the password fields stay gone for 1.5 seconds.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L865-L920",
+          "version": "repo-lines-v1:sha256:c93539e9e51f2acc0b5eb717bf351a3602db19d83c07fd786fedfc8f6432d4c6:eyJzZWxlY3RlZExpbmVDb3VudCI6NTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY5NmMxZTM0NzAzMWQ5OTVkZDMxMGIwNGM2ZjVhYjUwY2MxNjRjNDAwNTViMWY2NmJjYjllODFmY2ViNmRmZmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjMyNzU3ODQ4ZmQxZDc0YWZkYjM4NmM0MDBmOTYyMDlmMDQ1MDg3MDkxZTUzNzU2ZTA0NTMyNmMxN2QwMmY4MjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0YzQ3OTI5YTU4Y2VmNWRlZDc2MjkzNTA1Y2MxYzllNTg3ZGFkM2VmN2U4ODNmNTQ4MmE4ZmU2OGEwMGQwYjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_facfd2878c7344e6b4537123869212cd",
+      "statement": "Saving is never offered for private tabs, sites marked never, extension pages, or when saving is off or an extension handles saving; an identical saved login is only touched.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3812-L3834",
+          "version": "repo-lines-v1:sha256:8e21b00317f1373c2a9c6d390cf63560dd7ad3c74281eb3d5fe409da8f5b093c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiYjIzZWViYzA3MTcyNzljZGY1NjA4YTMyYzkyMmFiNzlmZmY2MWU3ZjZiZDNhYzE2MGY5OTliMDBiYjhkYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZkYWVhZjJkYjk0YzMzNGFiYjA1MDJhOTU1NmU1YmYxNmE3YjM5ODU1MzQwYjc2OTEzNGIzOTU3YzExZTVhYjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5MGE1MzJlNGQxMjEwMWNhYzEwMTVjNWJjYzM2MWRlNTdjNDNkMDIxMThlMTM1ODRkZTk1MGVlNmU5OTdjNmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b7e0dca226144be783dea25613c4a701",
+      "statement": "Saved accounts are shown under the focused sign-in field and never filled automatically; the list ignores clicks for half a second and plain-http pages are offered only plain-http logins.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L637-L760",
+          "version": "repo-lines-v1:sha256:be688ea211d69f41674f3a8246ad9cc9305948ae9909c300158525ce61df3fe0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI2N2ZkNjkxOWU1MGQ1MjY2MWY3MDRlMTYyMTBhNWE0MTJkNzgyNTkxNWM2YzkxYWFhZGQ2MzBhM2EzODU5Y2ZiIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJlNmIwNDQ5MTQ2OTcyMmU4MzYzYTk0ZTQwNDQ1MzhlMDEzYTJhMjE3ZTM2YjFlNTY4YmE2MGFjYjdiNGM4ZjJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYjkzOWVkMmIyNTAyOTEwYTllOTY1NWUwNWQ0NzQ4ZjlmNDFkODk4ZjVhYzY2Njc0NTJhNDU5MzE3Y2JlNzVjIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJkZmU2MzM1MDA0MTgzNzAwNTBhOTFlNjgyYWJhNzI0NDBjMjc2ODdlMDhjNjY0YjZjYTlkOWFjOWIyZjdmN2JiIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_43d8c1d163ce4e5a8e0d7fc93af4e09b",
+      "statement": "A chosen account is not filled if the tab has moved to another site since the list appeared, and a first-step pick fills the name alone.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L764-L790",
+          "version": "repo-lines-v1:sha256:25619bc751b776760208f17b41bc45bbac8c9a8524af1a4adb1479c3080ed47a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjYTNlNzI5MWZhNWU1MGNiYzk0YTJkMzQ0ODVjZDE0OWM0ZGI2MTg1OGNlMDNkOTViZDUzOWFkNjc4ZTlhMTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkMDRhNmE5MTFkMTQxZjZkNzRhNzdhM2FjNzBmMDI1YmEyZmU3ZGNhYmRjYmJjMGUzZTIxZWJiNzk0MzAwY2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRmZTYzMzUwMDQxODM3MDA1MGE5MWU2ODJhYmE3MjQ0MGMyNzY4N2UwOGM2NjRiNmNhOWQ5YWM5YjJmN2Y3YmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxZThhYWVjNTUwNWY3MGU3YjZmMGY2OWUyOTVjMzBmMmY4ZjhjNjdjYTE4ODM3NWRiN2U4ZTEzMDRlYTU0ZjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0eedc6366f0a4a4fafdef4edc919bc10",
+      "statement": "In identifier-first sign-ins the submitted name is remembered in memory for that tab and site for five minutes and used for the following password-only page.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L841-L882",
+          "version": "repo-lines-v1:sha256:65a3b849e8cdc34a323880aa00f97482a83971e6d6d722f00e683082a6258e0c:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNzU0Yzk5NTIyNDkxNmU3YWFlNTJiMzAzYjE1MjIwZmFhODc0ODkwYWFkZGZjMTc3OWU1M2E5MDg0NjRmNDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdlMTQ3NGUyMmU4Nzg0NWQzMWQ2M2FkMWU1ZjkzMzNiN2M5NzI5YWIzZjYwYmU4MzYwZGQ2ZjdiYTViNTg4ZGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2NjVmNTcxNTYzZWI2NjQ3MzZkODllYTllNzJhODEwZWY5YjJjZGU1MmFiMDEwNTcyZWE2MDY4YmUzZWU0Y2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6e7dedca6216476bb5655e84b9bfeb22",
+      "statement": "Showing or copying a password requires the Mac owner's authentication, and a copied password is concealed, local-only and cleared after 90 seconds.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L845-L876",
+          "version": "repo-lines-v1:sha256:43a97ce829b023c700d982ca642ab1e505e457ab06f5e3a74653e22460c84877:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZjMzYyMTE5ZjRkODlmZGQxZWY5N2Y2YmU2OTcxMjdlMjlmOTI2OWI1ZjVkMWY4YWVhMmEyODkwMjJhYmQ1NDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkNzlhOWZkNDM0NWU0MTJmMTZmN2I1NGM0NjM3ZmZmZjExNGQyNzA0YTEzOWM1MzVmNzg2ZGYxMjcxNzVlMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMxMTk0NTZjYjhmYmE4NjA4MjljMDJhNmY3ZGU4ZjM1OWNiYTNlNWJmN2Q2ZjRkODE5N2Y5MmNiMTI5ZjU4ZmIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Passwords.swift#L1-L10",
+          "version": "repo-lines-v1:sha256:d199b32de8558391315018bc23462ea2e62f6fbc94ff6e5ec97248f8e646a838:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzOWUxNjc4NzU1N2M3YzczYmJmYmJkNGIwYjczZDFkZTRmMDc1NWVjNGJmNzI0MzFlYjQ2MDRiYTY3MjY2NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyYWNmNDJmODI2M2NiNmU0OTNjMGU3NDY0MTY2NzE1NjNlZTU4MDE4NmE4NGY5ZDUwOTc1MGIzY2NjOTQ5ZWUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L228-L244",
+          "version": "repo-lines-v1:sha256:9188877c7ed6fbc54bd4e160cacc8b4f1ab065230d6c270983552968cce3553a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYWFmMTE5N2M3OWViMzNlZTQ1YWFkYTVmMmNmYzRhZTVhNzg1YTcyMTZmMGYwNDNlZWI0MTQ4MjZkNTNhZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNhZDY5YjRiMzNiMDUxMjRkNjljMmUzNzg4ZjdjZjEzZDVkY2ZhZmUxZWEzYzAxNjA1OTA0ZDM0YTkwNjFlOTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1ZjY5NDVjZWJiZTgxZGQyMTBkNjgwYWUxZWM5NTAyMmIxZjNkMTE2YzVhYzI2Mzk3YmQzNGZjMTllYjFiNzcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_adeb8503435a4b088c4cfa12bc5c1a7b",
+      "statement": "CSV password import parses quoted multiline fields and skips exports without a password column; tests cover this without touching the keychain.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Vault.swift#L267-L345",
+          "version": "repo-lines-v1:sha256:beb01d77bd8a27addf3f096c54e92229f45a69ae4ff7e6438bf5b3af18feeabc:eyJzZWxlY3RlZExpbmVDb3VudCI6NzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0MWVkZmRlY2RkM2M5M2I2NTE3YjAxYjU1YjI0MDcyNGU2ZmYzM2EzZGRiY2YwNjQyNmU1NWViNTk5ODYwNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4N2NhOTIyNmMwMzU3NmJmMTJiYTAxMDA2ZDEwOGViOWYxZTgyMDE0NmI4Y2UzNDA2NmVjNzM4NWMyMGJlZjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzNDMzMjUwOTM0YjUwZmZmYTg3Y2U1M2YwZDBlMWMxMjcwMjFkZmZjNTEwYjk2ZDdhZTUyZGMyNDhjODZjNmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjViMGY5OTMyY2ZmMWE4MWNjNjZjZjFlZjdlZTM0ZDAxNTY5MzkzY2YxNDJhMjBkMjQ4NjA4MGM5NjZmYTA4ZDIifQ"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/VaultAndUpdaterTests.swift#L1-L95",
+          "version": "repo-lines-v1:sha256:1a139f34bd749d0d5d003bdd45e6fcab721205e501d8f5a38067143b80d93271:eyJzZWxlY3RlZExpbmVDb3VudCI6OTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRhYTQxNDRiNTBjMDQyN2NkZDY3ZDg4NmUzNDUxOWM4ZWMwNjc5OTMyNmVkYTA1OWUxNTg1MGFkNzdlZGE3MTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxMjk1NjI0Y2FlY2JhZDU3MDA5ODc4M2MwMTg2YzE2MjNkYjcxYjVkOTMxNDc0YjgxOTU2MGRlNjUxZjA2OTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e99b6da5f41c49a489d9399799f53ac7",
+      "statement": "Password-only and identifier-first flows are tested in hidden probes against local pages using the test world's own keychain items.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/identifier_first.py",
+          "version": "repo-file-v1:sha256:cf71607a65efae64df803bd9a31b82de2238c27f15a17ab50a68281db6ec92e5"
+        },
+        {
+          "resource": "repo://Tests/password_only.py",
+          "version": "repo-file-v1:sha256:35f371d6e09871a6233dc63c04983909e68497cee6273b3905e197819919a4d0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

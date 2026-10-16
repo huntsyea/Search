@@ -19,18 +19,8 @@ final class DownloadLifecycleTests: XCTestCase {
     override class func setUp() {
         // Browser settings, history, WebKit data, and files live in this
         // process-specific test world, never in the user's Search profile.
-        setenv("SEARCH_PROBE", "download-ui-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
-    }
-
-    override class func tearDown() {
-        Disk.drain()
-        if let world = Store.world {
-            let suite = "com.officecommun.search.test.\(world)"
-            UserDefaults.standard.removePersistentDomain(forName: suite)
-            try? FileManager.default.removeItem(at: Store.folder)
-        }
-        super.tearDown()
     }
 
     override func setUp() async throws {
@@ -247,8 +237,7 @@ final class DownloadLifecycleTests: XCTestCase {
         try await waitUntil { tab.committed == fixture.url("/page") && !tab.loading }
         try await waitUntil { fixture.completed("/page") == 1 }
 
-        let download = try await requestDownload("/private.bin", from: tab.web)
-        browser.keep(download, from: tab.web)
+        _ = await keptDownload("/private.bin", from: tab.web)
         XCTAssertTrue(browser.fetches.entries.isEmpty)
 
         try await waitUntil {
@@ -258,6 +247,38 @@ final class DownloadLifecycleTests: XCTestCase {
         XCTAssertTrue(browser.loot.kept.isEmpty)
         XCTAssertFalse(browser.history.everything(matching: "127.0.0.1").contains { $0.url == fixture.url("/page") })
         XCTAssertTrue(fixture.cookies("/private.bin").contains { $0?.contains("download-session=fixture-cookie") == true })
+    }
+
+    /// A download started in code is kept before WebKit can ask where it goes,
+    /// however long the main thread is busy after asking for it. The main
+    /// thread is held until the server has the request and a moment more, so
+    /// WebKit's handler and its question are both waiting when it's let go; a
+    /// download kept one hop after the handler would be asked about first, with
+    /// no delegate, and cancelled.
+    func testADownloadStartedInCodeIsKeptBeforeWebKitAsks() async throws {
+        let tab = try await openFixturePage()
+        var started: WKDownload?
+        browser.download(URLRequest(url: fixture.url("/range.bin")), through: tab.web) { started = $0 }
+        // The main thread busy while WebKit answers: hold it until the server has
+        // the request, then a moment more for WebKit's answer to cross back, so
+        // both of its calls wait behind this.
+        let deadline = Date().addingTimeInterval(10)
+        while fixture.count("/range.bin") < 1 && Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        guard fixture.count("/range.bin") >= 1 else {
+            XCTFail("The download's request never reached the server while the main thread was held, so the race wasn't set up")
+            return
+        }
+        Thread.sleep(forTimeInterval: 0.5)
+        try await waitUntil { started != nil }
+        let download = try XCTUnwrap(started)
+        try await waitUntil { browser.fetches.entry(for: download) != nil }
+        let entry = try XCTUnwrap(browser.fetches.entry(for: download))
+        try await waitUntil { entry.completedBytes > 0 || entry.state != .downloading }
+        XCTAssertNotEqual(entry.state, .failed, "WebKit gave up on it: \(downloadsNow())")
+        XCTAssertGreaterThan(entry.completedBytes, 0, downloadsNow())
+        browser.cancelDownload(entry)
     }
 
     private func openFixturePage() async throws -> BrowserTab {
@@ -271,15 +292,18 @@ final class DownloadLifecycleTests: XCTestCase {
     }
 
     private func startDownload(_ path: String, in tab: BrowserTab) async throws -> FetchEntry {
-        let download = try await requestDownload(path, from: tab.web)
-        browser.keep(download, from: tab.web)
+        let download = await keptDownload(path, from: tab.web)
         return try XCTUnwrap(browser.fetches.entry(for: download))
     }
 
-    private func requestDownload(_ path: String, from webView: WKWebView) async throws -> WKDownload {
+    /// Kept inside WebKit's handler, so the download's delegate is there before
+    /// WebKit asks where the file goes. Kept one main-actor hop later, a busy
+    /// machine let WebKit ask first, find no delegate, and cancel.
+    private func keptDownload(_ path: String, from webView: WKWebView) async -> WKDownload {
         let request = URLRequest(url: fixture.url(path))
         return await withCheckedContinuation { continuation in
             webView.startDownload(using: request) { download in
+                MainActor.assumeIsolated { self.browser.keep(download, from: webView) }
                 continuation.resume(returning: download)
             }
         }
@@ -321,20 +345,46 @@ final class DownloadLifecycleTests: XCTestCase {
         throw WaitError.timedOut
     }
 
+    /// Waits on the downloads, not on a clock: it gives up when nothing about
+    /// them has changed for `idle` seconds — the shape of a real hang — or
+    /// after two minutes in all. A busy machine makes a download slow, not
+    /// still, so a download that is still moving is never mistaken for a stuck
+    /// one.
     private func waitUntil(
-        timeout: TimeInterval = 15,
+        idle: TimeInterval = 15,
         file: StaticString = #filePath,
         line: UInt = #line,
         _ condition: @MainActor () -> Bool
     ) async throws {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
+        let start = Date()
+        let cap = start.addingTimeInterval(120)
+        var last = downloadsNow()
+        var quietSince = Date()
+        while Date().timeIntervalSince(quietSince) < idle && Date() < cap {
             try nothingShown(file: file, line: line)
             if condition() { return }
+            let now = downloadsNow()
+            if now != last {
+                last = now
+                quietSince = Date()
+            }
             try await Task.sleep(nanoseconds: 20_000_000)
         }
-        XCTFail("Timed out waiting for the download state", file: file, line: line)
+        if condition() { return }   // woken late with it already true: not a timeout
+        let message = Date() >= cap
+            ? "Still not there after 120 s waiting for the download state: \(downloadsNow())"
+            : "Nothing moved for \(Int(idle)) s waiting for the download state: \(downloadsNow())"
+        XCTFail(message, file: file, line: line)
         throw WaitError.timedOut
+    }
+
+    /// What every download row and WebKit download was doing at a timeout, so
+    /// a real failure isn't a mystery.
+    private func downloadsNow() -> String {
+        let entries = browser.fetches.entries.map { entry in
+            "\(entry.state) \(entry.completedBytes)/\(entry.totalBytes)\(entry.errorDescription.map { " (\($0))" } ?? "")"
+        }
+        return "entries: \(entries); downloading: \(browser.downloading.count); kept: \(browser.loot.kept.map(\.name))"
     }
 
     private static func rangeOffset(_ header: String?) -> Int {

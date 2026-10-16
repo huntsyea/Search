@@ -436,6 +436,9 @@ final class Tab: ObservableObject, Identifiable {
     @Published var muted = false
     /// An extension is recording from this tab's page (see RecordingIndicator).
     @Published var recording = false
+    /// The chat's agent is acting in this tab (see AgentTools): its row
+    /// wears a mark and its page an outline while it does.
+    @Published var agent = false
 
     /// Not `web`: a tab asleep is muted without being woken, and hears of
     /// it when its page is built again.
@@ -526,9 +529,6 @@ final class Tab: ObservableObject, Identifiable {
     /// Drawn as a square while Settings › Tabs › Pinned rows is off, or
     /// with the tabs across the top.
     @Published var listed = false
-
-    /// The group that holds this ordinary tab in the sidebar.
-    @Published var groupID: UUID?
 
     /// A name you gave it, in place of whatever the page calls itself. It
     /// stays through navigation: a tab you named is a tab you are keeping for

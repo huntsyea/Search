@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:84a851f63c68f4b7361b69dde6d1421e2ae7c30f0f179177155051959bd65598",
+  "claims": [
+    {
+      "id": "claim_73940f4103974ae7863ec1ccf7de2a7b",
+      "statement": "Spaces are off by default; until enabled there is only the first space, whose tabs and store are the original session and store, so enabling spaces signs nobody out.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L34-L36",
+          "version": "repo-lines-v1:sha256:d615dd8b16e2d546cd2f5a53d8fbd953d69ee0e1ab7d606eafb19f1ab90f3afc:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDE4OWZlYzQwOTk1M2ViNzlmOTYwYmFmMjkzZWZiNzVmNWNmYjRkNGNiMjc1ZmRmZTIwZDQ3OTc1NmUwMTYwMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZWQ2YjczZDU4ZDY2MzRlYmQ2MTJiNTEyNDQxNGVjMDdmZTMwMzkxYmEzMGFlNzhjODI0YjE3MTA0ZjdhN2U4YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzg0NWRlMWZkNmM3MWFkNmY1Mjc2NjBjMjEwMTgzZGQ3MmZkZWUyZTAwZTk1ZjlmNjljODBmMTkwNDE4YTAxZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGQyZDEwNjM3OTM4NGU3NzhlYTMyMmU4OGJlZDA1YzRiNDExYmQ3MjdhMzI1ZjI2ZDg0OWUwM2Y5OGE4M2FlZiJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L4-L16",
+          "version": "repo-lines-v1:sha256:637d0a21cf3d4f7aea3669da6b0b53c50de93c266b882b75a8412d66d429c35a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM1NjM1ZjkyNzA2ZTIwNjBiMThiODMyNTViMjdkOGNhYWU0NmI0OGNlM2NhZDNiOGQ1YjE1ZTU0NDZiOGIyYzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYjg4NjQ3NTBmMDUxMGQ4MzUyNmM5NTY3N2NiZDQ5NTdmMTRmZmMyNDlhODg0MTgzMWZkZWJlMjA2ZTliYTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgzZTNiNzMyNjA1NmFhNmU2NTM4ZTg3MDBiMTczZmVhN2ExN2MyZWUxNTIwOGI1NzNiNzQ4N2JjZTdlYjAxYTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fd80caa78c5746dcba75d68f2dc8003a",
+      "statement": "A space either shares the first space's sign-ins or has its own WebKit data store created by its identifier; history, bookmarks, passwords, settings and extensions are shared.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L12-L32",
+          "version": "repo-lines-v1:sha256:71715034179a1e691c8ce3444b03c6949277b37847acae32a730b3ea7831ef50:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NzJkYmJjMmQwMzRjM2EzMzc1ZjJjMjk5ZDExMzE0Nzc3ZWJmYTIyYzBhMGY1ZDczMDU5NTM3YTI3MTFkYjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5NGM5ZGFmNTEzYzg1ZTNjMzVlNDY4OWRkYTVmZDM1MGU2YmRhZDNhYmQ3MzY2NDEyODgxY2JjYzk2OGYwMjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyYTU3YjhiY2E5OTkyZGM2ZGE5YTlmOWQ2YTRiYmI3OWJjZWFmYzUzMmI4NDk0Njg0NzZkZmEwMDc0YmNlZmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4YWM1MGM1ZGNhNjE0OWE1ZmExMTU3MGFkMmY1MWE5NTk4NzlhMzdjNjVjODBhYjk4NjE1NGU0N2Y0Mzc5YjkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L95-L106",
+          "version": "repo-lines-v1:sha256:ccb245db6007083c1115efafd811c6fca92916de3b9ee56abb3f028d6a754d3b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkOWMyMzg1YTZhZDNjMTJiYjdmNGE0MmFiOGNjYzIyZDAxNDU0OGRiNGIyMjFlYjU3ZDBiMmViNTRkMjhmYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkMzEzNGVkNjA2MjU4NWY5M2IzMzgyYjUzZjU5NWYzMDc4OTIwYmE4MGQyYTEwYWM4NjViNjA3Mzc0NzhjNmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhZDhkZWUxOTgxZmU2YjIzMGI5Nzk4MzNlMDBjNDg3YjJhZDkyMWY1ODM2YjA1MzJhMjAyYjRiYWVmYzRiNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ab369590d4b24b2dad958b8e5a0e0739",
+      "statement": "Switching spaces parks the current row with its sound still playing, and parked tabs sleep like any tab.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Sleep.swift#L57-L61",
+          "version": "repo-lines-v1:sha256:e182f3ccfa3bdb8120ab3f93bb0a45ff8dad9773fcebc29a2ef0cddded2bb7bb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY1NzFlODQ3YTljZWM5Y2M5YWY2NTM0MGIxNDE0OGQ1OTUzZGRhZGU4ZGQ0ZmUzZTFhNTIyYmMwZmViOGU5NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzc4OGViMDZkMWY2ZjRlMjY0YzUzZTViNWNkMmRjZDVhNzIxYjQ5NmIyYWVhYjBjNThjMmU0MDY1MzMyNjNkZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODJhZmExMmFhMmNjNzFlMDVjODVjMTk4ZjJhZDQzOGQzNTc3YWNjMjExODJmMTI4NmIyZDUzNTdiYTU3Y2MyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDdiNTNiMmM3MGY5YzQ2ZDcyMTQ2ZmRhNGRmNDJiMDIyNDlkZWQxMDkzYjA0ZjkxNzRkZDhiNjkzMTMyYTAwNCJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L183-L222",
+          "version": "repo-lines-v1:sha256:e607665895f31e58f2d62ba740507bd0613269d9c1248948a22199d00485cc71:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFiNTYwYWY3YTAwNTg2MGYyMWM0Y2NlODEyMmJkZDg0MDlmOGQ4ZTYwNDJjOTU1YjE0NmQ4OWQ2ODU0M2ZlYWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM1MDU4ZTY5NWUzNTUzNWFkMTliNTMyZjc1MDFmNGQ4M2UxNzg1OWM5YmUyOThiZWIyNzIwM2U0NTdkZjQ3ODQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU3ZjU1ZmNiOWI3MGQxYTkwYzc0ZWFiYmZmNzllM2MxZTlmNzU1MGViYTEwY2FjMTVjZDgyYjM2OWIxNTMxZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYWE2MmM1MGY1MTBiODVjYjY2MWIxNzg0M2EwNTU1OTkzNTA5MGExODg0ZTk5ZDY3YTEzMWE1NjE0ODk2OTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7ff6541f4bf1402482e056fa247c4e88",
+      "statement": "Deleting a space empties its store immediately and retries removing the store at the next launch, since WebKit will not remove a store still held by the process.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L115-L155",
+          "version": "repo-lines-v1:sha256:fd67d101399d44cbcc788582efd88dd1c9d17ee50ae493fb4ea54dbec3aaa30b:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0ZDdjNzZmYTE2ZDAzZDQwMTE0NDE3YzQzMTc0NzI3YTFkMGQzMTk3NDM4ZWE3ODMzOTgwMjFkYjllNGJhMjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1MjJjNDJjZDE5YzZkMDNkODA4YzQ1MjcyMDU1MjgyNWI3ZWExYzViNDkxYjIxODUxMWNhYzc0MTVjZjlkOWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1ZmU5MDgzZmI1YTA3YjY1ZThjNDFkZjdjMTQzMGVlMjQ1ZjIwMjM1ODRkMDJiOTk5NmQxMDIxYjlmYTZjYjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0YTM2NWE5MGVjMTFlOTA0MzI3NTJjZjkzNzZlYzVlZDM2YjgwYmE1ZThlNjg1NGZjZjk4OTcwZDMwNDQ0NjkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Spaces.swift#L308-L320",
+          "version": "repo-lines-v1:sha256:85379c2aa767c4707892161cafbda186c7d2d849b9e569aedfb2775bc5e24d73:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVkODgzZWFiY2RiMGMzNGJiNmYzM2YxZDIyZjAwZDRhYjY4MjNiZTU2MzhiMGM1NDk5ZWExOTU2NmUxNzNmZjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwMTUzZTVjZjQ0ZDc4ZDczYmVkNDRjMmFkODJiODkyZDEzOWM2ZmFkYzA4NzI3YjU3NDIxZjdlOTVkODhiN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI0OGEzZTNiMDdmZjBjNzFlNTcxNzUwMTEyN2I4MzNmMDU4N2ZkNGZiYTg2N2NlMmY4NWQ4OTQxOWI1MjgwNzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY0M2U3ZjYxZThmZWE3ZmJmMTFiNDc1MWYwMjdjOTU4ZGY5ZmE2M2FiMzkwZDE4YjMxODYxYjg1ZTg2ZjIwMzEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f3b7995eca14e9595172a8bbb640fa3",
+      "statement": "Space swipes are taken only if they start over the tabs and move clearly along the spaces' axis, with thresholds of 50 points in the column and most of the 52-point bar.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SpaceSwipe.swift#L15-L60",
+          "version": "repo-lines-v1:sha256:0fb3857cda0fba71374c9fa079d0af1f5fbe70b558b868589a1424fb747f3d5e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzMThlNjU3ZmQ4ODMyMTA4NzZjYWU2MWE4ZDI2YTQyYzQzMzNiMzM5Nzc0NTFiMGY5ODYwOThlZmEwYjRhZmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjMDc3Y2ZmMjFiYzZlYmVjYjU3MzMyYmY5M2Q0ZTRhMmRkNTE2ZWQwMDM5MDY3OGJkN2U1MDU4Y2Y1MmVmNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4NzMzZGU2YjIwMjVlNWIxMzFjM2MwMTlmNTU2MzIyMDIyZTZkYzQ3Y2RhYWEyMGJhNmI2MjgwNDdhMjViMTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1ODI4MmQwYzU4YzUyNWI3NTI1MDlmNDExYTBiZWE4YjY3MzdiMjAwYWIwZTMwOTVmNTY3NDE4Mzc1YTdmZmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_45d958ffd4d2430fae6d95fd9caf1a28",
+      "statement": "Pinning is immediate with a letter guessed from the address; private tabs cannot be pins, and pins stay at the head of the row in pinned order.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L1160-L1243",
+          "version": "repo-lines-v1:sha256:98aa8cc28bc442309f775f29f7061f98738ff1c47ecac30de75fab15bc8b4604:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1MDI1ZGI2YzFlYWU4NWY0MmJjNDY1MTk1ZTQ0OGUzZjIyMmVkZDI3Nzc1ZWQzNzQzNTc5NWFhMmQ1MzE1MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyYTNhZDU3NTE5MjNhODQ2NDg3YjUzNGNjY2YyMzQxYzVmOGM2ZTJkNDk0OTIxNDlkODE0NzliNWE2NGIxZTgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwNzQ5NDVmZTAwNmE2ZTg5NDE0NWEzMzgxZTI2MTg3ZDI0MWU5MGQ1OGRjNTAzNzNmMzJjOGI2ODg3NDQ2MmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNhMmFlMTFkODcyMjJlYWUzYzU0ZjQwNDBlOTdlMDZmY2NkNWNlOGM1NTlmNDg2NDlhOWYzOTE2OTRiNmUwYTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d37e0f57b985455bba5cac010a31ec90",
+      "statement": "Cmd-W on a pinned tab releases its page but keeps its letter and address, and only Unpin removes it.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L2716-L2733",
+          "version": "repo-lines-v1:sha256:b7c4a0ba78f132b99c0331a1b9e210f5105b2612e6ed8fee586c36727cb350d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNWUyY2RkYmY4NWY5Zjk1N2FlNDdiMDQ0YzNlZWZkMDVjMTFmYzgwMmQ2NzIzOGIwZWNmYzAwMDQ0YjM5ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI1MzZhNTc3NzBlMWRhOTZmNTkzOWE5NWZkYWY4MTJlYjQzZGZlYjIyMGE3YjliZTZmMjVhYzZkMjE0MDMyMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYyNjk2N2QyNzBiYWU0YzBjNWU3Y2QzODk5NWE5ZWIwZjE4MWFlZDM4ZWZlZTk5MDEwM2I3OTMyYmFkM2Q5NDQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d6ef1d599bd413888e327602cb834d0",
+      "statement": "Pin definitions are shared across windows per space; changes post a notification so other windows reconcile their own tabs for each pin.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L1935-L1999",
+          "version": "repo-lines-v1:sha256:633e573069207c4e179b44e092ad5c651ae7f065ea391df36b52be2111774126:eyJzZWxlY3RlZExpbmVDb3VudCI6NjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwYTgzOWZhZjY5NDc1OGU2MmYzOWJkNzcxYjEwYTFhMGE4ZTc3OTE1ZWQ3ZDZkY2MzNmUzNDBhMWFjZWQzYWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhZDUzYmFhYzE4Nzg1MmI0MzFjMjMyZTA1MTYwNjFkNDk2ZjdhMjE1NmVlNGJmN2RlYTY0N2ZjNjY0OTg2NmQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZTliNjUzNDJjZDA0ZWQyNTdiYTYzM2U5MDBlNjMxMmJhYzFiZTA3NDdiYjVlY2Y1OThmNWFjZTFhMjUxNjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdmYjI4ZWEwNjIyNjFkYzZkZjQ4MzAwMmJhMmMyOGE3YzU0NDAxYTU1ZTk0ZmQ0ZjNkYTMwYzViZTdmYzcwMjgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Pins.swift#L1-L84",
+          "version": "repo-lines-v1:sha256:7c3d93832f32009b2d076758cf80cb20c495d4239c5c9e6a76f5e485f0dec000:eyJzZWxlY3RlZExpbmVDb3VudCI6ODQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_faa0272c680c49bd93612fc146090b5f",
+      "statement": "Tab groups are per-space named sections whose membership is each tab's groupID; groups saved without a collapsed state are open, and extensions see a stable Chrome-style number derived from the UUID.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/TabGroup.swift",
+          "version": "repo-file-v1:sha256:6d2136bb5856dac5472798afb6aed56c43b972e4e976ac0adc057f3060307c02"
+        }
+      ]
+    },
+    {
+      "id": "claim_6a3fd484d62147cf9f494f8d1def525d",
+      "statement": "With groups on, every change to the tab row is followed by rearranging it into display order.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L3226-L3242",
+          "version": "repo-lines-v1:sha256:512d645a615630fc2d8eb46f2879d81a8bb32f8ec6eed9d599f33a7a2ac1c660:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBkMTc1YmIzZWNjMmI5ZTU1NjZmMDQ1M2RlYjZhZTNiY2ZlOWFiZDE2ZDA1OWY1YmI1OTgxZjdlNWYwY2E4YjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlhNjJhYTNiYjM5ZDk3Nzk2ZjIzMGEwZDAxMzUxNzZiNjkzNTgxMzI3MWM0NmYzNWY0ZjkxMTlhZDQzNWFlOTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlNjQ4NTA0ZjNjYzA2YTNiY2Y2MGI2YjkwMGRiM2VkZDA4YmI5MzQ0NjA1NDZiOGMwNGVkZjRmMjZmMTAxNzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI1YTdjZDcxMWMzYjZjYTM0NzU0Njk2MmVmODQ3MjFkYjBiYzNiMDFlNmE0ZWY4ZmZlYjRkMTk5OGY1ZmJiNzYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L36-L44",
+          "version": "repo-lines-v1:sha256:5667de3268859dfd9532a023b9235cefb78bf850aae91b3723759ecef6952392:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWVmMDY5NDE0ODNhNDMxZTk5YmI2YTBlMWU5ZTFkZjBkMmYzMDljMTNiNzQwNGJiY2ZiMWIzOTI5NzhmNGE4OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWNjYjQ4NjRiYmYyMWRjYTE3ZWVhYzExOWYwOGZiMDJhNzZmM2RmMzE2MjMyYjA0NTkwZmE1MTk2OWQ3YzkxNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiN2NiMDE4MDAzZWM3NzAxNGI0MDQxNzViOTExMWVlOTA2MGZmODAzYTE4MTNjMmY4MDRmYzVhOTBhMDFiMWY5MyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0fde2c5eecd34474ab758f41e121fb57",
+      "statement": "The Ctrl-Tab switcher orders tabs by most recently left, freezes the order for one gesture, keeps pictures for the ten latest, and picks a card under the pointer only after the pointer moves.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/TabSwitcher.swift#L1-L60",
+          "version": "repo-lines-v1:sha256:225f592b0402e990e03d2d439ed48d2cd88a7a0bc181fc169b9deafc8e161389:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJmMmNmOWYyMzg5YzRjYTVjY2E1ZDYxYmZjNTAyNGY5MjJhMzBjMTAwYTBkMmRlNWYxNTg3Zjk0OWRjMGQ5MTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFjNWJiY2MxMWRiZDYxYzdjNDI4ZGQwNTU1NGNjNjU5ZDNjNGY2ZmEwOTE4ZDNjMjQwMGFmMmJiNWFhMzNkYTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d30de22498b34e73890f8ca9f0f4da42",
+      "statement": "Pinned rows and the tab switcher are tested through the bench in hidden probes.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/pin_tiers.py",
+          "version": "repo-file-v1:sha256:4aee013b70d86ab874b7784b645a32ec1941b59d0deec342f5dd8dd36ccd28a1"
+        },
+        {
+          "resource": "repo://Tests/tab_switcher.py",
+          "version": "repo-file-v1:sha256:e9b3b317165f72e98c4b692355dbc07a88be23e1a4360331204fb7665f6217fe"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

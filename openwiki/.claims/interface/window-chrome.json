@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7b21623cd66eb569af22faad9f66e02eb5cd09bdbaa5abdea985b7c1226c3f22",
+  "claims": [
+    {
+      "id": "claim_f13f850c208b49279f0229780ba1f769",
+      "statement": "Every colour in Palette is a light/dark pair resolved dynamically against the window's appearance, and the only non-grey colours are the safe and unsafe connection tints.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Design.swift#L4-L77",
+          "version": "repo-lines-v1:sha256:1423e7ae4b7a173cf4029bc3561bfaa20c86fa6cc123c9edb72a2a9136a8a54e:eyJzZWxlY3RlZExpbmVDb3VudCI6NzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0OWJmYzc2NTRiYzAxNjQ1ZGY0ODlkYWYyMDUwNDc2ZWRlODNkMzBkMGY3ZTNkNjk0Y2FlMDhhMWZlMjY5MWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MjU0YzhlY2RlYzI5N2VjMDUyZjk4NmJhOGZkYjI4OGNkYzM1NDExY2JjOWFiODQ4ZTE0OGZjMGIyZDhlOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiZDk3NjA2MGIyZDgwNjcxODViYjUwYjBhNjgzMjE5MmZjZWM2NDhiMTgyNTIzYzE2YThmNGNmYThmNGNhMjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_09d751d088cd4d5e9aaf4fad9a3e6deb",
+      "statement": "The Look setting sets NSApp.appearance on the next run-loop turn so all windows, sheets and pages agree.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Design.swift#L79-L118",
+          "version": "repo-lines-v1:sha256:275d40c23ec075dbff97d88073672584b9daf5d3f56595dd66cd4a92192061c9:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzMmExMDMwNWY0ODM4NjczMGM0ZWMwNTE4YTAzODIxNDgxOGY2MjY0NDllOWNlMjI5Nzk5NzllOGNmNDhhZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEzNTliY2U3YTYzYTg1ZjNiZWYxNTk3ZDVhZTExYjZjODQ2OTg3YTYyOWM1NWUzNTc3MTc4NzVjYWFmMTY4NWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f9aa327a8e044ff598df5a9c15abb2db",
+      "statement": "Tabs in the strip have a fixed 186-point width, shrinking to icon-only below 80 points and stopping at 36 points before the row scrolls; the strip is 52 points tall.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Design.swift#L120-L163",
+          "version": "repo-lines-v1:sha256:a13be8c714e077de75b0b463ee6762f3a58ec315a5efe097ed0f4ec02762f772:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiMzIxMjlkYWRlZTA0MmFhOTQ1YmJhY2JiZTZiZWZjMDI5NTdhODMyMDQyYjE0OTY2NzE4NTQzYzI2ZDJhNDMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVlOTBiNDhlOWEyYWZmOTU0ZDFjMGE4OTE0NjZjMDJjMWJkYWQ3YjJkMzU0Njc1ODI3ODI4M2ZlM2IwNTBkOTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdkYzc4MTY4ODQxMzQ0YjhjYmUyMTc4OWZjNTNlMTg5YzBiMmM3MzlmMmYyNWIzMDU5MTk3ZDUyZjkzNzEzZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ebf2adf8369c430ebec1a0a84dd530e4",
+      "statement": "The sidebar defaults to 232 points and can be resized between 176 and 440 points.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Design.swift#L164-L167",
+          "version": "repo-lines-v1:sha256:f511d8e8c74efe6f93a27dfc2e4e1a095ade17a49b37e0889cc89978794c96f9:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOTE1YjRmYjBlZDZhNjUxYzQyZjZkNDUyMzM4ODY0NWMyYTE0NGNkMzFmYTE4OGIyYmYxY2ViZWNjMDViZjc3NSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzk4MjU0MDBiNTViMzRmOTlhODZlOTFmMTMyODEyNzkxMzZmMGVlMGY2OWQyNmUyMTkxNDNmMGU1MjBmZTRlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMGM0NGMxMTkxNTc1OGM4NTJiM2I1ZjQ5NWYzOTgzZWFhYTU1ZmZjZDQ2ZWM2NDY3MjgwODM2YTMzYmE0YWNlYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDAwZWU4ZTQxNjRiZjk2MmVmZDRjOWNjY2NjMjFmMzFlZGIwODM2OGY4NmM0YzJhNmFhY2VkNjA4YWE1NzdkMSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Side.swift#L136-L146",
+          "version": "repo-lines-v1:sha256:03d2d0fb0cac41db3244de84571424c4d11819141ec376cb8f54597a60c53766:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjNGNmM2Y0OTg5OGM2YjhhYWNkOGI5NjFjNTAwNDc3ZDQ3NTk2YmMwZGIwODE2YzY4YzM4MGFhYzIwMmZiNmEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMDIxZTVmMzUyNTcxY2FhOWQ1MjhhMzc3ZDUyMzQwZDY3NDhlMzViNjVmODdmYTIyN2QwN2U3YmI4YTQ4ZTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc3OGEzZjVlOWFkZDcwZDIxZmUzYTE1MTFmNGQzMzI3NjkxNDMyNTQ0Y2M0MTZjZDYwMDJkMjJkNTI2NDMyMzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiMGM2ZDI3NGM0YzdjMzgyMTNmNDA4MjA5NzY3MmQxZjZjOTM3ZDU5YjE1Y2Q3YjFjMWNjZTkzYTVkZmY1ZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ae33c19b0077483299cb15d931a26bd9",
+      "statement": "Folding with Cmd-S hides the column or strip for the session, bringing it out over the page when the pointer reaches the edge; a keep-folded setting makes it wait for the pointer to settle.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Fold.swift#L1-L43",
+          "version": "repo-lines-v1:sha256:138fbf24b2301c1ebbf2aa8451c87e4c88f661858654876e14c1a45ca1767105:eyJzZWxlY3RlZExpbmVDb3VudCI6NDMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZlZDcxNTA1YjdiZDYyZjRhMTBlODFhY2JjZTZjODc4YjBkNDc1OWJmZTk4NjJhYzQ0ODc1Zjc1MjYyMTNhM2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9c145f9402454a15ad5c8ae05faec47f",
+      "statement": "The window has no toolbar and the traffic lights are positioned by hand using AppKit's spacing read once, to avoid macOS 26's rounder toolbar corners.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Lights.swift#L1-L50",
+          "version": "repo-lines-v1:sha256:cc2d0ef557bb08535377a406a8b9490f4808dc85e3c14b88b4d5c78899b29c64:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzODk2NmM3ZTljZmI0MWM1N2YxYTk1NjMxMzFkMTU0ZWRmZTNjZGFmY2I5YTAxZDlmN2MxZDVmNjY5Njc3OGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImExMmQ5YTVlMTI2M2FlYmU5YTQ4NmUyZmYwNWM4M2MzOWYxZjNjMDMyMTNiYzIzOGQ0OTY0NmRjNzhkOGY2YmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4098142818a64f62a0b1925a89dcb120",
+      "statement": "All animations use shared Motion springs that become immediate under Reduce Motion.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Design.swift#L175-L200",
+          "version": "repo-lines-v1:sha256:8fb0077507c3992136bcc6bb69ff088fde416ee81993e90508d8ab9d39dccb4c:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA1YjVkYWVjN2UwM2M5MTkyM2I5YmI1ZTMxMWI2YmNiMDhlMjM2YmQ1NDNjMWVmNzRjZWQ1ZjM2MjA1MDUyNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMxMDNlZjVjMGY4MGI4NmYxYjk2M2QzYjcwNmQ0MTk3ZTNlMWI4Njk4NTNlYzA2NjM2NTVjYzA0OGI5YTcwMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjViYmQ4OTQxODRlMDc4N2IxZmRlMmNjNzk2YTE1ZWYwMWRiNDEzYWYxYTAxNDczYTM3MDg2N2UxYzUyZThjZmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzZDQxNWIwNmFmYTFiNWEzYzAzNTNiZDRlMjUxMjRkNzgxZDY5Zjk2NmE1OTE4ZjNlNGQ2OTE1ZTRkMGNmZGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3544c0b9cca447788dc2be9f46b3bc9d",
+      "statement": "Panels such as Settings, History, Downloads, Passwords and Bookmarks are built from shared Plate, Card, Rule, Line, Caption, Hunt and Nothing views.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Plate.swift#L1-L190",
+          "version": "repo-lines-v1:sha256:32087dd2b45f54d68a54e78ec46b253c78ffd2765a1b13bbe2118f6abc5f69dd:eyJzZWxlY3RlZExpbmVDb3VudCI6MTkwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI5ZThiYWYzZWNjYWU4YmFhMzJlODZlNDBmOTIxZDI2YTEzMGJhNzRjMjNmMDIxOWE3ZDI2ZWRmNzdjMmQ1YWEwIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmMTlmMWJiNjAyZWU2MWE4MzRkYjdkM2MzMmMwZDI4OGM3ZmI0NDcyNDgwMTA1OGExMjliYTNkOTVkMGFjMjA2IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI5YmQyZGIzMmE0YTU1OGM4NjJiMDVkZTc1OTVlZWM0ZDlmYTE3NDNiOWE0NzhlNzcyOWZjOTAwYTBiN2MxMjRjIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_e3f4fb489b284ec68b1846c43516a126",
+      "statement": "Settings has General, Tabs, Shortcuts, Extensions, Passwords, Downloads, Privacy, AI and About pages, with AI hidden unless the add-on is shipped.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Settings.swift#L1-L30",
+          "version": "repo-lines-v1:sha256:ebc895514905a49d805c46c2e4472772cfbe069824b6bbf926257743f8e99704:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhmMmViZWRiMDE5ZDdhMDY2N2Q0Mjg5NjVjYjkwZGZiODAyNTU3NDkyMTRiOWI3MmFlOTE4NzY4YjM2MzJhZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjEwNTI1OWM3ZmY5MmVkNjViNjM5ZjA3MGFkZDdhYjU4NTFiMDQyYTNlYjg3M2Q0MmJjMDIzMzVjN2IwMTRmMjEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Settings.swift#L81-L81",
+          "version": "repo-lines-v1:sha256:5162d137375cc9697feea0ef87e570b59df44b32b52bbcf97b18a4e32737c476:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE2MmQxMzczNzVjYzk2OTdmZWVhMGVmODdlNTcwYjU5ZGY0NGIzMmI1MmJiY2Y5N2IxOGE0ZTMyNzM3YzQ3NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNTE2MmQxMzczNzVjYzk2OTdmZWVhMGVmODdlNTcwYjU5ZGY0NGIzMmI1MmJiY2Y5N2IxOGE0ZTMyNzM3YzQ3NiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZmM5ZGZkZWU4ZjRlMmFjOTVkMTNiYjMyMWM0ZTZjYTM3OGVlOWI4ZDM5YzVmNGFiNWJkNGM2NDliZDEyZTRkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDU1NzcxYzk0MmY4ZDRiYzNmMjdjNTcyZmRmNWYwNzMzMTJhNDQ3YjJiZjU5ZTMzMTIwN2ZlZjQyNjAzMTJkMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_e70cd568d72c47ae86ec4772e9c0c0b2",
+      "statement": "After an update, What's New shows the version's new switches and older switches still off, once per version, never after a fresh install.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/WhatsNew.swift#L1-L60",
+          "version": "repo-lines-v1:sha256:134319c7c5e3f0a8c9f112b1ab66e690fbac3afff70cb27c5a1bd7999042b94e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0NDA1ZWFkNmZkZWQxNTllODIzM2NlYzc5ZWNhYzkxMzQzMjVjNTM1ZTc3YmJmNGQzYjc5MDI4N2IxZTM4ZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5NzBlZDBiOWM5ZDNjNjQyNzQ4OGZhYWMyZTZkOTU0MTJiMDJjNjkwNTU1ZTk4MzQwZTA1YzkzZDM3ZTU1YTUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/WhatsNew.swift#L82-L100",
+          "version": "repo-lines-v1:sha256:f28cef3b25f22b6f14e40822da90e0a1bc7fd54824639695379d36e6faadf159:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3M2Q3ZmY2MjY4YmM1NDg4ZmYyYzIxZDUwOTM2NjhhYzdkNTYyYjBiNWQwYzRmZWJhZjg5N2JjZjg1ZDhkMTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzYzM4YmMxMGU2MjI3ZWNkOWFkODE5NjY3MzI1Mjk4ODNlNTIwZTFhODM2MDI5ZjRmMjk5YzI0MjhjZmZhYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjM5NDRiZWVlNTA4MTgwOWRmOThlOTAxN2ZlZWQwYjEzZjQzNDY5OTdmNWRjNzZiZWE4OWJkODA0OGY1MWUzZTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_44236c3902554f449b589e39631aa7d2",
+      "statement": "Keyboard shortcuts store only user changes over defaults, read keys by layout-independent position for the top row, and let the user reassign any menu command.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Shortcuts.swift#L1-L60",
+          "version": "repo-lines-v1:sha256:e29d2e974a9ad2bf256ad84b41dbd24065beaac65e0585cc129ecdd8b0a9dc12:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0YmY0ZWVmNmNkZmE3ZTc1OTUyMWQ2ZGJkZjZiMzQ5Mzg1ZjMzYjk3ZjA0ZWIwMjYxZDljNWJiMjFkNTA4NTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg3MWEzYTU3ZmU4ODhmODNhOGUwMzE4ZTc1NTNhZDdmMTYzYzlkN2NkZWIyNjI5MGE3ODdmYjFhZjdiOWM3YTYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Shortcuts.swift#L120-L140",
+          "version": "repo-lines-v1:sha256:399f65d0f67e61b4b5921714371f279de2187f92e2da337518f6d0b99838e09e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyMTYyYWM5M2U2ZjAxOTdiMGJhNmUwN2VjMGRhMzNiNDU4NWVkZjlkM2RhMzEyMTdhYzllMDYyMDhjNmIzMDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJiMjRjNzY0OWNiMDE0MTEzM2Q4MTI2ZGIyY2Q1NGZjM2FjNmM2MWJiNmUxOWRhNGRhOWMwOTVlZjE1ZWViNjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY0ZmJjMjRjZTJkYmIyNDE0ZDY0N2Q4NDQ0MTBhZjExYmM1NGY3Nzg1ZGQwZjI1MDkxNjhhYmFkNTVhODE4MDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg1MjdkN2UwMzk2ZGZmZTg4NDUzOGYxMTU3NTJkZDFiYjcxMWM2ZDBiODNhOGEwOGJjOWVlOTEzMjM3ODE4MzQifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Shortcuts.swift#L241-L300",
+          "version": "repo-lines-v1:sha256:f44eca68d54f228cfd237894da4ec53ebaa0e24346fe3ec24eed77389387ca48:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0MzY3OGM2OGFhZDQ4MmMyZWYxNDQzNmUxOGJmMDIxY2M1ODA2Y2QxZTUwODQwNDYzMjc3ZDU3MTExMGJmZDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyNTQyZDJjMmMxYjZiNDU4NDNhMmI1ZTUxNDA4MDhmODI3MWQ3YmMxMDAwYjk0OWZkMDZiYjFiYTY3YjI3MTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZiM2RhNTkwMjM2MmRkMGVlZjg1ZWMzMTc4YWJiODhkMjlhM2ZiYjUxNWQzMmIyODcyZGFmMDljM2JlNzMyZjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5ZDI5MTc1ZWM4YTRmMDQzOTEzNTA0OTExMjMxOTZjY2JlNTg0ZmIxMjA3OGQzODEwYzQ4ZDEzMjYwOGNkMTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66ef9001284846988b5d33b996937d39",
+      "statement": "Extension command keys from manifests are adopted unless the key is reserved by macOS, browser-only, or held by a Search command, in which case the command is left unbound.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Shortcuts.swift#L300-L404",
+          "version": "repo-lines-v1:sha256:d70546d14742ca3a03078e6409b964de145420bb5a3552290220f1c7c29c65cc:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhMjU0MmQyYzJjMWI2YjQ1ODQzYTJiNWU1MTQwODA4ZjgyNzFkN2JjMTAwMGI5NDlmZDA2YmIxYmE2N2IyNzE3IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI3ZGIzOWE1ZjIxMDJhMGZkMzk3MzRmMGQzOTRiNzhiMjk3YjM3MmQ2YzlhNzI2YWU4MzQ5OGIwODkyMDJmODdkIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJjODA1NTUyMjdiMTRjNWZhMGE0NDUwNTY4ZjNlNDdkZjcwMTA4NTYxZWQ1ODYzN2U2Yjg5ZGQ3OWZlYThhNzc4IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxYjJhM2E2OTljNjViZTM5YjA2NmZlNWFlZjEwMjgyMWNkZjcxMmJiNTAxZmVjZWFjYWY5M2I4ZDVkMGI1NDI3In0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

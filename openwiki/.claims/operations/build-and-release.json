@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8211e9dded8ea90426423dca5acd93b81193155c105a074f71ecdc7e8e169e6f",
+  "claims": [
+    {
+      "id": "claim_39aadeffa9d94c47b9e16f38a9a6a54b",
+      "statement": "build.sh builds with swift build for the chosen architecture, using -Osize for release, verifies the binary architecture with lipo, and outputs to build/ for arm64 or build/intel/ for x86_64.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L44-L72",
+          "version": "repo-lines-v1:sha256:48a1117e7d33975513dc5662439d1dcac386d85badf013f193b4d2e3fc75b221:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4ZmM2MzM2NjdkMDMwMDczMWJkZDg0NDcyZGM0MjRlMWY5YzY0MTc1ZWEyYmFkYjY2NjQ3MmQ5MWFlYjRlZmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwZWQ2NWM5OTc5NTU1ODM3OGFlOThkMTY2OWY1ZDI5N2RkNDg1ZDZkMDZjN2NjNWZhMjgzMjg3MDlkMDQwMDkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI2MzYzYjc2ZmMzMDcxNGFhOGRmYzgwNDM3N2Y0MjFhZDA4MDhjN2Y3YjdhZTJkYjdiYzE5NzY3ZThkODdjNGMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVlYjIxNmJiMzIyMDBhNjUyMmY0YmEzYmIwMjYyNDQ1NzE5NmQzMWViYTg3NzBiMjljMTkwODAxYjI2NGNhNTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3dad8cc22fd741379affd7498dd6a1da",
+      "statement": "Release builds write a dSYM beside the app and strip the binary.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L81-L91",
+          "version": "repo-lines-v1:sha256:25f21377e0d0d0035e64c75bdcbc9e682f2042047d895787e758998063c8fbfa:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyMDNmODQ0MGFmMWI2MjA0NGI2MWY4NDk1MmM4Zjk2OTFkNzZmYTgwMGMxOGNjZGIwNmM5MDA0YjFjNDNkNGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjlkMjM3Y2Q0MjBiOWQzOGI5ODFhMGE0ZjY3NzAxOTBhNGE4M2RjYTFmZTU2YzRmNWJhMWUyY2JjMGVmNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVlYmNlMGQwZjA4YjlmZmIwMTdjYTRlOWRlYTQxYmM5NzFmNDc0ZmRlMWQ0MTJjNjUxZTVmZWEwNDQ1YmY5MTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1NzMzZDUyNDY2MzI2YmI0ZTJmNmUxMmIyYmM3OTFiNmNlMDEwYTJmMjMzNGNiZTc1ZWU0MjVkYjU0MmQxMTAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_20e1457ca6fb4666aa097cc3afea1e87",
+      "statement": "The app icon is drawn by Icon/icon.swift at build time and compiled to an icns plus, when Xcode 26's actool is available, an Assets.car for macOS 26 Dock styles.",
+      "evidence": [
+        {
+          "resource": "repo://Icon/icon.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:b57331c386cfd58a60c40f3e8f1c18802b35ada31a39803f99ebbd029a2565d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFkOTM4MDQ4YzUxMDIzMjZmMzg4ZmM5YTU1Zjc5MWVjNzM3MWIyM2NiYjgyM2JhYmRlMjVjYmIzNTk4MWIyYmMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1Y2NmNzQ3NjU1ZTBjODBjMGY0YzViY2EwZTMyMjgzYzdjZTZmY2YwZWQwZDU3MzA2YWQ1ZWUyNmUzMjg1NjgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjN2Q0ZDViNGY1YTFlZDI3MDAzMDZjYjA5MjQ3NjlkNzUwNGY3YzBmNDQwMGFmNGI4OTRmNTY1MzNmZDk1NWMifQ"
+        },
+        {
+          "resource": "repo://build.sh#L93-L127",
+          "version": "repo-lines-v1:sha256:84f7867fe0525c45b4f03da6ddc1d967ecb14373d67406d7454a70ffca3e8051:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImViY2ViZjRmZmM5ZDNlMDYxM2MyYjMxNmQ4OGY0ZGI3MjdhNmU2OWFiZDRkNTkzODY3NDBmZDA5YzQwODU4YWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE1N2FjZTdjOWVhM2YwOGE1N2ZlM2ZhN2E1YmEwOGRhZWY3N2MwOGNjMjM0YjdmM2U0ZTI0ZTI5NzI4NWU2ZDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmZDNjOTkxZGVjYjRjYzBjNjYyOWJjZTU1ODNlMDA4OTY0YTdhNGQzOGJhNjYwYzU0ZTk4OGNlNTdmZTAwMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmNmY4YTI3YzEzYzk3ZTUwOTUzY2FlMTU5OTE5ZDk0MWJlMzM1Nzc2NmNiNmYyZWUyN2I5OTU0MTgwMjg3ZjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7724fc3672354628bd0a56033510faab",
+      "statement": "The bundle version comes from VERSION and the build number is a timestamp that only increases.",
+      "evidence": [
+        {
+          "resource": "repo://VERSION",
+          "version": "repo-file-v1:sha256:8c54bfab7f1ae9bd1a7148eae41e7b0a8f4ad3726e0cac70f823a2d45db9e60c"
+        },
+        {
+          "resource": "repo://build.sh#L55-L63",
+          "version": "repo-lines-v1:sha256:74aae45211271d45b82b2864df6974a3cd87c7cbf3981e47419f098e598f18fe:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzEzNjdmNTBlOTg4NmE5NDIyZjEyNzZiNmI3NzQ1MDAwMDEyYjVlNTQ5M2FmYzYzNjJmODI3NDg0OTYzMzM2NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmE3MTcxNDcxY2E0NjY2MTIzZmUzNzAwODM0ZDI3NTdhNDFiNDUyMDM0NTk5MzljODQzMmIyNDljZDY0NjlmZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGNiYmFjNmUxMDVkYzI1NjZjM2JjYTYzYTk4NzNhNGRmNjI1MDVlMzUxNDQ0NzFkMGM5ZTlhOWJiMGFjZGU4NiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTI2MTQxNDZkNmQ3Y2Q1MzhhYWY5MTkzNDIzYzI3ZGUzN2Y2YmM3MDNiY2FhNjFlN2YxYWZhNzViNWVmMDA0YyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b880ae0475d74a48be62058974adc6b6",
+      "statement": "With a Developer ID the app is signed with hardened runtime and timestamp; otherwise it is ad-hoc signed; the passkeys entitlements and embedded profile are used only when Search.provisionprofile exists.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L196-L224",
+          "version": "repo-lines-v1:sha256:c3562ed165e4ab349003f88c8f3084d2e17f34c6b564e10ff7dc63d1f8d1874b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3NjlkMjM3Y2Q0MjBiOWQzOGI5ODFhMGE0ZjY3NzAxOTBhNGE4M2RjYTFmZTU2YzRmNWJhMWUyY2JjMGVmNzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyMmRlODc3ZGY1M2FlNjg2MTJiOWQ2MWJiZjIyODY4MGQ1MmE4YmU1NzNlNDk0M2JlMzI5M2M4YWUxZTMzMTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImU1MWMwMTg2OWE4ODIxOGQzYmYyMTRhOTk4NDM1YmFjMTVjYWM5M2JjOWQyYmMwYjg0MzM5NDE2NDY2MjcwZGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5b2775ad71f24f9481fb429c54da6fc7",
+      "statement": "The DMG is laid out with dmgbuild using Installer/dmg.py and a drawn background, falling back to a plain hdiutil image.",
+      "evidence": [
+        {
+          "resource": "repo://Installer/dmg.py",
+          "version": "repo-file-v1:sha256:03b8a1c5d21b6479d21c6535d2757c9c404d4dd870ea39db4a412867dc221d7e"
+        },
+        {
+          "resource": "repo://build.sh#L229-L261",
+          "version": "repo-lines-v1:sha256:13f0e716c4329dce277ef8640abad43c773a0ca648ed1b43a2ab8f1d6dd825ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU3YjJiNWJjOTUxOWU3M2VkYzI4YTAwMGQ5ODU0YjRmNzc4ZTZkOGMzYjA0Y2Y4NmY1YzQyNTljMGExZWU1YTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhODI0OTNkZGE0OTU5MWI2NTIxZGVjZjRmYTNiMmJmZDQ4MDg3MGZhZjJkMTA1N2E0NThkZTdhYTk4MzllYzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhiNjNjOTBiZjQ3NzYzMDI1ZjA5Zjc2ZjU3YzU5MzM0NjY5ZmIzODdkYmJlMmYzODk2N2IyMzI3NWI5NDY2YzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNhOTliMjM2NjZjYjMwY2Q2MGFmZGZkMTI5Y2ZhY2RkYTcyMDZkZTg0NjgyYzBkNzgyYTIyNGY0MzVlNjc3ZDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dc1b254b5728455da22d938168ad07bd",
+      "statement": "The appcast lists version, build, ZIP and DMG URLs with SHA-256s, the first paragraph of NOTES.md, minimum macOS, and optionally an AI engine, and is written after stapling.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L263-L319",
+          "version": "repo-lines-v1:sha256:299ca71adb5e7dcd07ed058d395ac9a831bc137ecec544c678d8e133721c1e47:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBlNDYzYmNhYjQyMDg3ODc4ZjUwN2FmMjg3MWU2ZjA4ZDYxOWIyYjIwNjIyZjY4Yjk4ZWNmODQyMjQ0NWZhYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc3N2U1ZTNmOTFlMzNmM2FmNGE3Njc1MGMxZWQ3NTFjZjI1NTMzMmJhOGJhNzExYzVmNTkzMDk2ZWQxYWQ4NTkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MzFjOTliY2U5MGFiMGFjZDg0NzBkZTA3ODRjZGJhNTgzYmRiY2VkNTMxYWMwNDhhYzMxNDhkM2Q0OTZmMmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4NDUzMGYyMDNjYzUwNWMyNTIzZDI2MzBhYmNiZTc0ZTk3OTM0YTRkYTI3ODQ5NTM1NTIzMzllOWNlNjQ0M2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a93d6ee628ef45bfa6fe0648b4663c37",
+      "statement": "A signed copy of the appcast is produced by codesigning the JSON with identifier com.officecommun.search.appcast and zipping it with its extended attributes.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L320-L334",
+          "version": "repo-lines-v1:sha256:30264a96c18d1ba592d8c2e4246e8e6130bf5d71a5c0d4d5a851cd7d58a8b637:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE4M2Y3ZDNmYjUzMWE5MGY5ZWY2OTlkY2JjMDQyOGE5ODRiYmFhNzMwOTdmYzU5MmQ3MjU5MmM3MDY5ZThiNjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYxNTQ4YzE0ZjQxMjJmMTRlZTY1YmFkMmQxNmUxYjQxMThhNDEzMjUzMDFlNjRlYjNhZGJjNmIyZDkwOGIwNmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE1MDk4NzVlZDgyNWZjMDk2OTYwZTg1ZjQ0MmIyZDk4YzYzYjJjNzk1YWI4MjlkMWRkMTg4YTFlZmFkZmU2NDkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e5a3284c89e14889aebfef6111d1d447",
+      "statement": "The ship step requires a Developer ID, notarises the DMG and ZIP, and staples the DMG.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L337-L346",
+          "version": "repo-lines-v1:sha256:54beada7b580e91dcca3ef745c6c3509bc3149f0054a901d2b0e1e90800a19c7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTRlNWJmNDVmNTc1NWRkNTFhNDUyMjdhMjY1YjA4ODk3MzdmNDllNWUwNjFmOGQ4YWU0MDA5ZWY3ZTE0ZTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg4ZDE2MjgxODMxYzQ2MjY2ZDNlMmU4N2Y3MzY5OWQ4MWFjZjA5ODQxZDI3NTExZWYwZWU4MGMyNTk1YWQzN2MiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFjYzJmODI1NDY3OTkwZjA3YWE4ZGY3M2E4ZmY5YmI5NzM5ZWMyZmYyYzRlMTFmZDBjMTRjODU2ZWQ3OWQ1ZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b1407ced0c7a4fb4914d4db1351882e7",
+      "statement": "Separate Apple Silicon and Intel builds are produced instead of a universal binary to avoid doubling the download size.",
+      "evidence": [
+        {
+          "resource": "repo://build.sh#L22-L27",
+          "version": "repo-lines-v1:sha256:95e2ed2e63c1fe690c6446dfd16e271dd06105768dd576e210b53558f13b9df9:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZmY2ZTMyMjE5ZDFkNmRiOGQxZmI1MDIxYTI0MzM0ZWFkYTAzMjliNTU4NDVhY2ZiNjdjZjQ2Y2YxMWYwYWJmYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2I3YTNjNGU3YzgxNGI2MmY5OTc2NGRlNTg4N2FmOTM2NTMzYjE2ZGJhN2EwNmUwMzEzY2U5ZDBkYjQwZDU3ZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTYzMmQ3MmVhNDlhMzA5NjE0MTEyNTg3NjVhNmFjNzlmZGNmNWE5OGVhYjM1MTY0NTI1ZjYxMzgwZjc2YzE0YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWM1YzgzZDJmNTQzMGZmMjM0MjUwMDNjYTNkMjVhYTQ2ODhkYzMzYzc4NDYzYjU0ODU0YjliZDljNGFiODFmYyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_be46fb23c9e346a9a5a0595e02a7b378",
+      "statement": "publish.sh refuses to publish unless the appcast matches VERSION, the ZIP is the right architecture, the signed appcast verifies against the designated requirement and equals the plain appcast, and any named AI engine matches its hash.",
+      "evidence": [
+        {
+          "resource": "repo://publish.sh#L25-L63",
+          "version": "repo-lines-v1:sha256:1cd7a82128fa79047b73e9464b5ed881f625786bc16b9f79e10a9405232fd435:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlkMzcxOTJjZDNiZTJiZDU0MjllNzJhYjI3MDdhMGM4NWQ3ZjM5N2E3MTczOGE3ZDYwOTE0ZmE1YWEwMmYzMTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMTdmYTAwNmJhOTIwODUwMGIyOTMwY2U2OWNiZGU0MzZjNjQ3YWZhOTE3Y2I3Mzk2YTliYzkxMTFhNDZkZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2MmRiNGFjODczYTUyZWZmYzRiMTI1ZDhkOGYwNGU3ZmU2NjVhZDkwMTg0NDY1ZWQ1MDIwYjMzYWNhY2E3YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f6f72eb776f4d119cd5886aae40f894",
+      "statement": "tap.sh updates the Homebrew cask in driceroland/homebrew-tap with the version and both DMG checksums from the GitHub release.",
+      "evidence": [
+        {
+          "resource": "repo://tap.sh#L1-L55",
+          "version": "repo-lines-v1:sha256:f9ee8b444891e0ae6124510e05dbeb247b82ce041c7f7732cf4e8e7a82009e62:eyJzZWxlY3RlZExpbmVDb3VudCI6NTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NzVmOTI4NTQ2YWVlNzg1NWNiMWRiOWFmYzhhYjNmMWE4YTM0ZDQzZGU1YmJkNjJmNzA3NmQ3YmE5ZjM5MTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjZTRiN2E1M2E1NDlkNTIyZTJiNzMwMDE2YTJjM2U3NWRjYTAzNmE0ZjAzZWYyZThmZjQ1N2JmZDQzZWY4ZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_139f30e16e8b4f6188228f8086798d2b",
+      "statement": "A GitHub Actions workflow runs openwiki code --update daily and opens a pull request on the openwiki/update branch, preserving partial progress on failure.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/openwiki-update.yml",
+          "version": "repo-file-v1:sha256:c31005f16763845e6dcd826d671cf11890a4c8e12498fd2b59428be80e3b585a"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

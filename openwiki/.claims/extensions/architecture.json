@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a00270ff0d67370e703e3b1960b9017db85d7fe492ee0c22007b7f82627f2bc6",
+  "claims": [
+    {
+      "id": "claim_66fcea1a3c0f4239810f6f11d3673bde",
+      "statement": "Extensions run on a single WKWebExtensionController requiring macOS 15.4+, using WebKit's default configuration for the real browser and an identifier-based configuration for test runs, with extension views given the same user agent as web tabs.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L154-L188",
+          "version": "repo-lines-v1:sha256:035281abf2034737271c407fb270aaa5d8969ed79602848c1e516c4a08a87ca5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc1Y2QxNjVhNmZkZWJkZTdiZDUzNWM5ZGFhYjE5YjE3YmU1NzNlMmY3ODE0MjVkNzViZTNjZmJiMGI5N2ZhNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFhYjdmMDc2Zjk3NGIxODRmYTljNzUxZTg2NTNmYmFhNmRhMjI3NDhjMGJlMjc5ZmZhMWEyNTI3ZjEyY2UzYzcifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L50-L61",
+          "version": "repo-lines-v1:sha256:8a6fc8dd80a17a2207e0aaa8f2c18ad75bb79b5e2fb406dc95b090c4d4a288c0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhM2NmMjVmNDMzN2M0YzQ1MjY1MmM5MTE4YWY3ODJjZDM4YTY0ZDg0ZmM1MGJiNzZjZTBjZWMwMDE1MmM5NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4M2VkZDMxNTQ1NjA4MzBmYTUzMGVkZDM1ODM4NTg5NTVkZDQ4YzBlY2ZlZTQwNmVkZDk1MmFlZjI0ODY5YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkYTIwYTVmNmZkYTJmZGU1NmU3MzkwOTUyMTM3ZTBhODkxNzVhY2YwOGRmY2E3NGU1ZTBkODZmMzg2ZDUxNzgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_484dece046904ea7af8bfc6bbd36b201",
+      "statement": "Extension pages are served at chrome-extension://<id>/ with a fixed base URL per context so stored data keeps a stable origin; legacy webkit-extension URLs are mapped to the new scheme.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L111-L124",
+          "version": "repo-lines-v1:sha256:186335510f2eb0406981cde8cbaaa21c6f06f9d76ccb0e5caec8bebe21e43e7b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmOGM0NDU3ODA4NTkwMDY0YmQ3ZjczODkwZjY1NjFkZmFhNmQ4YWY0NzkxOWIxZTZmYjc3OTE1NmEwNWRlMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0NjZiZWYwNWQ0YjExNzk3MjIyOWViYzM4Y2I1MzVkMjYzYTViODkwNzc4ZTA0MDc1MWNhMTZkNjU4YTZhMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ3NmM1YjY3OGYzOTJlZjExNTQzMjc5ZjNiZThiNjU3ZjM5NzU2YzU2NWNkMzMzNWVlMWRhMmRjNDVkNDkyNTcifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L459-L466",
+          "version": "repo-lines-v1:sha256:b4571f49854d802ccbd2e5ba2b9c85645918bef33db76303378b8775f483fa3f:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTE0MzIzNmM2OGZkMzI5NDZmYTlkNTNiZDI4ZGMxNTA1OGYzMmQxZDcxN2E3NzliZmYxYTM2ZWVkYzVhMWRjZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzM5ZGNlNTM1MDE5YWQ3MTZiOWUzOWEzOGFiOTNhNzBlZjRjNTA3YjVkYjc1MDM4ZGMxOWU5NDY2YmIwNzk4MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDRkNGY4M2YwZmJhNmFjMjg4MTVkMWE1YzZjNzMxZDM5MzY0ODk2YTg0NjkzNDJiZDE4MzJiYWQxZGM5MjA5OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2Q1MWQ4NDRlYmUwOTc2MjRiZWE2YmFjNDVlMmYzZmQyYjFiNzY0MDNkMjk3MzNhOTVhMWM2OTI0MmYzNGMxOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f929bae2699245cb9474578fea2d5e7f",
+      "statement": "Every tab's web view configuration receives the extension controller when it is created because it cannot be added later.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L55-L59",
+          "version": "repo-lines-v1:sha256:58fb0b0bbb489c9137678da1bee3a724045a1c02a75edeae63c3b4f0a7c3d76a:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNjODlkOTA4MjE1YTJiM2ViZmM0YWY0YWMxYmFlNGVkMDVhNGU5YjMzNGFiZTYzYTE1NDE3NTQ1MzcxY2Y5MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTY4ZTAxMzYwNTMxZWY4ODIwMmIxZjlhNDM4YmEzNzY4NDg5ZWNlZWM4MGNiNDhhZjg4OGUwZTVlZjBhYmFiNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjk3ZjI4NzA5YjJjNjA3NjU3Y2ExODQzNjQwNmUzNGExMzNkZDcxZjRlNDUyMGI5MTQyOGEzMGJhODc4MjEwNyJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Tab.swift#L94-L99",
+          "version": "repo-lines-v1:sha256:0444c88b7141f9bb4baed9cd9e6e302e26c1c260660ec157ae6c188a2014b88e:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2E3NzNlZGFkODMzOGYwM2VmMWIzNWVmOTljZDdkMzYxZDI0MTFkOTQwNTY4NjE0YjA5YTEwMTYxNDFiM2Y3NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTZiMDQ0OTE0Njk3MjJlODM2M2E5NGU0MDQ0NTM4ZTAxM2EyYTIxN2UzNmIxZTU2OGJhNjBhY2I3YjRjOGYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTIwYTU0ZDcwYmYxODQ3YmY1MWM1NmEyZGRmNzQ3NmQ4NjQ2YTgyMzI0NzJjODc3YzdkYjk3NGM4MWVkZTg3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmZjMDc0MWNkM2EwYmEzNGM4MDM0ZjlkNGQ4NDZiMTA4YTU2NTExMWJlZmRlNGViZDRhMTVjYjY0YzZiY2E1OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b82b5408fec749bba9a8014be48731f4",
+      "statement": "Installed extensions are recorded in Extensions/installed.json with id, name, version, enabled, fromStore, granted permissions, pinned and unpacked source.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L125-L126",
+          "version": "repo-lines-v1:sha256:26177d09d6d9fa10e08a9d163e9fec0f58a35ace5dd3c48d712c9b590af25c8d:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMmZhZDg2MzdiMTk2N2Y1ZDdlZTUwMTg4OTY3MjBiOGYxZTk4M2E4ZTg5ZWZhNGNhMTFkNjBkNzJmMDNiMGFiZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmMyMDUwOTk0OGJmZDZjMTEzM2YxOTE3Y2Q2MmFhMTM0ODNlM2VhMzYyN2U5MjBkM2UyNzY0YjhmOTI0OTYzNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDcxMTM5OGRlNWI5MWI0NTZkODM0YWEzYTlmOTRhMDY0YTM4N2Y5ZWY2MDc1N2Q4ODA0ZWVmZWUxNzliZjg5MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMTIxMmUzMDJlMjY0OTU4MjE5NThjNWJiNzM5YWI1ZDJlZjg1NGY4ZDU4Mzk5NDIxNjY0OWM0OTgzNjg0ODAzZSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L21-L48",
+          "version": "repo-lines-v1:sha256:a3e506f372e35c83760e9863f1058e792b9c746d1a30c724877d3b761f380dc9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMwNmY3NjhhMjY2MDIzMDNjNTQzZWE0NmU4Y2U1NzMzMzI2ZmFmOWFlYmI3MTg5YWZlOWYyYzU4NzNhNTYyZWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MzlkZTE4YjE3NjUzZjhkZWU0Y2FhYThkMWY2MTYwYmMyMDIwNjA4OTA2NDhhOGRkNDA2Y2Y1MTE3NWIzNjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgwODQzNzVhZGVjNDUzMmVjZGI2OTBmOGM0ODA5OWJkMTI5MGQ2ZjM1OGMzNzMzMGZjOThjNDJmNzQwNDUyNDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1a80b12a5b3c4e89b525c65774d83d03",
+      "statement": "At launch, after the first window shows, service-worker registrations are cleared when the shim version or installed extensions changed, and enabled extensions load sequentially with 400 ms gaps for those with background content.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L192-L218",
+          "version": "repo-lines-v1:sha256:77be93641cd2403177c90f5816455d4c690422fad4c6a1067319fd80e7019631:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkZDNiZjllMzkzMzYxZTZkYTQ3OWI0NzQ4YmE4MjU5ZDczNTY1Nzk3M2IxNWMzMDk1ZWQ2OGExOWM1MzQ1NmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFhYjdmMDc2Zjk3NGIxODRmYTljNzUxZTg2NTNmYmFhNmRhMjI3NDhjMGJlMjc5ZmZhMWEyNTI3ZjEyY2UzYzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIyMjM4ZjE2ZmEyMzA5NzFjYmE3ZjEyYWRkNzA4YzIyODExODA5NmE3YmE0M2Q3N2U5OGRkNWRkOWVkMmZjNGEifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L245-L274",
+          "version": "repo-lines-v1:sha256:e9de59cccd9de32d7919c439a423310a902afc9a7478b744f4f4c8d2b3e6f3df:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmNWMzMTM4MzUxYTU3YmEzNTBhZTlkMGZiMmYwMGVhOWNjZWJjODAzNzZhNDA3ZDc2MjFiNzRkN2NlNDRhYzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjNDM2YTYxMWM0YjQyNTE2ZDg3NTgwY2IyNmVlOTAzZjU2MWRlYjk1NTllZDY0MzI5MTk2NTFlZTg0MmNhYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1NThlNzc2YTJjOWY0NzI5ZGNlOWY5YTE2ZDFjODQ5ZDI2MTQ2ZjBmNzM3NjhlMGVkMWNiNTdkOGEwYTg2NDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0bd1ed99ab0d4a0e9432bbdfc8348c9c",
+      "statement": "Loading grants all requested permissions, nativeMessaging and manifest match patterns explicitly, then fences off other extensions' pages and file URLs with explicit denials.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1036-L1063",
+          "version": "repo-lines-v1:sha256:a615e1bd392317c9a8ad0e12b5b52c27144544d36417423282e843e4a751284a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRmNzg4Yjc5ODIxYTY4ZjY3NTcyNWYwMzU4ODZhZjMwYzc3YjI0Y2U0OWQ1ZTk4YWZmYjRhYjQ1NDBjMjdiNjciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM5ZjJmMmZmMDgwOTZiNzA3Y2UxZWI4MDkzMDEzZmQxYWFlZTgwOTY2NzhjOTJiYjY4MTFhYjhjOGE0NDdmNjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZhZGQ5ZmU5NzJhZGY4MTcxZjNkOWJjYTU0YzQwODU5MGE0M2Y5YzdlMWJmNzFlYTE2ODIwZTEzZjZmMGVkNzkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L467-L486",
+          "version": "repo-lines-v1:sha256:18c389a1325ee22975fcf98fe30489f9ec39f425c41fbed8a5745712ffca374f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYzlhZGU5ZTVkOThjOGZhZGNiMjg4YjNkYmJjNDgyMjcwMjk5MGRmYmE5MTBiMjA0NzIzMTMzMWU3MTEwOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk0NmUwYWQ3MDRiMDk0YTcyNzg0Yjg4Mzc0OGQzZmM0Y2I0N2U1ODkxOGNiN2Q5NmExZDg2MzZhNjJmYzdhNmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRiNDQ0OGNjMmZiY2JlMjIwOGRjOTRlNTdjMTRkMzVmN2UzZDczMDgyZmU0ODRkYTE5MGM0M2Y4ZDkyYmM0MmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIwMzIwNzU1NGVjYmRiNTUyOTJmNzc4OTFhMTRkYmJmMzJkZDZmNDFlZTkwMjNlNDNmNDE1OTk5YTBiNjc2MjIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9448de04c17944ba960b85b5a4c57d99",
+      "statement": "WebKit's runtime prompts for URL access are always refused, while match-pattern and permission requests are asked as serialized sheets on the front window.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1171-L1196",
+          "version": "repo-lines-v1:sha256:ed367e5b17e8e4e2569d6dc3827592a7de15309768d1794f4252155bfa3dd417:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI1NDIzYmRhNzI5NzY2MzBlNzc1OWU0MTlkMTEyMDFiNjgyYjQ5MDUzODRjZDhhMDRkZmJjZmExMzMwMGM1ZDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA2NjZkZDQyYTczZWExOGExMzU3MTcwZWIzNDUwOTI5NmMwZjY3ZTM3Mjc4NTBlNTczMWQyMGJkM2U0MGE2NGIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjIxZDlmMTRiYzU2MzY4OWE0YjNmZmM1MDhmM2MxOTc4MzNkOTM4NTg2NjhhMDkyOTQ1NzRjZTZiZWIwZTY0NTkifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1439-L1465",
+          "version": "repo-lines-v1:sha256:cf83dd7fa6f8392e29dc7837cb26c0f376ab0eb2fff035db671dc3226d60e43a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjOTQ3OWM1NzE2MTFlNTQ3ZWFmN2IwOGE0ZThjY2Y0ZDQ5Y2MxNTY2MjdiNGI1MzU0NGQxY2IxNDgzNjY0MTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2ZDEzMGUwM2RhNGRhYzAwN2U2ODY3M2JmOGJkN2JmMmYxNmE0YWNlZWE1ZDVkMmQ0OWYyZTQwNDE1MmY0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRlZmY2NzY1NjhlMDY4NjdlMGM2ZjEyZjk4MGY2N2Y3M2QzNjQ5NDU5NmRjNWRhMDQ2MDQyZGExNWJkM2RkZTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fdd36afa4b7646779be550c24430eed0",
+      "statement": "Each Tab and window is represented to WebKit by cached ExtensionTab and ExtensionWindow adapters that read built (never web), and a tab showing another extension's page reports no web view or URL.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1530-L1560",
+          "version": "repo-lines-v1:sha256:112a9af4992d033f8124d3d6ccdad3bac0f8c742b496f5033beba031340fe45c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhM2NmMjVmNDMzN2M0YzQ1MjY1MmM5MTE4YWY3ODJjZDM4YTY0ZDg0ZmM1MGJiNzZjZTBjZWMwMDE1MmM5NjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3ZmY3YzQ4NTQyOWRiNzEzNmE4YWI3ZjM1MTA2NGEwNzYwOGU2N2U4NzQ4ZTJlNjA5NDBlN2QyNWMxZjAwZDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1ZDQzODdmZTI3YmQ2ZmI3NTJmYjViZjhmOWMyODE2ZTIxNTQ3Njk0NmU4YjBhMjEzODA1MGU5ZGUxN2JhYjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYxYWI2ZmU4YzQ5MGYzZTBmZDExNmY0NzljYTNlNmRhYmRkY2JiM2UxODY0NzFiOWQxNGVkYTUzODNkNGE1NDMifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L276-L289",
+          "version": "repo-lines-v1:sha256:f5375f52106c1955022f8df36eaa6c6364bdfca262868646c9b3aa1dbd1ea9a5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmMjNhNjlhYjE0M2M3ZWYxYzRmZTRjZjRmMGQyOWNlNTVkMjUxZDc5NzI3MjAwYmY5ZTEyZjRlMmI1NTVhYzQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM2YWFmOTg4MWUyNWFkY2MzYmJkZDA4MmM2YTkyNWE0NzNmYzY3ZWE5ODZkNzA5NTEyYzNiNjY2MDkzZjkwMzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE2ZTJlNzU2ZjU5NmUyMTY4YmNjYTUxOTExYTYyNWM1OTBhMDllMDE3YzYyN2U1YTA1OWM4ODI4MjUzMDZhYTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY4NjBmM2IzYTJhOWQxMmVmOGUwYjFhMmY4ZTBmOWQ2ZWU5ZjhmNDBmYTQ2YTU0YmE0ODM5ZTI5NDY2NGJhZTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d48a7c75c7ce43ac808f248c211a1944",
+      "statement": "Extensions cannot open private windows or navigate to javascript: or file: URLs, and popup-type windows may only show websites, about:blank or the extension's own pages.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1337-L1404",
+          "version": "repo-lines-v1:sha256:3454d27807e8006adbf0cfb482035e9fc24977072969d61e3df89efe74fdd0a9:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwMzI1MDY4NjY5MDZmYzFmZDRkOWVjM2IxMjBjYjJmMTc0MWNiNGIxNTUxYmI4ZWNmNTEwNzBlY2M4YTY5MDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ5YjNmOWQ2MDQ4NjE5Y2UyZWUyYjdhOTM2NWI5NTExMDE2NDI3NWRlODk5ZjY1ZGM4NjlkODQ3ZWViZWQxYzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ0ZWYyMDBmZDJlNjc1N2I2ZGRhNGEyNDk0MDYzNjQyNzg5MmQ1OTc3NDJmNTIxOWUzM2U1ZDliMzk2MzE5MjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5788458f33574abab56aa2eb31553d9f",
+      "statement": "Talking to a native app requires the manifest to request nativeMessaging (excluding what Search added), whereas messages to Search itself are answered by ExtensionShims.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1065-L1076",
+          "version": "repo-lines-v1:sha256:fc5930d649c4a8a476f4463bae14ba599b1c6cafa6b3dbf77786da306c0e4a92:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0NTI3MGNkMTRlN2ZiN2E3ZDJiZDc3ZWYyNGRjOTI0NjBlMDIwMGM4M2U3MThlNjE4ZjA1ZTRjN2NiZDY3MWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3ZjdlYmE2NmZmODRkNTlhYWIyYzk0OWYzMzUzMjRjZDFlNmUxNzRlODJkMWNlODdlYzdlYTAyNTRkYzM5MGIifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1480-L1519",
+          "version": "repo-lines-v1:sha256:7ca6e58429a8e33c4a5dbd1d23f34c0a9c8560421638384567b774a1e605eae2:eyJzZWxlY3RlZExpbmVDb3VudCI6NDAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMWVkNjM4NzY2ZDdjNjhiYTFjM2FhZGNmODM1NThhMDEzODRhODU2Y2UzOWNmNWExMjQ4NjY0MDE1ODg5YzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJkYWFlM2Y2MTE1ZTI4Zjc2M2VmNDIyZTgxZGE2NmQ3MjA0N2E5Zjg5YjNlMzhlYzhjMzA5MzkwZTE0MDQ3NzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5MTAyNTY2MmIxMTg5ODgzNWUyMGYzMzMwNTgzNDM0YWE4ZTNkYzVjNzM2YzhlNDQzMTU3ODU2N2I2MDg1ZmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cee46823499e4278bd5611e4a186954b",
+      "statement": "Pressing an extension's button opens its popup in Search's own popover rather than WebKit's, because WebKit's popup sometimes failed to reach the extension worker; the popover sizes the page like Chrome between 25x25 and 800x600.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/ExtensionPopup.swift#L4-L20",
+          "version": "repo-lines-v1:sha256:78bb95215d1b9c366b6ba99bb30b94a7105d8218ba9d7b289b42da501a3acad4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjkyYjRjNjMwMDIxMzZiZjlmY2U4M2MwYjRmZDc0NWY5OGU1ZjA5NjQzNDQxYmU2YjM3NWU4MTIwMmE0YzI2NTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMyZjEzYTJkNjJiOWE0OTE4YmJhOWQ3NjgzZDhlODNiMDgwZjNkNTA1ZDBkNmMzYzI4ZWQzZDU4ZDIxMzBjMGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgyNjAxNGQ5NjEzNDc5MmE3MWY1YTg1YTIzYWQxNjlmZjk0Y2UzMDg2MmM1ZjY5NmU4MzBkNjRhOGY4ZTI4MjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0OWFkY2U0ZGFlM2ZhMjYzZGYyMDM3ZjFkMDczNTE1MzBjMzI4OTJhMTY0NjFiOTUxNWRhNzUzZTg3Zjc4MzAifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L1275-L1293",
+          "version": "repo-lines-v1:sha256:38559f0a1434f48d01284d858cf8fce127e8fffe163aa3be95eef92884d39434:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljNTVhNTU3MmI1ZGI0MmExNDU0MTU0ZjI3OTQ2NDhkYTIzMjU4YzcwZTc4Mjk0MTAyMDk4OTgzZTRlZDRkYTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIwNWFlNTE0YTg3NjU1MjNhNjVhZjRjODIzZTI5ZDdmNzlmMTMyZWE0MDI1NTFkMDY0NjZlMWQ5ODE5N2MwNDEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2NzBhNTFmYjA4YjIzZjVkNTA1MDYxMjZiNmM1ODFlNDgxZDJmMmRmZmFkMGNjMjg4ODdlNTdlMGJjYjYzOGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_34a41c2e7900489397216b1fd73779ba",
+      "statement": "Store-installed extensions are checked for updates about once every 20 hours; an update requesting more than recorded permissions is asked about before the folder is atomically replaced and reloaded.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Extensions.swift#L916-L986",
+          "version": "repo-lines-v1:sha256:18490a4a6b8641bb6b5044aeaa9e6abf1742c275af55e36ab527557e39ea3488:eyJzZWxlY3RlZExpbmVDb3VudCI6NzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0YTA5NDI3YzQ2NjkzYzZiOGY5Njk2NGRkZWU5NzBjNTQ1ZTM1MmRkNjJkNjAwMmJiODk5MzY2YzU0YjJhZGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ2ZDEzMGUwM2RhNGRhYzAwN2U2ODY3M2JmOGJkN2JmMmYxNmE0YWNlZWE1ZDVkMmQ0OWYyZTQwNDE1MmY0MzMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1YjNlMWU0MzllY2U0MDA1ZjBlMzllNmMxYmU3NzAyOWM3MjA4N2FkMTgxNWJmNTk5Mjk2YTM2NWFhOWU3YmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_94af29cfa5e3485f90d6a711ff456898",
+      "statement": "Extension popup windows are never written to the saved window list.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/SearchTests/ExtensionPopupWindowTests.swift#L26-L37",
+          "version": "repo-lines-v1:sha256:a09013d23427b7f51e4c90f3892452940788138d3005a310a6bc04ad77f05e4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ3YTU0M2RmNzU0OTIxYjkxMjRmMTZmMzVmYzVmOWRiNzFhNzc2NWZlNDRkNzNmNjgyYWQ4ODIwNzQ4Y2E1YjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI5MWJiM2ZhYmQ3ZWMxNGQ1MWEyMGJjYjEzMGM0NmRiNzI1M2MyNTZjMGUwY2RiZmFhYTg5ZGUxY2M3Yzg2OTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0ZDA1ZjI0MWQyMDYzMDgyOTAzMWJmZDI5ZDcxMmJmMzIwMTk1ZDUzNTQ1OWVjOTRmNDkxNzJiZjMyYmM2NDgifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

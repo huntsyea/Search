@@ -11,6 +11,21 @@ in [ROADMAP.md](ROADMAP.md).
 
 ## Unreleased
 
+### Added
+
+- A sidebar panel, a column on the side away from your tabs, for an extension's side panel or a chat: ⌥⌘B shows or hides it. Extensions' side panels (`chrome.sidePanel`) open there instead of in a tab of their own. Off unless you turn it on in Settings › AI › Sidebar panel.
+- A chat in the sidebar panel with an agent on this Mac that reads and acts in your tabs: pi, or any agent found on your login path — opencode, Oh My Pi, Grok, Hermes, Gemini, Cursor, Kimi, or one you add — and Claude Code and Codex through ACP adapters Search sets up at fixed versions. Every agent gets the browser's tools only, never its own shell or files. It asks before each act — Allow once, This chat, Always for the site, or Deny — unless you let it act without asking; Pause, Resume and Stop are over the page, and the tab it works in is marked. There can be many chats, each the agent's own session, opened again where it was left. Settings › AI holds the agent and model for new chats and the sites allowed always.
+- Suggestions over a new chat's box: Summarize this page, and three things to do with the page in front, read from it. Chats are named in a few words from their first message. Both come from an agent chosen in Settings › AI, pi to start with; the suggestions can be turned off there.
+- Sort Tabs, beside the bookmarks, puts your loose tabs in groups by topic — into groups you made when they fit, never taking tabs out of them — and the line that says so has Undo. Each tab's title and address go to the agent chosen for it; pins and private tabs stay where they are. Off unless you turn it on in Settings › AI.
+
+### Fixed
+
+- An extension's download, and Download Image, are no longer cancelled when the Mac is busy: WebKit could ask where the file goes before Search was ready to answer.
+- Extensions with a worker start working on every launch. On most launches WebKit took up the worker it had kept from the last one and never started it, so the extension answered nothing — Obsidian Web Clipper's popup said to reload the page — until Search was quit and opened again, and then only every other time. The workers WebKit keeps are now cleared at every launch, before any extension loads; websites' workers are registered again the next time they're opened online, so a site kept for offline use needs one visit with a connection first.
+- An extension whose worker WebKit left dead comes back by itself, its popup and side panel open again: also when WebKit's network process starts again in the middle of a session, which left every extension silent until Search was quit. Pages no longer decide this by asking the worker and restarting the extension when it was slow to answer; the restart that followed never brought the worker back.
+- A build of Search that Office Commun didn't sign — built from this repository and signed with another Developer ID — no longer checks Office Commun's feed or replaces itself with the next official release, which would have taken away whatever that build adds. Check for Updates and Settings › About say why.
+- Reloading an extension loaded from a folder runs what its author just saved, and an update or installing again runs the new version, without quitting Search. WebKit kept serving the old scripts to its worker and pages from memory until Search was quit.
+
 ### Held back
 
 Not in this version, kept on main for a later one:

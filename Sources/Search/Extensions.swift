@@ -62,6 +62,11 @@ final class Extensions: NSObject, ObservableObject {
     @Published private(set) var installed: [Installed] = []
     /// The loaded ones, by id.
     @Published private(set) var contexts: [String: WKWebExtensionContext] = [:]
+    /// Whether each extension's worker runs, and bringing back the ones WebKit
+    /// left dead (see ExtensionWorkers).
+    private(set) lazy var workers = ExtensionWorkers(store: Store.websites) { [weak self] ids, reason in
+        await self?.revive(ids, because: reason)
+    }
     /// Bumped when any extension's button changes — icon, badge, enabled.
     @Published private(set) var actionsChanged = 0
     @Published private(set) var busy: String?
@@ -190,11 +195,14 @@ final class Extensions: NSObject, ObservableObject {
     // MARK: - starting
 
     func start(for browser: Browser) {
+        // Clearing what WebKit kept needs no window, so it begins here,
+        // before the window is up.
+        Task { await workers.forgetKept() }
         attach(browser)
         let begin: @MainActor () -> Void = { [weak self] in
             Task { @MainActor [weak self] in
                 guard let self else { return }
-                await forgetWorkersIfChanged()
+                await workers.forgetKept()
                 await forgetLeftOver()
                 // One after another, a moment apart: started all at once, WebKit
                 // fails some of their workers and never tries them again.
@@ -240,37 +248,6 @@ final class Extensions: NSObject, ObservableObject {
         let waiting = onStarted
         onStarted = []
         waiting.forEach { $0() }
-    }
-
-    // MARK: - workers WebKit remembers
-
-    /// WebKit keeps each extension's service worker registered from one
-    /// launch to the next, with the scripts it fetched then, and may start
-    /// that copy rather than what is on disk now. A copy from another build
-    /// of the shim or another version of the extension can leave the worker
-    /// dead for good — reinstalling, reloading and restarting all bring the
-    /// same stale copy back (Vimium's keys stopped working, for one). WebKit
-    /// lists no records for extension origins, so there is no clearing one
-    /// extension's alone; clearing them all stops the workers that run. So
-    /// it is done at launch, before any extension loads, and only when what
-    /// they would run has changed since. Websites' workers go with them and
-    /// are registered again on the next visit.
-    private static let workersKey = "extensions.workers"
-
-    private var workers: String {
-        ([ExtensionShims.version] + installed.map { "\($0.id) \($0.version)" }.sorted()).joined(separator: "\n")
-    }
-
-    private func forgetWorkersIfChanged() async {
-        guard Store.settings.string(forKey: Extensions.workersKey) != workers else { return }
-        await Store.websites.removeData(ofTypes: [WKWebsiteDataTypeServiceWorkerRegistrations], modifiedSince: .distantPast)
-        Store.settings.set(workers, forKey: Extensions.workersKey)
-    }
-
-    /// An extension put in again, reloaded or found with its worker dead:
-    /// the version alone doesn't tell, so the next launch clears regardless.
-    private func workersChanged() {
-        Store.settings.removeObject(forKey: Extensions.workersKey)
     }
 
     // MARK: - the row, as WebKit sees it
@@ -443,6 +420,9 @@ final class Extensions: NSObject, ObservableObject {
 
     @discardableResult
     private func load(_ item: Installed) async -> Bool {
+        // No extension loads before the workers WebKit kept are cleared
+        // (see ExtensionWorkers.forgetKept).
+        await workers.forgetKept()
         if let forgetting = forgetting[item.id] { await forgetting.value }
         // The shim this build of Search carries, in place of whatever the
         // build that installed it carried — away from the main thread: the
@@ -483,10 +463,11 @@ final class Extensions: NSObject, ObservableObject {
             }
             Extensions.fence(context)
             Extensions.watchTouches()
+            // Loading suspends above; meanwhile it may have been switched off or
+            // removed, or loaded by another path (a Reload beside a revive).
+            guard installed.first(where: { $0.id == item.id })?.enabled == true, contexts[item.id] == nil else { return false }
             try controller.load(context)
-            watch(context)
-            if contexts[item.id] == nil, loadsThisRun.contains(item.id) { loadedBefore.insert(item.id) }
-            loadsThisRun.insert(item.id)
+            workers.loaded(context)
             contexts[item.id] = context
             // Keys you gave its commands in Settings › Shortcuts (#189).
             ShortcutStore.shared.adopt(context, id: item.id)
@@ -501,6 +482,7 @@ final class Extensions: NSObject, ObservableObject {
     private func unload(_ id: String) {
         guard let context = contexts[id] else { return }
         Browsers.closePopups(of: id)
+        SidePanels.closeAll(of: id)
         try? controller.unload(context)
         // What it kept going outside WebKit goes with it: its offscreen
         // page, and a Mac kept awake on its behalf.
@@ -510,6 +492,7 @@ final class Extensions: NSObject, ObservableObject {
         // Its ports read as gone only once WebKit has had a turn.
         DispatchQueue.main.async { ExtensionNative.stopOrphans() }
         contexts[id] = nil
+        workers.unloaded(id)
         actionsChanged += 1
     }
 
@@ -656,7 +639,7 @@ final class Extensions: NSObject, ObservableObject {
             guard installed.contains(where: { $0.id == id }) else { return }
             if let staged {
                 do {
-                    try ExtensionFiles.replace(staged, at: target)
+                    try await ExtensionFiles.replace(staged, at: target, in: Store.websites)
                 } catch {
                     browser?.announce("Couldn't replace \(original.name): \(error.localizedDescription)")
                     return
@@ -664,7 +647,6 @@ final class Extensions: NSObject, ObservableObject {
             }
             unload(id)
             errors[id] = nil
-            workersChanged()
             if let found, let index = installed.firstIndex(where: { $0.id == id }), let wants {
                 installed[index].name = found.displayName ?? installed[index].name
                 installed[index].version = found.version ?? installed[index].version
@@ -676,55 +658,29 @@ final class Extensions: NSObject, ObservableObject {
         }
     }
 
-    /// An extension whose worker won't start again: unloaded and loaded,
-    /// as a relaunch would — at most once a minute, so one that can never
-    /// start doesn't go round in circles.
-    private var revived: [String: Date] = [:]
     private var reloading: Set<String> = []
     /// Recent failed native messages, per extension and host.
     private var failures: [String: [Date]] = [:]
 
-    /// Loaded at least once since the browser started, and loaded again.
-    private var loadsThisRun: Set<String> = []
-    private(set) var loadedBefore: Set<String> = []
-
-    func revive(_ id: String, because reason: String) {
-        guard let item = installed.first(where: { $0.id == id }), item.enabled,
-              Date().timeIntervalSince(revived[id] ?? .distantPast) > 60 else { return }
-        revived[id] = Date()
-        workersChanged()
-        noteError("restarted the extension: \(reason)", for: id)
-        // Its popup goes with it; it is opened again once the extension is back.
-        let popup = ExtensionPopup.shared.extensionID == id ? ExtensionPopup.shared.view?.url : nil
-        unload(id)
-        Task {
-            guard await load(item), let popup, let context = contexts[id] else { return }
-            // Its button as it is now: the one it hung from may have gone
-            // with a folded column meanwhile.
-            ExtensionPopup.shared.show(popup, for: context, from: anchor(for: id))
-        }
-    }
-
-    /// WebKit records a worker that failed to start as an error on its
-    /// context, and then doesn't try again: the extension would be dead
-    /// until someone noticed. It is taken up afresh as soon as that shows.
-    private var errorWatchers: [String: NSObjectProtocol] = [:]
-    private func watch(_ context: WKWebExtensionContext) {
-        let id = context.uniqueIdentifier
-        if let old = errorWatchers[id] { NotificationCenter.default.removeObserver(old) }
-        errorWatchers[id] = NotificationCenter.default.addObserver(forName: WKWebExtensionContext.errorsDidUpdateNotification, object: context, queue: .main) { [weak self, weak context] _ in
-            MainActor.assumeIsolated {
-                guard let self, let context, self.contexts[id] === context else { return }
-                let failed = context.errors.contains { error in
-                    let e = error as NSError
-                    return e.domain == WKWebExtensionContext.errorDomain && e.code == WKWebExtensionContext.Error.backgroundContentFailedToLoad.rawValue
-                }
-                guard failed else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
-                    guard let self, self.contexts[id] === context else { return }
-                    self.revive(id, because: "its worker failed to start")
-                }
+    /// Every extension with a worker, unloaded and loaded again once
+    /// ExtensionWorkers has cleared what WebKit kept (see there), the way a
+    /// relaunch would. Its popup and side panels go with it, and are opened
+    /// again once it is back.
+    private func revive(_ ids: [String], because reason: String) async {
+        for (n, id) in ids.enumerated() {
+            guard let item = installed.first(where: { $0.id == id }), item.enabled, contexts[id] != nil else { continue }
+            noteError("restarted the extension: \(reason)", for: id)
+            let popup = ExtensionPopup.shared.extensionID == id ? ExtensionPopup.shared.view?.url : nil
+            let panels = Browsers.all.filter { $0.utility == .panel(id) }
+            unload(id)
+            if await load(item), let context = contexts[id] {
+                // Its button as it is now: the one it hung from may have gone
+                // with a folded column meanwhile.
+                if let popup { ExtensionPopup.shared.show(popup, for: context, from: anchor(for: id)) }
+                for browser in panels { browser.showUtility(.panel(id)) }
             }
+            // One after another, a moment apart, as at launch.
+            if n < ids.count - 1 { try? await Task.sleep(for: .milliseconds(400)) }
         }
     }
 
@@ -744,10 +700,9 @@ final class Extensions: NSObject, ObservableObject {
         let accepted = confirm ? await ask(install: name, wants: wants, icon: found.icon(for: CGSize(width: 64, height: 64))) : true
         guard accepted, !installed.contains(where: { $0.id == id }) else { return }
         let permissions = Extensions.grants(found, in: staged)
-        try ExtensionFiles.replace(staged, at: finalFolder)
+        try await ExtensionFiles.replace(staged, at: finalFolder, in: Store.websites)
         unload(id)
         errors[id] = nil
-        workersChanged()
         let item = Installed(
             id: id, name: name, version: found.version ?? "?", enabled: true, fromStore: fromStore,
             permissions: permissions,
@@ -769,8 +724,7 @@ final class Extensions: NSObject, ObservableObject {
         errors[id] = nil
         Extensions.setSettings([:], for: id)
         Store.settings.removeObject(forKey: "extensions.granted.\(id)")
-        loadsThisRun.remove(id)
-        loadedBefore.remove(id)
+        workers.unloaded(id, removed: true)
         Store.settings.removeObject(forKey: "extensions.newtab.\(id)")
         installed.removeAll { $0.id == id }
         save()
@@ -804,10 +758,10 @@ final class Extensions: NSObject, ObservableObject {
     /// starts with nothing of the one before, as in Chrome: loading waits.
     private var forgetting: [String: Task<Void, Never>] = [:]
 
-    /// Its chrome.storage, which WebKit keeps by id, and what its pages
-    /// kept at chrome-extension://<id>. WebKit lists no website records
-    /// for that origin (see `workersKey`), so the second is cleared from a
-    /// blank page at that origin, which only an extension context can
+    /// Its chrome.storage, which WebKit keeps by id, and what its pages kept
+    /// at chrome-extension://<id>. WebKit lists no website records for that
+    /// origin (see `ExtensionWorkers.forgetKept()`), so the second is cleared
+    /// from a blank page at that origin, which only an extension context can
     /// host: a stand-in with no worker, scripts or pages of its own, so
     /// nothing of the removed extension runs again.
     /// Whether all of it was cleared.
@@ -968,14 +922,15 @@ final class Extensions: NSObject, ObservableObject {
                     return
                 }
             }
-            guard let index = installed.firstIndex(where: { $0.id == item.id }), installed[index].fromStore,
-                  installed[index].version == item.version,
-                  installed[index].permissions == current.permissions else { return }
+            guard let before = installed.firstIndex(where: { $0.id == item.id }), installed[before].fromStore,
+                  installed[before].version == item.version,
+                  installed[before].permissions == current.permissions else { return }
             let target = Extensions.folder(for: item.id)
-            try ExtensionFiles.replace(staged, at: target)
+            try await ExtensionFiles.replace(staged, at: target, in: Store.websites)
+            // Replacing suspends; the list may have changed meanwhile.
+            guard let index = installed.firstIndex(where: { $0.id == item.id }) else { return }
             unload(item.id)
             errors[item.id] = nil
-            workersChanged()
             installed[index].version = found.version ?? version
             installed[index].permissions = wants.sorted()
             save()
@@ -1312,6 +1267,9 @@ final class Extensions: NSObject, ObservableObject {
     /// A keystroke an extension registered for.
     func take(_ event: NSEvent) -> Bool {
         for context in contexts.values where context.command(for: event) != nil {
+            // A key you pressed for it counts as using it, as its button does
+            // (sidePanel.open, permissions.request).
+            Extensions.clicked[context.uniqueIdentifier] = Date()
             return context.performCommand(for: event)
         }
         return false

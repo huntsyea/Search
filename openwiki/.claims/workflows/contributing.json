@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:b516e917f564f756dd0a665e8f7fe21447ea3c9f1f40b55de60b1171516919ac",
+  "claims": [
+    {
+      "id": "claim_b4e50c0da0a7438aa38fc9158e3fc128",
+      "statement": "New features that change how the browser looks or behaves must be minimal, optional and off by default, and findable through a Settings switch and, for big ones, the welcome screens.",
+      "evidence": [
+        {
+          "resource": "repo://CONTRIBUTING.md",
+          "version": "repo-file-v1:sha256:436a469bc16b856c93081b11b77fe3073e87ed736e979025892ff6634f830ce2"
+        }
+      ]
+    },
+    {
+      "id": "claim_14bdfe41c7064055b97074fb2198dbfd",
+      "statement": "What's New lists each release's new switches and older switches still off, and a release edits its toggles, releases and notes.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/WhatsNew.swift#L1-L60",
+          "version": "repo-lines-v1:sha256:134319c7c5e3f0a8c9f112b1ab66e690fbac3afff70cb27c5a1bd7999042b94e:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0NDA1ZWFkNmZkZWQxNTllODIzM2NlYzc5ZWNhYzkxMzQzMjVjNTM1ZTc3YmJmNGQzYjc5MDI4N2IxZTM4ZmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5NzBlZDBiOWM5ZDNjNjQyNzQ4OGZhYWMyZTZkOTU0MTJiMDJjNjkwNTU1ZTk4MzQwZTA1YzkzZDM3ZTU1YTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aef34e0eebb9462a9eb57cd6982d3064",
+      "statement": "Merged changes must add no dependencies, follow the why-not-what comment style, avoid force-unwraps on fallible operations, and build with no new warnings; phoning home, analytics, vendored engines and real keys are rejected.",
+      "evidence": [
+        {
+          "resource": "repo://CONTRIBUTING.md",
+          "version": "repo-file-v1:sha256:436a469bc16b856c93081b11b77fe3073e87ed736e979025892ff6634f830ce2"
+        }
+      ]
+    },
+    {
+      "id": "claim_a4b52cc226a14186b8ad16a5e7f49ec7",
+      "statement": "The gitleaks configuration extends the default rules with OpenRouter, Groq and Google AI Studio key patterns.",
+      "evidence": [
+        {
+          "resource": "repo://.gitleaks.toml",
+          "version": "repo-file-v1:sha256:b6a5d376672d9981235bc3e9ab9486efd61a4ee1eb75bc44fb0eabe27ad93707"
+        }
+      ]
+    },
+    {
+      "id": "claim_f73ccf4233a745d9bc5f119966320e3d",
+      "statement": "CHANGELOG.md collects merged changes under Unreleased, including a Held back section for work kept on main such as the AI add-on.",
+      "evidence": [
+        {
+          "resource": "repo://CHANGELOG.md#L1-L20",
+          "version": "repo-lines-v1:sha256:3ffc14eaa44c0cd6bf0d7d43b4ea1259e9addfe84f0bee172c8c6e9be37b29c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlNzljNGNhZmI1MDRhMjFmODkxM2U0ZTBlNjZmMmZmN2IxMTkyYTEyN2M2ZjU2NGFhYjM3OWM4YjVmYTliZGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5ZmI1MjUzYWUwYTNkNDAxNDc5MDYyYTRhY2U4YjUwMmFjMWI1ZDY3MTg2NWIxZDk2YzY0ZGJmMzQ3YWNiYzYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwODc3YTdjMzg2YThlMDQ4YWEyOTJlMWRhNDg3NzkwMTdlOGZkMjViN2YyNzRiOTkxOTgzNWZkYTljNjYwN2UifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_611a426f2ba64d10b46cde7a789d5263",
+      "statement": "ROADMAP.md is generated from a live list by ./ideas md, and every new idea is expected to be recorded the day it arrives.",
+      "evidence": [
+        {
+          "resource": "repo://ROADMAP.md#L1-L30",
+          "version": "repo-lines-v1:sha256:3dcff97c563d43fe8dfcdff58195d8f845ddc3412c46d57e302f39456aed74bb:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZTcxMDQzOWI2YWIxZThlMDM0NDc5ZTQ3ODVmZGRmNjQwNThiYmU0Yjc0NjAwM2U2NTk0OThlNjE4YWU3NjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk4OWNlNzMzMmViOTk0M2ZhYTViZTY2MTljMWQ3NjA1YjQzMTkzNzc0MGNhNTc3NjFhM2QyMGYzYmQwZTFhYTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjJhMzc5Zjg4OTllODk5ZjJhMjQyMTBkNzRkMzUxN2RlMzEzMGIxOGY0NjQ0NWY0MDJjYzA4NzRiNjg3ZjdlYTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_2f916092072c42e28faf31b27dd3f624",
+      "statement": "./ideas manages the search_ideas table in Office Commun's Supabase project through the Management API using the owner's Supabase CLI login, with defined statuses, lanes and areas.",
+      "evidence": [
+        {
+          "resource": "repo://ideas#L1-L80",
+          "version": "repo-lines-v1:sha256:8d826d65c33f1e20520222afd248d32811fc21e6841fade0da55197194fb25b3:eyJzZWxlY3RlZExpbmVDb3VudCI6ODAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODJjYmRiNGM4YjA3NTE4YmY0ODZjNTg5OTBmYzM5MTc4M2FhMjBhOTE2YmZiMjdhZDIxMWViMWQ1YzM2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMyODI0MTA5OWJkNWMyNjYzN2Y2NzQ0MmJmMjBhYzRjODVmZjk2Yzg5ZTY0M2ZjMWQyNjcyMjQ5NGRlNWIwN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM2ZjhkOTUwZGMzYzlkN2Y1YjQzZGMxNDRiNDNkMGMyOGQ2YTRhNjA1YTk4NWE2ZmMyZWJiZTM3ZmJlYjc1ODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7aafc35536ff4900ac9ff336c9e2e151",
+      "statement": "Security issues are reported privately via GitHub advisories or email, and the updater, keychain items, extensions layer and ./bench are in scope.",
+      "evidence": [
+        {
+          "resource": "repo://SECURITY.md",
+          "version": "repo-file-v1:sha256:ed0512c9ab6e7d631f6d08c3a9e14d32a2a2d1e9420758012dedf1ad40ab3288"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

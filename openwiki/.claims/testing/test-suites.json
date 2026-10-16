@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c648e8bc7e70e2100fa43397e0cf90b78bff4aeeee1766df29bf2f8b1586bc92",
+  "claims": [
+    {
+      "id": "claim_d3806a172dca4addaa2aab6056b64505",
+      "statement": "Package.swift declares a SearchTests XCTest target in Tests/SearchTests depending on the Search executable target.",
+      "evidence": [
+        {
+          "resource": "repo://Package.swift",
+          "version": "repo-file-v1:sha256:c88388023f01a5598113e70b2c67187f7829ebbdd33b4722d553f73ffd8faeef"
+        }
+      ]
+    },
+    {
+      "id": "claim_50ec241065744a458d799110cf4bd667",
+      "statement": "AppKit-dependent XCTests run in their own SEARCH_PROBE world with activation prohibited and assert no window was shown and the app never activated.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/SearchTests/ExtensionPopupWindowTests.swift#L1-L25",
+          "version": "repo-lines-v1:sha256:8ea3a27320365bc47c00e700cd652928a8513e3135815d113f15fb07931cb872:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2MjdlMWVkZWUyZjM1NjlmNTQ1Yjk4NjMwMmViODkwMmRiNjIwNTg2OGZiODIxOTg1MjRiMzE2Mzg2NDk5ODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ee31f14ce7764acb80bf8d80dd74bb47",
+      "statement": "Download lifecycle tests run real WebKit downloads against a loopback-only HTTP server.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/SearchTests/DownloadLifecycleTests.swift#L81-L260",
+          "version": "repo-lines-v1:sha256:d73c4de590f270df0e602fdddd5be4f5e1d64faf3408820acc25a7f8b4eb4395:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIyMzFkODU4YmIzNzcyNjNjMmJjM2Q5NTIxMjUyNjgzNWRkNzczZDQ0YTQ0Y2Q4ZTBiMDBiMTE1NjNjYTk2NGVhIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjYTZmMGY5N2FkNWZjYTdiODJlNzVmOWRjYjI3YTY0MzE3ZTNiMGUzNzRmN2U3YzI2MTI0MDdiMTU2ZDhkYzRmIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiZGJlMmEwOWE1ZTlmYTViNTI2Yzc2ZjMyYWExNTEyNWYzY2NjMmE4NmZhYjQxZTI2ZTllZDI5MjUyMjdlNjRhIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiIxNGJjMDg3OTk4ZGY4Y2ZjM2M3NDdjZWNmMTdkMjZmMWQ4ODBlYWQyY2E0NjgzOGVkNDYzMDQ5NTRhNWVjOGI1In0"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/LocalDownloadServer.swift",
+          "version": "repo-file-v1:sha256:27edf67a591add83083f6bcd1ac10f3da2479097cc5f7b32c82f05d0300b9f70"
+        }
+      ]
+    },
+    {
+      "id": "claim_58aeda2b7ade47c0afeb301e08096d53",
+      "statement": "test-find compiles PageFind.swift with the PageFind harness into a temporary directory and runs it.",
+      "evidence": [
+        {
+          "resource": "repo://test-find",
+          "version": "repo-file-v1:sha256:5581e8aa99b30cf09bc01ff1b61f23ed1ce5a63c7c02ae229bd02126522d33f1"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb2ce05b38f94bf69d66bca376be291e",
+      "statement": "The history regression runner compiles Address.swift and History.swift with stubs and runs against a fresh temporary store.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/HistoryRegression/README.md",
+          "version": "repo-file-v1:sha256:fe52b7e13460bfe120db51cc7b197894781bc501161b2337dadd5af4481b9182"
+        },
+        {
+          "resource": "repo://Tests/HistoryRegression/run.sh",
+          "version": "repo-file-v1:sha256:6c57b7d91e127d7200f57466ebec3149779e6905d637058fd78e88e3dbfe0edc"
+        }
+      ]
+    },
+    {
+      "id": "claim_4464dabe449646baa087189c4e17f106",
+      "statement": "The extension files harness is compiled and run standalone by Tests/run-extension-files-tests.sh.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/run-extension-files-tests.sh",
+          "version": "repo-file-v1:sha256:1be13c9f7bcef47011c26a7126b842fe882d2adcd62a576dfea0c63ddc8b48ff"
+        }
+      ]
+    },
+    {
+      "id": "claim_28557bfcc5c54d33b4ec01ce83e8a0dd",
+      "statement": "Python probe tests require a built app, run it hidden in an isolated world through the bench socket, and reuse the split_view.py harness.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/arc_pins.py",
+          "version": "repo-file-v1:sha256:55a83e92d127e6c256e39b073881c6c89b9d4eb219a7c1156faab9095729b738"
+        },
+        {
+          "resource": "repo://Tests/split_view.py#L1-L60",
+          "version": "repo-lines-v1:sha256:326058318e3e3dd7e51ac8a115fcf6d9c268a154eac78f787b9891365ca7dc6f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODJjYmRiNGM4YjA3NTE4YmY0ODZjNTg5OTBmYzM5MTc4M2FhMjBhOTE2YmZiMjdhZDIxMWViMWQ1YzM2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMGVmNDQwNWNiMzQ5NzI5OGNmYmViMTVhNTNkMGQzZDI3NDA0MTk3OTllNTdmNzM0ODljN2M0MTBkZDFkZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjNGFkZmUyN2RhYzMxOTI3ZGRhYmNiNmMxMThiMDk2ZDAxNWJmZTEzZGVmYWFiNmQyNDFjMzlmODk4MDNhNzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_01bb20c210c14767ad8ff10257dbee0f",
+      "statement": "live_rate.py runs LiveRate's script in JavaScriptCore without opening the app.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/live_rate.py",
+          "version": "repo-file-v1:sha256:860a69e5f541718ca09694fd18bc13c6871513635c7052ff13c066de86331482"
+        }
+      ]
+    },
+    {
+      "id": "claim_42a60b7b5bc143be81c642f3083e3c12",
+      "statement": "Visual behaviours such as dragging onto a page edge and the split divider's motion are checked by hand on a release candidate.",
+      "evidence": [
+        {
+          "resource": "repo://README.md",
+          "version": "repo-file-v1:sha256:ba763e536c0e099f170481c05cab3aa3e4f9901734ede29ae787e1ba74a06b3e"
+        },
+        {
+          "resource": "repo://Tests/split_view.py#L1-L12",
+          "version": "repo-lines-v1:sha256:21fb83d50c0e87272bf4dfe046bec1596a95e701047071dd544b1c312ea2dc84:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODJjYmRiNGM4YjA3NTE4YmY0ODZjNTg5OTBmYzM5MTc4M2FhMjBhOTE2YmZiMjdhZDIxMWViMWQ1YzM2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzMDNlY2RkNGE0ZDEwZjE5YzczZmQ0MmZkMTI0MzdmZDMzNTRhODI2ODE2MDVkYTUyNTVhOTdhMzkwNjhkYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ1MDJlYjI4OWU4NmEyZjY4ZDE1OGJkZDUzYmE2ZDZjNTVjNjNmNzA4NTRmMmM5MTg1MmUzYzY2YmJlOTBiY2QifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

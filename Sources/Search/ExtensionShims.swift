@@ -422,6 +422,9 @@ enum ExtensionShims {
       const manifest = (() => { try { return runtime.getManifest(); } catch (e) { return {}; } })();
       const backgroundPage = manifest.background || {};
       const hasWorker = !!(backgroundPage.service_worker || backgroundPage.scripts || backgroundPage.page);
+      // The browser is told each time the worker or background page starts:
+      // that is how it knows WebKit started it (see ExtensionWorkers).
+      if (background) native("background.started", []).catch(() => {});
       const offscreenCapable = [...(manifest.permissions || []), ...(manifest.optional_permissions || [])].includes("offscreen");
       // A script a worker imports that isn't there: Chrome throws at once.
       // WebKit goes looking for it first, and while it does, runs the
@@ -891,11 +894,6 @@ enum ExtensionShims {
               .then(sendResponse, (error) => sendResponse({ relayError: String(error) }));
             return true;
           }
-          // Only the worker answers; any other page stays out of it.
-          if (message && message.__searchPing === true) {
-            if (background) { sendResponse("pong"); return; }
-            return true;
-          }
           // Search's own envelopes come from this extension only: another
           // extension (onMessageExternal) could otherwise speak as one of its
           // user scripts, or as a frame of its own.
@@ -1176,56 +1174,16 @@ enum ExtensionShims {
         promise.then((r) => r === undefined ? withLastError(new Error(gone), callback) : callback(r),
           (e) => withLastError(e, callback));
       };
-      let checkWorker = () => {};
-      // When the worker was last heard from — a reply, a port message.
-      let heard = 0;
       if (runtime && typeof runtime.sendMessage === "function") {
-        const page = typeof document !== "undefined";
         // WebKit's own, looked up at each call — not held from the page's
         // first moment, when the page isn't yet the tab or popup it will be.
         const original = Object.getPrototypeOf(runtime).sendMessage;
         const send = (...args) => original.apply(chrome.runtime, args);
-        // WebKit can also lose a worker without knowing — its process
-        // stopped along with a tab's — and then answers every message with
-        // nothing, for good. So after waking it, a page asks the worker
-        // itself (its shim answers) at most every few seconds; no answer,
-        // and the browser takes the extension up afresh.
-        // The message itself doesn't wait on the answer: a worker busy
-        // starting up can take seconds. An empty reply means gone; silence
-        // for a quarter of a minute does too.
-        let asking = false;
-        const check = () => {
-          if (!hasWorker || asking || Date.now() - heard < 5000) return;
-          asking = true;
-          // Asked three times, a second apart, then once more after waking
-          // it — only then taken for gone: a restart has consequences
-          // (welcome pages, a popup loading again), and a question can go
-          // unanswered for reasons that pass. Waking a worker that runs
-          // starts it over, so that is kept for last.
-          const ping = Object.getPrototypeOf(runtime).sendMessage;
-          const ask = () => Promise.race([ping.call(runtime, { __searchPing: true }), new Promise((r) => setTimeout(() => r("late"), 15000))]).catch(() => undefined);
-          const pause = (ms) => new Promise((w) => setTimeout(w, ms));
-          const tries = [() => ask(), () => pause(1000).then(ask), () => pause(1000).then(ask),
-            () => native("background.wake", []).catch(() => {}).then(() => pause(1000)).then(ask)];
-          const attempt = (i, last) => i >= tries.length || last === "pong" ? Promise.resolve(last) : tries[i]().then((r) => attempt(i + 1, r));
-          const started = Date.now();
-          attempt(0).then((r) => {
-            // Any real answer from the worker meanwhile says it runs, too:
-            // the question alone can go unheard from a page that listens.
-            if (r === "pong" || heard >= started) heard = Math.max(heard, Date.now());
-            else {
-              if (__SEARCH_VERBOSE__) native("debug.error", ["worker check: " + String(r) + " from " + location.pathname]).catch(() => {});
-              native("background.revive", []).catch(() => {});
-            }
-          }).finally(() => { asking = false; });
-        };
-        checkWorker = page ? check : () => {};
         put(runtime, "sendMessage", (...args) => {
           const callback = typeof args[args.length - 1] === "function" ? args.pop() : null;
           // Never heard back by the one that sends it, so said for it.
           if (!inContent) tell(typeof args[0] === "string" && args.length > 1 && typeof args[1] !== "function" ? args[1] : args[0], "passes");
-          checkWorker();
-          const answer = send(...args).then((r) => { if (r !== undefined) heard = Date.now(); return r; });
+          const answer = send(...args);
           if (typeof args[0] !== "string" && !(args[0] && Object.keys(args[0]).some((k) => k.startsWith("__search")))) relay(args[0]);
           return replied(answer, callback, "The message port closed before a response was received.");
         });
@@ -1261,16 +1219,6 @@ enum ExtensionShims {
           return replied(background ? alsoFramed(p, tabId, message, options) : p, callback, "Could not establish connection. Receiving end does not exist.");
         });
       }
-      if (typeof document !== "undefined" && runtime && typeof runtime.connect === "function") {
-        const connect = runtime.connect.bind(runtime);
-        put(runtime, "connect", (...args) => {
-          checkWorker();
-          const port = connect(...args);
-          try { port.onMessage.addListener(() => { heard = Date.now(); }); } catch (e) {}
-          return port;
-        });
-      }
-
       gather(runtime && runtime.onMessage, true);
       gather(runtime && runtime.onMessageExternal);
 
@@ -1337,7 +1285,7 @@ enum ExtensionShims {
           pending.then((id) => callback(id), (error) => withLastError(error, callback));
         });
       }
-      define("sidePanel", ["open", "setOptions", "getOptions", "setPanelBehavior", "getPanelBehavior"]);
+      define("sidePanel", ["open", "close", "setOptions", "getOptions", "setPanelBehavior", "getPanelBehavior"]);
       define("offscreen", ["createDocument", "closeDocument", "hasDocument"], [],
         { Reason: new Proxy({}, { get: (_, key) => String(key) }) });
       define("tabGroups", ["get", "query", "update", "move"],
@@ -3534,8 +3482,9 @@ enum ExtensionShims {
                 browser.namedDownloads[url] = (name as NSString).lastPathComponent
             }
             ExtensionShims.askedDownloads[url] = id
-            let download = await web.startDownload(using: URLRequest(url: url))
-            browser.keep(download)
+            _ = await withCheckedContinuation { (done: CheckedContinuation<WKDownload, Never>) in
+                browser.download(URLRequest(url: url), through: web) { done.resume(returning: $0) }
+            }
             return browser.loot.kept.count + 1
         case "downloads.search":
             return browser.loot.kept.enumerated().map { index, keep in
@@ -3573,12 +3522,20 @@ enum ExtensionShims {
         case "downloads.pause", "downloads.resume", "downloads.cancel", "downloads.removeFile", "downloads.getFileIcon":
             throw Unsupported(what: "\(api) isn't available in Search yet")
 
-        // MARK: side panel — a tab of its own, since this window has one column
+        // MARK: side panel — in the sidebar panel, or a tab with that off (SidePanels.swift)
         case "sidePanel.setOptions":
-            if let path = (first as? [String: Any])?["path"] as? String { panelPath[id] = path }
+            let options = first as? [String: Any] ?? [:]
+            if let path = options["path"] as? String, path != panelPath[id] {
+                panelPath[id] = path
+                SidePanels.moved(id)
+            }
+            if let on = options["enabled"] as? Bool {
+                SidePanels.enabled[id] = on ? nil : false
+                if !on { SidePanels.closeAll(of: id) }
+            }
             return nil
         case "sidePanel.getOptions":
-            return ["enabled": true, "path": panelPath[id] ?? defaultPanel(context) ?? ""]
+            return ["enabled": SidePanels.enabled[id] != false, "path": panelPath[id] ?? defaultPanel(context) ?? ""]
         case "sidePanel.setPanelBehavior":
             if let on = (first as? [String: Any])?["openPanelOnActionClick"] as? Bool {
                 if on { panelOnClick.insert(id) } else { panelOnClick.remove(id) }
@@ -3587,7 +3544,15 @@ enum ExtensionShims {
         case "sidePanel.getPanelBehavior":
             return ["openPanelOnActionClick": panelOnClick.contains(id)]
         case "sidePanel.open":
+            // From something you just did, as Chrome insists: the extension's
+            // button, its key, or a click in one of its pages.
+            guard Extensions.justUsed(id) else {
+                throw Unsupported(what: "`sidePanel.open()` may only be called in response to a user gesture.")
+            }
             openPanel(context, owner: owner)
+            return nil
+        case "sidePanel.close":
+            SidePanels.closeAll(of: id)
             return nil
 
         // MARK: offscreen — a page with a DOM for a worker that has none
@@ -3727,39 +3692,15 @@ enum ExtensionShims {
                         "remote": false, "eventTypes": ["start", "end"]]
             }
 
-        // MARK: the worker, up before a page talks to it
-        case "background.wake":
-            guard context.webExtension.hasBackgroundContent else { return nil }
-            // WebKit sometimes fails to start a worker again after unloading
-            // it, and then never tries again: every message waits for ever.
-            // Tried twice more, then the extension is taken up afresh.
-            for attempt in 0..<3 {
-                // WebKit never calls back after some failed starts; eight
-                // seconds without an answer counts as a failure.
-                let error: Error? = await withCheckedContinuation { done in
-                    var finished = false
-                    let finish: (Error?) -> Void = { result in
-                        guard !finished else { return }
-                        finished = true
-                        done.resume(returning: result)
-                    }
-                    context.loadBackgroundContent { error in MainActor.assumeIsolated { finish(error) } }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 8) { finish(Unsupported(what: "no answer from WebKit")) }
-                }
-                guard error != nil else { return nil }
-                if attempt < 2 { try? await Task.sleep(for: .milliseconds(400)) }
-            }
-            owner.revive(id, because: "its worker wouldn't start")
+        // MARK: the worker
+        // The worker's shim, each time it starts (see ExtensionWorkers).
+        case "background.started":
+            owner.workers.started(id)
             return nil
         // Whether this extension was loaded before in this run of the
         // browser — an "install" then is really a restart (see the shim).
         case "background.loadedBefore":
-            return owner.loadedBefore.contains(id)
-        // A page found the worker gone though WebKit believes it runs (see
-        // the shim's ping).
-        case "background.revive":
-            owner.revive(id, because: "its worker stopped answering")
-            return nil
+            return owner.workers.loadedBefore(id)
 
         // MARK: what went wrong inside
         case "debug.error":
@@ -4287,8 +4228,8 @@ enum ExtensionShims {
         // Resolved, not appended: a path can carry a query — Claude's names
         // the tab its panel is for, sidepanel.html?tabId=… — which appended
         // would be escaped into the file's name.
-        guard let url = ExtensionShims.page(path, in: context) else { return }
-        owner.browser?.open(url, foreground: true)
+        guard ExtensionShims.page(path, in: context) != nil else { return }
+        SidePanels.open(context, owner: owner)
     }
 
     // MARK: - bookmarks, as Chrome shapes them

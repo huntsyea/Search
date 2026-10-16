@@ -1,0 +1,146 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:f74ba777ce7a1b63a6adcb4d59f9b68f0e6937e8d8f438386f3befaaedd90f73",
+  "claims": [
+    {
+      "id": "claim_3fddbb78433d4cb7bf801e59bf42867a",
+      "statement": "The updater reads a per-architecture feed at officecommun.com (an intel/ path for x86_64 builds), and SEARCH_FEED can override it only in test runs, the only case allowing plain http.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L32-L54",
+          "version": "repo-lines-v1:sha256:8b1958030067c22185e5326de7403142e8da77a37ddcd04c3dbd3bbddc85ccb8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNWU3MGE1M2Y3NmZmMzcxNGRiZTdmOGEwNDM1NTgyMjU3MWM2NDZhMTE1YTg4ZGYyOWQxNzc0N2UzZjFhMGEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFmMWQ1ZTRhOWU5ZTI0M2Y2NjVlNzNiNDFjMmY0NTJkY2IyZjU1MWMwMDA5MzdiMDU0NWExNGM0YTY2YTQzMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc3NmM3ZjFiZmViMGYxNGRiNDhhZDZlMDdlZWVkYmUxNGI1MzRiZTg3NWQzMGZhZmYwYWVhOTJiMGNkNjA1Y2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d1437d8696ef4cb88eb7fd66b042583e",
+      "statement": "The updater never reads or modifies Application Support data, defaults, or the keychain; it only replaces the bundle and deletes its own scratch folder and the .old bundle.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L16-L26",
+          "version": "repo-lines-v1:sha256:1c873ab3f82282d8b85a703adaf716810f57a73623e77ff450504335dda57ae5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZhODZiNDVhMzgyYjBlNzZlYzIyYWMxZGMyYzg5MTZmMzAyOGFhMTk4NWNkNjAxMzA5MDExMjMwOWZkYTM1ZTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNiNGQwZmZhNjdjOGU4MmViZDYyNzRjYjVjZWNkMjc4MzRiOTE2ZTMwMTcxN2FmN2QzZDkxNjI4ZGUwYTA5ZWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI4MmVkN2ZkNzYyM2NhNmY1ODFkYzBhYzg0YWZlMjBhNTM1NzNlZGY4MWY3NzY4NmEwN2FmNmJlNTE5N2RhMGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZjMmMxMTI3YTRmZjBjYWNiOTEyZjZmMTZmZmFjYmIzNzYxZTZkMTY5ODljNzE4YWMxNmE5M2MzZDA4ZGRhZGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_dfd4d531b75a45ca833e0291e0499589",
+      "statement": "Only the signed appcast.json.zip is read, and its appcast.json must be a regular file whose code signature meets the Developer ID requirement for team 7BYKA895MC and identifier com.officecommun.search.appcast.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L303-L315",
+          "version": "repo-lines-v1:sha256:66a511d82ebca12604e1e74a4a352c047439c9768091eeab892a8e72d034a9a0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1OTU5ZjdiYzU0NTIxZGYwMGQ2MTAwMTA0NWU3YjM4MGNiN2FmYTYxNWQwMzc4NDhhZjk2MTBiYWU5OWI1YmUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNhMjNkOWQ5NzIyZTUzNWFkZTI2ZGMzNWQ2MWRjNTRjOTUyNmEwMjczODE4MGZmODgyODJmMGM4M2FhNDcyZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1Y2I3YTc3MzUzNmM3ZjA5N2E4Y2MwMGMxNzdlYmE3YTQyN2QwMjA1YmQ1ZjNiZmY4YmI1MDk4ZTE1YjY0YmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ5MTBiMmY4ZmVmODM2NTcyYTA4ZDBhZWVmMGNiNWZkOTNiY2UxMDc5Y2I1YzAwMTQyMTdhOWE5MzJiNjFmMGYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L356-L385",
+          "version": "repo-lines-v1:sha256:081490eecb3d141f749bdd76e1737e929ee21b6ff6323598c2845c868a06ff3e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0OTA4NDRmYmNiNThhOGRkMTNlYzMwOGFjNTM5Y2E5YmUwYTMxZjM5ZmM1MzM1YzY3NTIxYjg3OWIzNWNjZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUwYzdhMGYwNjJhZTRjYTZlODU3Y2VmMzZiOGU0YTUzMjNiMGU5YjVlYzlkNzY2YzA2ZWY3NzAwZTRlZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIwODBhYjdhNDI2NWYzZmI2YmMzZDAxM2YxZWUyOTU5ZDNhNjVhMjA2YjdlOWQzZTVkZGE5M2MzMWY5Y2ZiMjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f025105376d34b83b17bdc58fc1d02d5",
+      "statement": "Feed URLs are accepted only over https on the feed's own host.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L387-L398",
+          "version": "repo-lines-v1:sha256:5449f9c0b115db18af685592a4b8a0336bccf1efa3ed9c880154d429c3817012:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0N2I2MDE3NTUxZGNmNWZmODFjMjYxMDljYWEwZjVmNjU5NTdiOGE2OTVhNjJlMWZkNmJhZTk0OGZhMzM4OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQ4MzUwYzdhMGYwNjJhZTRjYTZlODU3Y2VmMzZiOGU0YTUzMjNiMGU5YjVlYzlkNzY2YzA2ZWY3NzAwZTRlZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZmMDY0ODg1ZDRlOWRhNjIzODEzZTlkNjcyODA2MTJlNWI1ZTRmN2FhN2MxMjc4MjhmYzFiYzE2ZDdmNzgyOTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_90611f758e9d42a98b37bbf9967b39ea",
+      "statement": "Checks happen at launch and hourly when more than 50 minutes have passed, and a release is offered only if its build number is greater and its minimum macOS is satisfied.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L131-L207",
+          "version": "repo-lines-v1:sha256:9180dd852dd4f72ce13f3ffacc258395df7023ee1bcea44f9a1fffa57f050a71:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEyN2VmOTJlYzExZmU1ZTEzOWNiMGQ0MDc4NDMxY2VhYTY4MWVhNmNkMmM4NTMwZjhiZDcwYmM0NDE0ZWYxNzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5MDM1YTEwMzc2Y2U4ZTI2NDBkNTk4ODExNDRiZTRhMWRjNDEzOGE0NDU3Mjg1ZDE5YjkyZjAxNjUzZTE5YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ5MGFlNGUzY2RmMTVkNWIyYTQzZjAyZTFjOWNiMWFiYjNlOWEyYjNkZTEyZjNiZjZlZDMzN2MwNzllZGJlMzYifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L70-L81",
+          "version": "repo-lines-v1:sha256:85c94024447683700e268f8a749c17c49c8987759bb88feb4b55b349773713ca:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OGEwNTZiNWQwZjNlNDkxZDQxMzkwOGIxYWE5OGExMTViYzQ4OTdlNWJlYjM1Mjg2ZWQzZjdlMTM1ZjU1ZWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2YjA0NDkxNDY5NzIyZTgzNjNhOTRlNDA0NDUzOGUwMTNhMmEyMTdlMzZiMWU1NjhiYTYwYWNiN2I0YzhmMmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNlMjQzY2JmOTVkM2UwNTI4MDc2YjM2NGUxZWY5ZGE4YzQyMzM3NDM3MzAyODZmOTU2ODRmMGM1NDdlZTMwZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4ODYyNzYxYzllMmNjMzg4NGY3NjNiYzE4ZmY0NWZjZmQ4MDFjMGIxMmQyZTU3ZWQwMzdjNzY2ZTk3NWU3ZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d3ea5e3e31544550a29a90e03bee035c",
+      "statement": "With automatic installing off, a found release waits for Install Update; otherwise it is fetched and swapped, becoming ready or falling back to offered.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L237-L273",
+          "version": "repo-lines-v1:sha256:8cd491ddb40f8bbe314daf445382e560237eebaa3c767b76b89e58cc46c1a768:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE5ZjJlZThkYjUwYTg1YjRhNzYxOWE2NjdiNWE0YzNhN2E5MzIxYWZiNGViNjg3OTA0MGMyNmU0YzQzNTIzODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk2OTZlYTAxMjhjMWVlZDQzZjY0ZDQ1MzAyNjA4NDRjMTlkNGExNDUyOGE2ZTlmZTBmN2I2YWMyNzIzZjc3ODgifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L84-L98",
+          "version": "repo-lines-v1:sha256:ae1d4829beb0d8444bff121bbd6995c79cee8a80abf435f2cac60c3da14bad0d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjliOGEwNzQxNmFjMWEyN2VlYjY5ZTBlZTExZGExMGY4ZjEyOTczNDIzODBkNjM4NjQ0OTViNTU2NWE5NWZjODUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJkZTlkMjE3OGMwNWY4NmQ0YzRkYmYwYTQxNDEwYWFhMjU2OWM5MDRiMTQzZDM0NDU5YmVmZmE1ZWM0NThjMDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8c7897522e53434987b1f291acd3c333",
+      "statement": "An update is never installed under an ad-hoc signed app or into a non-writable folder, and the downloaded ZIP's SHA-256 must match the signed feed.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L418-L450",
+          "version": "repo-lines-v1:sha256:628222eb80f6e8b57328ca15056ea7d1acf51abb3b24cee6802f0c8ecc3e019a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllMWRkYjMzNjYwMjFmMjZiZTU4ZmVkMWU5OWVmMTEwMDVkZjhhMGExMzgxZDEwZjMzMjJlNGFjNGJhZjQ4ZmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkzOGY3MjAyZDc4ZTBjOTA0MTk4YmVkOTg2MjhhZWNjNDQ4ODA4ZTY1NjI1MzEzNDg2NzZlNDY1YmI2YTE1NDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjN2Q4MTY4NWE0N2NmMzQ3ZWYxMWM3Y2Y1NzkyODc1ZjhjNzBjYzYyOTk5ZmQwYzc2ODVlYjc5YjIxY2QwOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7cca6dac8dfa4178af9d7497a40cc770",
+      "statement": "The new bundle must have the same bundle id, a greater build number, a strict all-architecture Developer ID signature for the same team, and a matching Team ID.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L493-L551",
+          "version": "repo-lines-v1:sha256:20d503fd8dd319ea582b1f5d9f3bebc7fbe935deaa9fe727556484c08d730585:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNmYzYyNGU1ZjBmMmEzMzVmZWZhYjQ2YzhkZDZiNjQ3MWU4Mzc1ZGU3MTk0MzYyOWYzZjlmNmM2Yjg5Zjk5ODIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE0YmI3MjFjZTE2N2Y3MjJmZjI0ODhjNmZkZTJkNmYxMmNlNDUyNmUzZDc1OGI4YmNkNjBlMjUyNWUwMGVlNTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE4YTU2NTRjOWJhOTRlZDk1YWEwYjIxNTgyNGU0ZDEwNGIwMTViNmUzNjc2MDExMjNiNDM4YTQ3MjBkN2VhNDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8f05eb274da249efa913635426572ee1",
+      "statement": "The swap renames the running bundle to .old and moves the new one into place, undoing the first rename on failure; the .old bundle is removed at quit or next launch only if it is this app.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L568-L596",
+          "version": "repo-lines-v1:sha256:4a2e3ca41809323a470d5b0bf33a5a86087c040965277b10b75c6ac152279b23:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY2NmIwYzA2MTg3NTQ0Y2Y5ZTUwNjdlNzAwZmQ2YTMxNjQzMmRkNjM2MTU5MTY5OTM3ODJmNzcyYTNmYmViNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU5MmEwZjJiNWJjYTU2M2I3NDk4OTY3ZTMzNGVjY2U4MTA4YjYyY2I3N2NiYWEzMmY0MWNjMjEwMjAxZjE4YmQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmY2UyMTAyMDdlOWVhNjgxN2RjYjE0ZTYxZGViYTcyNGY2N2NkYTBhOTk2NWU2YjkyY2JkNTc1YjRjY2QxYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9ce7f1bf69254dd38eb77e9c364f6419",
+      "statement": "The DMG fallback is downloaded by Search itself and opened only if its hash matches the feed and it is signed by the team's Developer ID.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L209-L235",
+          "version": "repo-lines-v1:sha256:b63de775c267bc6f3714f737f8d2f52b863a34d171a1c5f66ff6e23b4f4bffe7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg0M2Q0NmU0YzFjNzhjZWMxMzdhNGRlNzU4ODBmNGU4ODk1MDgwYzI1N2IyYzhjNGJkY2E2N2VhODFiNjE0ZjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjllNDg2OTY4MWQyYmU5OWJkNjVlODliYTVjYWFiZDhkNmNlYjJhMmZiMjk2OTBiZTRmZjVkMzRlNjk0ZmMzOGUifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L526-L541",
+          "version": "repo-lines-v1:sha256:93918c42cf7d9c2415dfb32e57d941c4d2f23c54e2b594a307e1a308c9885f65:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhjZDIwMjhjOThjNzA1MzZlOGYzZmYyMmY0YjIzYTQ3OGU3MzVkMGVhMmQxZjA1ZTE2ZmNhOTUzYWRkOGZjMTYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlmZmFiNDYwYWFiZGYyNDJlYzAxMjA0ZDZiNGU0ZGRiYzhjZmVlN2JlYTMwMjE2NmRlYTJhOTNjNjg2ZDY2YTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNjZTBmNmNiNzRiZDY2ZTI1OTM5NTg4ODhlYzA5YmE4YjgwMzI0NzZjZWVmMWU2NTM1ZjgzNzZhYTg4OTY1ODMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1ce293ee147f447882066b8e9b0c3e53",
+      "statement": "Relaunch waits for the current process to exit before reopening the bundle, preserving test-run environment variables.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Updater.swift#L275-L301",
+          "version": "repo-lines-v1:sha256:03790db5d3bb5d7dee76153171d3402531bf25faeb18ec8f6c3ea9ae69f5ec4b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjNjgxYmIwMmI4ZDRlNTk3OTg4MDg0NjVkNTMzYTdmMjlhZjJjNmRlODU5NTIzODM2MjE0NTkzNjgxNjI4YzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzOTc3Y2MxNzE0ZDJhZmUyMDdjYzMyOWQ3MzRlZjQ0MWQwMjhmZTAxODU3NzFkYzdkMDU4NDk2OWExYWI2NWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY1YjdhMzlhZTU1NTI0YzA3ODNiYzdjMGM1ZDhmNDk3MTdiYjM5M2FmZTFjNjJkMWNhMmNlZTRmODhlNDdiZDEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a396281077974bf982d8184b410d49db",
+      "statement": "Tests cover minimum-system checks, rejection of garbage feeds and of unsigned feeds inside valid ZIPs.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/SearchTests/VaultAndUpdaterTests.swift#L96-L130",
+          "version": "repo-lines-v1:sha256:ac772ec4242d5ea74407a18ed69e9e17119f4e48f0c42e1d72edcb9d0a032217:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0NWU4NGNiYjM1MzcwZjg4YjVkZjEyMDBkZTNmZDQwZGFlYzBlYWFhMGZiODAyYTU0NDIyOWNhZGVjYTI4YjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyNDFjNmViNGRhYjZlZjU3ZTliMjNiNjhkOTRhM2E3MzYzMDg5ODJkMThiMTJiYzFlZTFhNzNlNTE2M2I3YzgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMGQ3NTk1MGRmMGZmOWEzZWU5NjYzOWRjYzhmZjVlYWVkYjQwZDY4MmJlYTkyNjIyYjUyMGRkODg3ZDkzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI0MDBkMDc4ZTc3MjQwNzJlYjk5OTkxNTA4NmRiOWU3ZGM1OTUzNGU1MTAzYjg4MDkxZTQ3OTZhYjI5YjkyYTYifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

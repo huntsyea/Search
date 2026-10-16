@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:150ff7c7e3b0a13febea5d3cf49b91dedb3de1b955f8a940e0208b3e2a027ebe",
+  "claims": [
+    {
+      "id": "claim_298a9b1e11744fe787308c1a21694d8e",
+      "statement": "History identity lowercases scheme and host, drops credentials and fragment, treats an empty path as /, and preserves path and query spelling; recorded URLs never keep credentials.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/History.swift#L86-L111",
+          "version": "repo-lines-v1:sha256:144261c9321a28e9500ce0e02961b95e550c890e95d08ca29d7b146e957975c5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2NmYyNjE1YjJmMGYzZWE0MWVlMjM5NTUzMGRhZGE5Y2YxOWRhMzZmNDA1Y2RjODYyN2ZjOGE4NzU5YzQyMGMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4MTlkMWNhYzU5ZDkwMDMwNjM0MGJjYjE0NjhmODdkZGQ3OGUyMWU0YjE5MDA0YzJkY2E0YWYyMTJjOWE3MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjZiNmI2YmE1YjY1NmU0Y2QyNDY0YzUzNTYwNDNjNGRkMzBjYmI0ZDg5MzBhNDU5NTZmNTY0Y2M4OWFjYjA5MTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9612594b260841188c5e050de29ca294",
+      "statement": "Recording a visit to a deep page also credits the site's home page so completion offers the front door.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/History.swift#L172-L210",
+          "version": "repo-lines-v1:sha256:dc94b18a4753a8c9a32b4097b4d03a9a2e77afa1f85974006acf52fdd9123607:eyJzZWxlY3RlZExpbmVDb3VudCI6MzksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk1OTg5ZWI1YTEwMGRkZTQzZGNkYzdkZmJiMjU2MWFlMTc1ZGFlZDk0MTc3YmY5YTYwZDRlMGY1YWI0ZTNlMzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjFkZGQ0NDE3MWI0ZDIxNzRjMDk0YzA1Mzc5NzViMDBjMjk4YzdhNTAwZWM0YmIyOTEwYmYzMDhkZTYxOGE1ZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzZWFlNzJmYzM4YzU1ODY4N2UwMjhhMTA4YTBiZTdiYzA0YmY2M2RjNmM3Y2Q4Y2NjMDY5MGMyY2RhMjZmYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a08c315509ad48b68c678ccd78f3870a",
+      "statement": "History ranking uses frecency count × exp(−days/30).",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/History.swift#L444-L453",
+          "version": "repo-lines-v1:sha256:af6f65a048a8311b238e9ade7c04f0eb0abc2b6bc12eaeb259dd00f5b43f816a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIxNTM3ZTRlYjdjODA2MDZkNGIwY2JkNzZlMDQ3OTlhNjM2YzUzNTg5MGZhODVhY2Q4MjNkYjQ4ZDk2OTNhMTciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY4YWNlOWI3NWYyZWQ5ZTRiMDk4NTZlNGJjYjFhMDJiMzVjNzY1MzRjNzhiZjM0MjZlYjllYWQxNWM2YmUyYTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgxMTA4NGJkMmEyY2EwODFjNmFmOGUzZmU5YTViYmY2NjE0OGI0ZjNlYTBjNmVjNDcyYWVmNTVmYjAyMjFkZjcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7838a66b12ff44e2b6c6d2cf58141e2e",
+      "statement": "History is saved 1.5 seconds after a visit and the file keeps only the 2,000 highest-scoring visits.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/History.swift#L537-L553",
+          "version": "repo-lines-v1:sha256:6d2d423eb7fce2544b1963df291341b49d66153c2a4950c0b004151df68bb707:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiY2ZiZWMwN2RmM2M5NWQwZjcyZWRlYWE0N2Y2MjU5ZTJjMzQwYWI1ZTRlNGIwMjcyYzVjNjI0YTgxMjFkOGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkZTMwYjIyZjlmZTM1ODcyMWE4OTk3ZTE4MzdlMDg4OWJhODM4NjMyZTk0OTYwNDIwZDcwYzA4ZDljMmY5ZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZhNWYyNWM1NTEwY2VjNDQ2MmE1YmMyMDNkMDM2ZWMxNTc0NjI0YTA0YmI3N2ZjOGFhMjY0ZjI4NmVjNDRiZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9dcf78d3a7554543aa0407513c669fa2",
+      "statement": "Importing visits from another browser keeps the larger visit count rather than summing, so repeated imports do not double-count.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/History.swift#L212-L234",
+          "version": "repo-lines-v1:sha256:62cb9515a52fb3e9e9a1c1887f36d9957f38d834a4872dcf463b128f434036fb:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlZmE5MDE4MWNlNmU0ZTFmZjYwY2Q3YTE5MzdjZmI4MWM0NjAyYzIzOThiMzU1ODU0MzdlNmYyMTMyODhmMTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjYyNzE3OGFmOTcyYTQxYzFkMGQwODg3NmI5OTQ3MWJjNGQ2ZGFjMTk0YmViOWNjZTE0M2U2ZGY4MDA3YjIwMWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjRlZjUyMGY4MzU3NTQxN2EwMDZjZTAzNzQwNzNhOTQ2YzFiMmE2YjJkZjUyNmUzNTgxMjlhNzkzNDgyNDI2YjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc5ZDg1ZDA5YzcxMTI1MDllYjQ0MjU3YzZhOWFiYTZiODAwNjM2MDllODZmZmJlMTIzNjMyZjEwYTAxYzc0MmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_29fddd2a08f04be7807c5f3c0fbe6b20",
+      "statement": "Clearing history also removes stored favicons and learned site searches.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L1094-L1101",
+          "version": "repo-lines-v1:sha256:ac2ec3f25a932e6b42adbeb2512e2b6ede24771bcba6d06067ab96bef8810b6d:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWE0Y2NmODE0NWViZGJhNDhhOGMzZGE0MDMwNjg1YTdlYjM0ODdmMzkyMjU1ZmZjYmUwNmNhOGI2ZmUzOTA4YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg5M2Y0MGUzNzgxZWI4OTZjODJkMDQ2YTA4MDY3YTExZTM1Y2RmMmYxZGZhZjI2ZmVhOTBiOGRiNjY3NjQxMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODVmM2Q5ZmNhYmRkZDA4YzcyMzk3ZTk3MmYzODQwNDdmMzdiOThmMTkxNzgzNzU1YTg2YmJmN2M4NWU4YTE1NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTUwYzE0ZDNlN2I0NmY3Mzk2OWFlMWViY2QyNjlkNmNhMDNkOTA3ZmRlNTJiYzFmOTQ5NjZiOWM2NGFlYThjYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_478ca65c58e8475b86bb924ee8827e01",
+      "statement": "A Bookmark with a nil url is a folder, and Bookmarks keeps a set of kept URLs recomputed whenever roots change for fast membership checks.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Bookmarks.swift#L10-L66",
+          "version": "repo-lines-v1:sha256:8ecf57ac9282b17286f91ccf102c59c9b85b2127f6cef3362f2ded69bf8d23c3:eyJzZWxlY3RlZExpbmVDb3VudCI6NTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY3MmQ0MTYyNGE5ZmE0YmQxZTY2MWM5MWEyYTI4MjNiOGRjZDllMjU1NDNmYjJlOWVmYjI0NWZmNTFhYmI4ZjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjY2UwYzg2OTE3OGIzNTVmM2IzMjYyYjI4ZGY0ZmU3ZjEzOWJiNmMwNzE3NGRhYmQ3YmNiY2RjZmNiNmQ4NzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg4NGU2MTMxZGMwZjcxZTEwNWIyNWJlODdlZDc4MGVjMDk5Y2ZhYjI0MmNiNzY3NzkxN2Y4ZWFiYThkMTM0ZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6b512ce6cd714a76a9e55c41eb524bce",
+      "statement": "Bookmark files in the Netscape HTML format are parsed loosely and only http/https addresses are kept.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/BookmarksFile.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:094f38e1268bc06e5ddf779bb4c4852be76538e88b563f582bab7fcf9cfb97f8:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRkYTliNzVmNjRiMTA2ZWI1NDRkZTIwMWY1OTkxMjJkNzVhYmM0ODNjNWIxNTZiYmE2YzA1YzBmOTU2ZGJjM2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZTlkNTU5NmYzZjczYWM5NThjNmRlMjJiYzMwMjg5OTM1YTViOThiNWQzNzM3YmU2MTIyNzcwNTU5N2MyNGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ2MjJmNmFmN2M3OGRhMzliMjAyZDFjNjA4YzFiMDZhMDBlMDVjNDcxOGY3MWQ5YWY2OWY3NjE4NWM2MjQ1NTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_65f82fcfb1664874b52dd8ddda3baea3",
+      "statement": "The bookmarks bar is off by default and hides with folded tabs and fullscreen video.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/BookmarksBar.swift#L1-L10",
+          "version": "repo-lines-v1:sha256:46085bfa6a2e0ccb0744574a032f3a3a9ee1e9724c8ad905cb937258d0c839d7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY5ZDE4MGYyM2Q1ZWU2ZGIwMGRkYTI1NzE3YmYyZDM3YWM0NzdiOTc3YjcxOWIwYTNhMjIwNGM2YmRkZjdlOTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4fd617e27bfe46629d6280e917f7df16",
+      "statement": "Download resume data, request and data store are held only in memory; retry is allowed only for replayable GET/HEAD requests.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Fetching.swift#L5-L66",
+          "version": "repo-lines-v1:sha256:b50a3a74bcfb2d002c0f8f9b67d558d117586619ef1a9f666057fc3c71899cc5:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzMjgxZjA5ZGFmNjExMDE3YmU5MzM5Yjg0YWY5OTY4YWEyYTVlMjRiMWJjZDJkOWE5Yjg4ZTU5MGJiMjhmMjEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MTcxY2Q3Y2M3Y2IzY2U4NGI5MmRhMjVlMDQ5MTJmYWY0Y2E2OWIwOTA5MjA3YTVjNWNkMDg3NTY3N2U0MmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRmMTc5ZDQ4YmEzMDJjZmE0OTFiMWU1OTNiOWFmZTczMDUyNTUwOWFmMjNjOWUyN2YzMmFhMzNlYWEyMWZlOGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4d5c2de29ab44394a554ebc30861a7e0",
+      "statement": "A download's partial file is identified by volume, inode, size and modification time, and resume or deletion proceeds only while that identity still matches.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Fetching.swift#L120-L145",
+          "version": "repo-lines-v1:sha256:1ee21d62f75cc64ff8d30b665e06edc7861eb23d8c46725bab1f529545353e98:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ1ODhkMmRiNzNiNDBkMDU2ZjFjYzNmYWY0NTFkNjkzZTVlYWQwYjcxNTZjNWM0OWI0MTI4MjUxMTlmNTA3NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM4NDU4OTIzZWU0OWFhMzRiOGRlZWNhZGYyZDJjNzRlYzdmZmY0ODNiMWQ5NjVhZDExYWRhZDYzYzQ1ZWI0YjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2NGMxZWRmY2QxYWE0ODRmYTdhZDJhNmZhYTUzYzM4NzFmMDBlMWFlNDM4MGNiYzk0NzVhY2MwMGMzN2Q2YmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY3Zjg4ZmVkNjE2Y2E0YjVjNmVjNjE5NzNmNWRiMmUyYTlhNzdjYTdhOTYxMGVlYzA0ZWVlYzY4NTk3MTkyNjMifQ"
+        },
+        {
+          "resource": "repo://Sources/Search/Fetching.swift#L225-L243",
+          "version": "repo-lines-v1:sha256:7b59018a644155794cf7374ab33fe5e3fd9b5bcbf3a2a61c6414a6702f746bde:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4M2QwZmZiNWZjNTcxZDYzMDQ2ZjE5YmEzODU4MzBmMzJkY2MzZmM0ZWMwMjAzN2UwZTdjN2Y4M2U2MzMxNjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQzZGRlNjU2NDI2MzU2ZDI5MTAzMjU2ZWM4MjI3NWU4NTJmNjU0MTA2ZDExOTUwNTdjZTVhMGJkYzJiMTcyNDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ2N2U1NzE5YTA0ZDczNTkwNjM3Y2RiMGYwNjAyYTg4YTZiZTVjZDk4M2IyMDEwOTZhMTg0MzQ5OGZlYjU3MjMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_963405e0adb24b48baf125517eb150cf",
+      "statement": "Private downloads are tracked for cleanup and progress but never become entries in the shared downloads panel.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Fetching.swift#L310-L313",
+          "version": "repo-lines-v1:sha256:438d67fc563dcb6e9fb31d2dc15a427470522f8c69cd6b515b6eae8f60b61647:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTcxMWYxNjYyNzZkZTEzZjljYTc0NGNhZjBjMGM4ZTg1YmE0NjMzZTExYTlkZTAwOTIwZmZmODE5NGI4ZWJiMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTY1ZWQ5NjZmZjRmMTlhZDExYTE5ZTQwNmYzM2NkNmY3MGNmZTVkMDNkNGI1MDJmMzg2MmI5Nzk4ZDg4YTA5MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYmNkMjA2OGY5YmI5ZDhjYWEyNzg0ZDRkOWIwY2JiMzkyN2Y5MzFkYWU1NDc4NTlhODlhODY1YzdiZDVlNjc0ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNWVlYTMyNjk0ZWFkNTkxZWM3MWZmZDAwM2NiMzJlMmNiNmVkOGYxY2YxOGEyMWRlOTgyMjUyOGE3Y2ExN2QxOSJ9"
+        },
+        {
+          "resource": "repo://Tests/SearchTests/DownloadLifecycleTests.swift#L241-L260",
+          "version": "repo-lines-v1:sha256:97df54d8696e157a070630c40d6b637fe2d2bf076bd69a69196adb7202bac056:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzNTBlOTQ2NDk3N2RmMmJlMWE2MjJmN2Q4YmVkNTU3YjVlZDc2Zjk0ZmMwOWRkNGNhZWNiZGNmZDQ1ZWVjYjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNhNmYwZjk3YWQ1ZmNhN2I4MmU3NWY5ZGNiMjdhNjQzMTdlM2IwZTM3NGY3ZTdjMjYxMjQwN2IxNTZkOGRjNGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MTUzNzQyNDljN2Q3MWIzZWNkYTIyNzVkOGEwZjAwNTgzMzBjM2MxZjgyMjMwZWFlOGJhNjJhYWJkODExY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE0YmMwODc5OThkZjhjZmMzYzc0N2NlY2YxN2QyNmYxZDg4MGVhZDJjYTQ2ODM4ZWQ0NjMwNDk1NGE1ZWM4YjUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e00937fc6a7a44de94229eb5fb9fbf60",
+      "statement": "Download file names use only the last path component and are numbered when the name is taken, because WebKit will not overwrite an existing file.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L5047-L5096",
+          "version": "repo-lines-v1:sha256:95b96c565ecb2c8ebd83a72381a44b243bf0884ae6898e3bc9e406be389337b1:eyJzZWxlY3RlZExpbmVDb3VudCI6NTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZiODI5YzhjMTI0MjhmZWNhNjE3ZjUzNjczYWZjNGJlZTI0OTg5ZWU5OGNjZGIyYzhkNmI2ZTA2OTdjNzZiYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZmMGQ3NTk1MGRmMGZmOWEzZWU5NjYzOWRjYzhmZjVlYWVkYjQwZDY4MmJlYTkyNjIyYjUyMGRkODg3ZDkzZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQyNWNhYzA3Y2E3NWU0ODE4YjgxYjNmOWRiYWQyNWZjOGQ1OWY5MDRiNjlmODUwMGZiNGI4YjRmZWM2YmM4NmYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_16eee7fe2f7447c8bd40e1ffa2d564c3",
+      "statement": "Loot keeps at most 50 finished downloads, and clearing it never deletes files.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Loot.swift#L26-L45",
+          "version": "repo-lines-v1:sha256:ef7b0ecb05cc3e79271350a54de81e25c4ba297dc224161a57d221673f894593:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3OTc3M2MzYmIwNDBkODU5MzkzYzMzZTI5NTI1YmM1MDk4ZjEzYTFmYTI0ZTE1YzQ3NGZhYTk1MDNhZTMwODgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4MTlkMWNhYzU5ZDkwMDMwNjM0MGJjYjE0NjhmODdkZGQ3OGUyMWU0YjE5MDA0YzJkY2E0YWYyMTJjOWE3MTgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIzM2ZhYWRlYTM1MzkwNzQ5OTJhZGYwNWMwYmJjOTJiY2ExOWViNjkxYTZmNTI4YmQ0MGRlMzA1OTgyNjBkMWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ba69edc51ed1409d8942385ddc0f73c9",
+      "statement": "Favicons are stored as PNGs keyed by host plus non-default port, with separate dark variants.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Icons.swift#L37-L58",
+          "version": "repo-lines-v1:sha256:86d59bc22ad228cbc1ba102da9a373423a8039fa0126e7e56cd190a55f5489d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5ODczNDE2YWRlNzFkOTAyMTIzYTIzYzc5NjM2YzU4NjAyMDg0ZjdhYTc2ODI2NWI2ZWVkM2ZhYmMyOTAwM2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0YzNjZGJiNzc0YzEzMzE2NWNlZDlkNmVhNjNmOTVhY2RjMzUyN2FmZTM0YmM5Y2ViMWI5NjgyN2ZmZWI2OGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImY2MjJlODJlZDc1MjkzZGE1NWQ4MjU0YzE2ZjljNGExMjk3MmNhMzJiNjNlZmYzMTdkYzMwMjU0MmRiMmMzZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkOWFiNzYxOTVkZWJmMDA5MzVmZDk4NTU4MzMwY2E2ODY0ZDUxNjUxYjBlYjRkY2FmYTIxZDFmNTVhOTVjZDgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b8e9ec65b29f4c48a16a8c804105e465",
+      "statement": "The history regression harness compiles the real Address.swift and History.swift with stubs against a temporary store.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/HistoryRegression/README.md",
+          "version": "repo-file-v1:sha256:fe52b7e13460bfe120db51cc7b197894781bc501161b2337dadd5af4481b9182"
+        },
+        {
+          "resource": "repo://Tests/HistoryRegression/run.sh",
+          "version": "repo-file-v1:sha256:6c57b7d91e127d7200f57466ebec3149779e6905d637058fd78e88e3dbfe0edc"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

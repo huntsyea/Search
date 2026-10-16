@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Agent Fixture Shop</title></head>
+  <body style="font: 15px -apple-system; padding: 24px; max-width: 640px">
+    <h1>Agent Fixture Shop</h1>
+    <p>A made-up page for Search's tests of the chat's browser tools.</p>
+    <form id="find" onsubmit="event.preventDefault(); document.getElementById('result').textContent = 'You searched for: ' + document.getElementById('q').value + ' in ' + document.getElementById('kind').value;">
+      <label for="q">Search the shop</label>
+      <input id="q" name="q" placeholder="What are you looking for?">
+      <label for="kind">Department</label>
+      <select id="kind"><option>Books</option><option>Music</option><option>Tools</option></select>
+      <button type="submit">Search</button>
+    </form>
+    <p id="result">No search yet.</p>
+    <form id="login" onsubmit="event.preventDefault()">
+      <label for="user">Account name</label> <input id="user" autocomplete="username">
+      <label for="pass">Password</label> <input id="pass" type="password" autocomplete="current-password">
+    </form>
+    <p><button id="count" onclick="this.textContent = 'Clicked ' + (++window.clicks) + ' times'">Click me</button></p>
+    <script>window.clicks = 0;</script>
+    <p><a href="page2.html">Go to the second page</a></p>
+  </body>
+</html>

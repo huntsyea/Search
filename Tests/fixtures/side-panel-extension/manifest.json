@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Side Panel Fixture",
+  "version": "1.0",
+  "description": "A made-up extension with a side panel, for Search's tests.",
+  "permissions": ["sidePanel", "tabs"],
+  "action": { "default_title": "Side Panel Fixture" },
+  "background": { "service_worker": "worker.js" },
+  "side_panel": { "default_path": "panel.html" }
+}

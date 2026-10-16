@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:632b4c73301b51355dacaa6366936025d36a8b112deebd4111f446b1a29671b0",
+  "claims": [
+    {
+      "id": "claim_be27fa2d09e848eb83c098fdc9fef4b0",
+      "statement": "TabSplit stores ordered tab ids, an axis, sizes summing to 1 and the focused tab; the first tab is the pair's place in the row, and two-page sizes are clamped between 20% and 80%.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Split.swift",
+          "version": "repo-file-v1:sha256:cd8df95cd700c333a7ae1d010dd0e7b9127767d84e97e46a88e470dc70035009"
+        }
+      ]
+    },
+    {
+      "id": "claim_b998c54ae712484e9564997bbf6f943b",
+      "statement": "Split pairs are kept when Split View is turned off, and nothing acts on them until it is on again.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L92-L113",
+          "version": "repo-lines-v1:sha256:06159f6951a77d169dbaeb91318a715952d32c0f42eeb4a2a8dac22b59249e60:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjlmMWY2YzkwZTZjMzg3YmMwNDQyZjUyYjVhNDA1OWMyMWMyNmZjZjUzNDQwMWEzZGUzZjMyZmY0ZjU5YjlhMDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk5OWJkZWZlZWFjYTYzNDBlMDI5MGRjODZlODg5Yzg5ZDVlMTg5YWE1YmE0NGI1ODViM2I3MDczNGY0YTYyZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM5ODM1MmJkYjA1NGFhM2RiMTI0NDEzYjNjOTM0ZDQ0MGViZGQ3NGM0MjUzNTNlN2E2N2QwNjU1NDMxZmQ3MTgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_985111ae8011433ba6f812f65db35954",
+      "statement": "Two tabs can be paired only if Split View is on, both are in the row, neither is a bench tab, and both have the same private status; a pinned tab contributes a new tab with its page instead of itself.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L2333-L2351",
+          "version": "repo-lines-v1:sha256:98f74af068fb124db0f7c50e3ab8fd4be653bae611c6ca7547f76d54e5081395:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIzMzIwMzNjYjY2NWZlOTEwMWUxZmU1ODZmMTg4MGRkOTIxNDFkNzc2N2MxNDUwNmFkYzM4NzM4OTJkMDg4OWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyMTE3YWQ5MzQ0NzY0ZjQ0YzY1ZWM4YTNiOGU2YzEzZDU3YjQzMjZkM2JmOGM3MmQyY2Y1NzVmMmM5ZDdkMDMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE2YTRkOTJjY2Q1MTJmNDVmNmMyZGI3MTM4ODA4MjVjYjQyZTA2MmVlMTJkMWQ5NTQ2ODBlZWE0MjQzOWViMGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_651902fa5f0e430a9e22a7105113b614",
+      "statement": "Starting a split pairs the current page with a new blank tab in the same store and focuses the address field there.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L2376-L2398",
+          "version": "repo-lines-v1:sha256:5052a9ed080998a43bedef09bdb0d6c3f7d2914825c26304caea8952924d51b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5MGRhMmY0YzBlMmMxMjM4Y2U3N2YzMWZjNDAyODhiMjU0ZjYwN2YyNTY5N2JkY2VhMjY4Y2M5NjBjNmVlNzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxYTZiMWVhMzYxNDI5Y2U2Mjk4YzEyNWFlMzRlNGJmMTYwZjc0MTliZTgwZjlhYmNjNmFiNzAzNGYxY2JiMzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFlMTlkNDA5YjFmN2YyMzE2ZmRjMjI5YmMwOTQyZDQ1YTJmMDgwOGU3Njg2MGI5NWE1YTk5M2Q5MTM5ODliMzQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1dcb1f8fa5934680b281edfc79e236c4",
+      "statement": "A pair can stand in a row only if its tabs are adjacent and in order, unpinned, not bench tabs, and share private status and group.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/Browser.swift#L121-L132",
+          "version": "repo-lines-v1:sha256:31ff2101296ba14f600a7e3b1495ff39af29f3b6f2b40f09d784b8b634f2f48a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZmNGNlZGRiYzU2NjFlMWI0ZDliMjg2N2UwNTEwMGUxNmY2MWYyOWU3MTFjYTFmZDcxNDEwZGYzNmE4YTJkZjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTNmNDBlMzc4MWViODk2YzgyZDA0NmEwODA2N2ExMWUzNWNkZjJmMWRmYWYyNmZlYTkwYjhkYjY2NzY0MTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjhlNzM2YzU0ZjA5MDdmMmFmMWZjOTk5YzY2NTFmMmZmODUzOThjZjA3MzZhMzVhYjU2YjU0MDQyYTlkNjEzZjciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNlM2NkNTBkMWQ0ZDhkMDIzY2U1NmJiOWQ3NmIwN2RjN2Y2Y2FiMGJjYTFmNDQ5MDc0MWRhZDdmMzFlYmFlMmEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7bb5ebcbe81b4631a8d3c8d5759b3345",
+      "statement": "PaneStage is a single never-rebuilt AppKit view holding each visible page in its own StageView, with a 7-point gutter, a 250-point minimum page width, and divider snapping within 15 points.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/PaneStage.swift#L6-L90",
+          "version": "repo-lines-v1:sha256:b7cd4ac9b6ecc0f4dc6920faf27d7e83b056d5721dacfde4ca0febd9a7cf12e0:eyJzZWxlY3RlZExpbmVDb3VudCI6ODUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhhOTRlZGQxNzdjNTdkOWJmNDhhMmNhNTk3MDcwZDU5MGM5NGJkMDY2MDZiZWQ5YzVkYTZmNjcyYjc0YjM1Y2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE5NDJkZTMyY2VjOGIyMWMyNDBhNjlhZDhjZjMxYWJjNjUxNWU2YjI2NTM2OTliZmJjMGYyYjBjYmFlNjUxZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3MjllNzQ1MmJkYjhmN2IzZWNkNmY5MGJlODQ1NjVhYTY2NzBkNDFiOGE4ZDlhZDUwZDdhOGMzMDI0N2RiOGIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1ab4f5b8c5542af9683225033329848",
+      "statement": "While the divider is dragged the stage lays out pages itself without publishing changes, telling the pair once when released.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/PaneStage.swift#L13-L15",
+          "version": "repo-lines-v1:sha256:8f0701074cd9ffa8203d88fec25536cfbaca39e7aac9164797984cd49b915626:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiOGM3MzUwN2U2NTNmMjg0YzY1YTU5NzJlYThkMzU4NTlmODdmMTc5NmVkNDI3MzA2N2ZkYjVkZTU0ODgwMGVmZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODU4Zjc1NzQzMWUyNDVmYzhjNGJmZmJhNWZhNzgwMzEwNDZiYmJiZjMxYmM1ZTVmZmYyYzQ0NjhkYTk5ODczMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMjRjMmU3ZTY3NDc1MGJlNTgxZDc1MTVkYjJkMmI1ZmEwNTk3ZDdkYjIyZjg5NWU2NGU1NGFmOTBjMzk5YTAxOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmM5MjJhYmM2ZTBjMGJhNDhhMDA4ZTFhOTJkOTE4N2MzYWFkMDg3NmZhODIzNDdmZDc4ZTIxYTEzNjgzZWE5ZSJ9"
+        },
+        {
+          "resource": "repo://Sources/Search/PaneStage.swift#L371-L416",
+          "version": "repo-lines-v1:sha256:57e4e57f7b4df92c199530763e847256903fec2c24d6bf6664d8f3d5ad1ad470:eyJzZWxlY3RlZExpbmVDb3VudCI6NDYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImEzZjQ0ZDY5MDYyYzMwMmY4MDk4ZDNjMjRhNjE4NjE5NDBlODkwYmNiZjMwNzI3YThiZjc4YWRlMWUyMTQyMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmYzJkMTk0NDBhODlhMDdkZWE3ZDNhNTExMDYxNGQ1NGRhMjQyZmNmNWYzOTM0MzAwZjJkYWYyMmJlYmUxNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjE3NWU2NTQ2YmM3YmU4YWJkNWE4ZTE4YTk2ZDEwOTQ0MDg0MGJhNzY3NzUwOTU1NzExYjg3ZDgxMjUzNGQ5NjgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiMTY4MjYwMzQ0MzgzOGYwZmI3NjNjMGViODg3Njk4ZDdiMjcxZGI3MjA1ZTMyYzkzZWViMmFiMzIxMWUzZjAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f85af133658f48a2a72c7b044247b45c",
+      "statement": "A click in the unfocused page gives it focus while still reaching the page, and the focused page is outlined by a hairline that takes no clicks.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/PaneStage.swift#L420-L500",
+          "version": "repo-lines-v1:sha256:8a4791244c08f77def76c235000b2204c49ec622a26ad8c5f5a942366df76135:eyJzZWxlY3RlZExpbmVDb3VudCI6ODEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzODJmOTAwNGZkM2U3YTI3NzA1YTdkYjFkMzJhMzU4OTEzNjhjNDA3Y2U0Yjg0NTI0ODViOTI4MDY0YjhhY2YiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE0MmFmZGI4OGI3NjYyZDA5NTI4MzE0YWZhYmJiY2Y3Mjc2Yzk0OWI5MmUwZDNiY2U4MGNkZjdkZmViNTE1OTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZiMTY4MjYwMzQ0MzgzOGYwZmI3NjNjMGViODg3Njk4ZDdiMjcxZGI3MjA1ZTMyYzkzZWViMmFiMzIxMWUzZjAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE5ZTc2MzU1Y2YxMTk5NDgwYzNmOTk4MzZiMTQ4NmM4NDFkODkxZmFhZDkwNGM2MDhlMDkzMDIyZDM3NTdhZWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e439dfb4849645c4b88859a74d6a99ff",
+      "statement": "SplitStage draws covers, failures, the address field and per-page overlays over each page at the frames the stage reports.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SplitView.swift#L1-L30",
+          "version": "repo-lines-v1:sha256:edf1e445a7a34a1df2d35171f44929f7746cf00451c08183872dde719b84740c:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0Y2FjNTk5YmY1YTkxMzY5ZDBmYzNmYjQyOGVjODU2NzNiMTVjNTZhZjQ1ZGIyODBjMDgzYWJmMmY2ZjQzNzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVjZWFhNWU4OTlmOTM0OGVlNzkyYTU1NjNmZjQzNWVjMDczNmNjZWU1MmEzMmU0MDljMDgyNDk0NzFhZTk4OGUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_adf8ee4aa6644947a39cffc378cde07d",
+      "statement": "In the row a pair occupies one place: stacked lines in the column, side by side with a single close button across the top.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/SplitTabItem.swift#L1-L20",
+          "version": "repo-lines-v1:sha256:7bdcdff7de6cfaef757ad39638b47aae6557392eed778a5a643304a0ab1f0790:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjllOGJhZjNlY2NhZThiYWEzMmU4NmU0MGY5MjFkMjZhMTMwYmE3NGMyM2YwMjE5YTdkMjZlZGY3N2MyZDVhYTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE0YjdkYjYyYTY3ODM2MTMxYjRmN2YyNWFkMjM3MTA3NTdmMGYxN2JlMGYwYmY4MTc4YTdjMTkxNzE4NTM1MDQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRkMTIyMzMyYTdlMGFiNzEwOTVjODEzYTlhYjNlYjFhNjI0MTkzYjJkYmZkOTQ4ZGUxMzE2ZjE1NmRhMjZlYTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7e97763dcd1d4878b6d2f7714f1ec662",
+      "statement": "Drop zones for splitting are passive markers queried by the tab's existing drag gesture, never receiving mouse events themselves.",
+      "evidence": [
+        {
+          "resource": "repo://Sources/Search/TabDrag.swift#L1-L48",
+          "version": "repo-lines-v1:sha256:f670672676ad9f26d253da379acc967b24a30096520d9a2ffccde14de61d9893:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzYyZGQ0NjUwMDgyZDM0N2RhMTFjMmRlYzc0MjBjNDJjNmMwZDEzMzYwNTAzYjg4OGZjOTgxZmU3Njk3ZDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0NzUxNDBlMjZlOWM1YTE3MTFkNjQ0NWExOGI3ZjRhZTIwMjJmOTkzZWY2Mjg0MDc1NTQzMDFiOTZlMGRjMjAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhiMDI0YTM5ZmU3MTgyNmZlNDYyMWQ0ZDBhZmM4OWM5YmM5Yzk4NDEzOThkOTcyMTMzZDg0MTc4ZjVjNGZlYzMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_acaf208406134be08d1ad5dbb9be42e1",
+      "statement": "split_view.py runs the app hidden in its own world, drives it via the bench socket, never shows a window, and removes its files afterwards; visual behaviour is checked by hand.",
+      "evidence": [
+        {
+          "resource": "repo://Tests/split_view.py#L1-L60",
+          "version": "repo-lines-v1:sha256:326058318e3e3dd7e51ac8a115fcf6d9c268a154eac78f787b9891365ca7dc6f:eyJzZWxlY3RlZExpbmVDb3VudCI6NjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ2ODJjYmRiNGM4YjA3NTE4YmY0ODZjNTg5OTBmYzM5MTc4M2FhMjBhOTE2YmZiMjdhZDIxMWViMWQ1YzM2NDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBiMGVmNDQwNWNiMzQ5NzI5OGNmYmViMTVhNTNkMGQzZDI3NDA0MTk3OTllNTdmNzM0ODljN2M0MTBkZDFkZmYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjNGFkZmUyN2RhYzMxOTI3ZGRhYmNiNmMxMThiMDk2ZDAxNWJmZTEzZGVmYWFiNmQyNDFjMzlmODk4MDNhNzIifQ"
+        },
+        {
+          "resource": "repo://Tests/split_view.py#L197-L530",
+          "version": "repo-lines-v1:sha256:520ce784502de29f68d74895f8daed1648ae377cfdec80f13c6ab0bf94e32db5:eyJzZWxlY3RlZExpbmVDb3VudCI6MzM0LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJhZTlhOWFhMTFlNjBiZjUwMWQwNDVjYjI4MTMzYjU3NGQ3YjFjNWQyYjk0ZmE2ZmRhZDRmOTNlNmZjZDJjMjM4IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJjMmUzMTI1N2RjMGFlMWQ1OTMwMzdjMjgwYzlhZDUwODE5YjhhNmM4Y2Y3MjhiZTA3MTZkMDBhM2VlY2MwNGJiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIwYjQ2OGFkMGFiZDVkZjg2MjBiYjk0YmRmZmU4NWY0MjExMGVjZGE4YWY3NjRhNGQ1YzNiYTA2YmFhNWY3NzNmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3NjUwZGU0NDY1ZTk3MjkwMWFiYmY2ZjQ4ZTFiMjNkNTNlMzJkZWI5NWE2YTkyNTVkOGZiYmNjOGNlOTNiYWRiIn0"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.7.2",
+    "at": "2026-10-15T01:51:20.926Z"
+  }
+}

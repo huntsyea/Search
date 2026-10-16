@@ -17,12 +17,13 @@ struct SettingsPanel: View {
     @State private var page: Page = Page(rawValue: Store.settings.string(forKey: "settings.page") ?? "") ?? .general
 
     enum Page: String, CaseIterable, Identifiable {
-        case general, tabs, shortcuts, extensions, passwords, downloads, privacy, ai, about
+        case general, tabs, chat, shortcuts, extensions, passwords, downloads, privacy, ai, about
         var id: String { rawValue }
         var title: String {
             switch self {
             case .general: return "General"
             case .tabs: return "Tabs"
+            case .chat: return "AI"
             case .shortcuts: return "Shortcuts"
             case .extensions: return "Extensions"
             case .passwords: return "Passwords"
@@ -36,6 +37,7 @@ struct SettingsPanel: View {
             switch self {
             case .general: return "macwindow"
             case .tabs: return "rectangle.split.3x1"
+            case .chat: return "sparkles"
             case .shortcuts: return "keyboard"
             case .extensions: return "puzzlepiece.extension"
             case .passwords: return "key"
@@ -141,6 +143,7 @@ struct SettingsPanel: View {
                     case .tabs:
                         tabs
                         if !prefs.sidebar { toolbar }
+                    case .chat: ChatSettings(browser: browser, prefs: prefs)
                     case .shortcuts: ShortcutsPage(browser: browser, store: .shared)
                     case .extensions: ExtensionsPage(browser: browser)
                     case .passwords: passwords
@@ -458,6 +461,10 @@ struct SettingsPanel: View {
             Line("Split View", "Show two tabs side by side. Drag a tab onto a page to pair them.") {
                 Switch(on: $prefs.splitView)
             }
+            Rule()
+            Line("Sidebar panel", "A column on the side away from your tabs, for an extension's side panel or the chat. ⌥⌘B shows or hides it.") {
+                Switch(on: $prefs.utilitySidebar)
+            }
         }
     }
 
@@ -672,6 +679,7 @@ struct SettingsPanel: View {
     private var versionDetail: String {
         switch updater.stage {
         case .none:
+            guard Updater.updatesItself else { return "This build isn't Office Commun's, so it doesn't update itself" }
             return updater.lastChecked.map { "Checked \($0.formatted(.relative(presentation: .named))) — every hour on its own" }
                 ?? "Checked every hour on its own"
         case .fetching(let next):
@@ -688,6 +696,8 @@ struct SettingsPanel: View {
     @ViewBuilder
     private var versionControl: some View {
         switch updater.stage {
+        case .none where !Updater.updatesItself:
+            EmptyView()
         case .none:
             Pill(updater.checking ? "Checking…" : "Check now") {
                 updater.check { found in
@@ -912,5 +922,424 @@ private struct NotificationSites: View {
                 }
             }
         }
+    }
+}
+
+/// Settings › AI: the agents Search found and the ones the person added,
+/// what each can do, whether it shows in the chat's menu, and how its last
+/// start went.
+private struct AgentsCard: View {
+    @ObservedObject private var agents = Agents.shared
+    @State private var adding = false
+    @State private var name = ""
+    @State private var command = ""
+    @State private var addError: String?
+    @State private var settingUp: String?
+    @State private var setUpErrors: [String: String] = [:]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Card {
+                ForEach(Array(agents.all.enumerated()), id: \.element.id) { index, choice in
+                    if index > 0 { Rule() }
+                    Line(choice.name, detail(choice)) {
+                        HStack(spacing: 6) {
+                            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                                if settingUp == choice.id {
+                                    Quick("Setting up…") {}
+                                        .disabled(true)
+                                } else {
+                                    Quick("Set Up") { setUp(choice, adapter) }
+                                }
+                            }
+                            if choice.custom {
+                                Quick("Remove") { agents.remove(choice.id) }
+                            }
+                            if choice.id != "pi" {
+                                Switch(on: shown(choice))
+                            }
+                        }
+                    }
+                }
+                Rule()
+                HStack(spacing: 6) {
+                    Quick(agents.looked ? "Refresh" : "Looking…") { agents.refresh() }
+                        .disabled(!agents.looked)
+                    Quick("Add Agent…") { addError = nil; adding = true }
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+            }
+            Text("Search finds agents on your login shell's PATH. An agent you add is run as an ACP agent.")
+                .font(.system(size: 11))
+                .foregroundStyle(Palette.muted)
+                .padding(.leading, 2)
+        }
+        .sheet(isPresented: $adding) { addSheet }
+    }
+
+    /// What the row says under the name: where the program is, what happens
+    /// to its own tools, its adapter when it has one, and how its last start
+    /// went. A failure setting the adapter up is shown here too.
+    private func detail(_ choice: AgentChoice) -> String {
+        var parts = [choice.cliPath ?? choice.path ?? "Not found"]
+        parts.append(choice.ownTools == .off
+            ? "Its own tools are switched off"
+            : "Its own tools are refused when it asks, and it runs in an empty folder")
+        if let adapter = choice.adapter {
+            parts.append(Adapters.isSetUp(adapter) ? "ACP adapter \(adapter.version)" : "Needs its ACP adapter")
+        }
+        switch agents.state(choice.id) {
+        case .ready: parts.append("Signed in")
+        case .signIn: parts.append("Needs you to sign in")
+        case .unknown: break
+        }
+        if let error = setUpErrors[choice.id] { parts.append(error) }
+        return parts.joined(separator: " · ")
+    }
+
+    /// Install the agent's adapter, off the main thread: the row's button
+    /// waits, then shows what happened.
+    private func setUp(_ choice: AgentChoice, _ adapter: Adapter) {
+        settingUp = choice.id
+        setUpErrors[choice.id] = nil
+        Task {
+            do {
+                try await Adapters.setUp(adapter)
+            } catch {
+                setUpErrors[choice.id] = error.localizedDescription
+            }
+            settingUp = nil
+        }
+    }
+
+    private func shown(_ choice: AgentChoice) -> Binding<Bool> {
+        Binding(get: { !agents.isHidden(choice.id) }, set: { agents.hide(choice.id, !$0) })
+    }
+
+    private var addSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Add Agent")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Palette.ink)
+            TextField("Name", text: $name)
+                .textFieldStyle(.roundedBorder)
+            TextField("my-agent --acp", text: $command)
+                .textFieldStyle(.roundedBorder)
+            if let addError {
+                Text(addError)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Palette.unsafe)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            HStack {
+                Spacer()
+                Quick("Cancel") { close() }
+                Quick("Add") {
+                    switch agents.add(name: name, command: command) {
+                    case .success: close()
+                    case .failure(let error): addError = error.errorDescription ?? "That command line couldn't be used."
+                    }
+                }
+                .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+        .padding(20)
+        .frame(width: 360)
+    }
+
+    private func close() {
+        adding = false
+        name = ""
+        command = ""
+        addError = nil
+    }
+}
+
+/// Settings › AI: everything pi does here — the chat, where it lives, the
+/// models it uses, the suggestions over its box and the sites it may act on
+/// without asking; and Sort Tabs. (The page's case is still `.chat`, as
+/// Settings remembers it.)
+private struct ChatSettings: View {
+    @ObservedObject var browser: Browser
+    @ObservedObject var prefs: Preferences
+    @ObservedObject private var pi = PiModels.shared
+    @ObservedObject private var agents = Agents.shared
+    /// What asking the side agent for its models came to; nil while asking.
+    @State private var sideModels: AgentOnce.Models?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Card {
+                Line("Sidebar panel", "The chat lives in a column on the side away from your tabs, with extensions' side panels. ⌥⌘B shows or hides it.") {
+                    Switch(on: $prefs.utilitySidebar)
+                }
+            }
+            Card {
+                Line("Agent for new chats", "Each chat runs on the agent it was started with. Every agent gets only the browser's tools.") {
+                    agentPicker($prefs.chatAgent)
+                }
+            }
+            AgentsCard()
+            Card {
+                Line("Agent for suggestions, titles and Sort Tabs", "Asked once each time, with no tools: the pills over the chat's box, a chat's title, Sort Tabs") {
+                    agentPicker(sideAgentChoice)
+                }
+                Rule()
+                Line("Model for new chats", "pi's model for new chats. Other agents use their own default; each chat can change its model from the menu under its box.") {
+                    picker($prefs.chatModel)
+                }
+                if prefs.sideAgent == "pi" {
+                    Rule()
+                    Line("Model for suggestions", "Reads the page in front and offers things to do with it, over the chat's box") {
+                        picker($prefs.chatSuggestModel)
+                    }
+                    Rule()
+                    Line("Model for titles", "Names each chat in 3 to 5 words from its first message") {
+                        picker($prefs.chatTitleModel)
+                    }
+                } else {
+                    Rule()
+                    Line("Model", sideModelDetail) { sideModelControl }
+                    if sideKeepsHistory { sideHistoryNote }
+                }
+            }
+            Card {
+                Line("Suggest things to do with the page", "Each page you look at with a new chat open is read by the suggestions model, on this Mac's pi, with your provider") {
+                    Switch(on: $prefs.chatSuggests)
+                }
+            }
+            ChatSites(browser: browser)
+            Card {
+                Line("Sort tabs", "A button beside the bookmarks puts your tabs in groups by topic, with Undo. Each tab's title and address go to the model's provider; pins and private tabs stay put.") {
+                    Switch(on: $prefs.sortsTabs)
+                }
+                if prefs.sortsTabs {
+                    // The side agent's one model does the sorting too: no
+                    // picker of its own then.
+                    if prefs.sideAgent == "pi" {
+                        Rule()
+                        Line("Model for sorting tabs") {
+                            picker($prefs.sortModel)
+                        }
+                    }
+                }
+            }
+        }
+        .onAppear { pi.load() }
+        .task(id: prefs.sideAgent) {
+            await askSideModels()
+        }
+    }
+
+    /// The agent a new chat starts on: the ones found, or pi.
+    private func agentPicker(_ choice: Binding<String>) -> some View {
+        Menu {
+            ForEach(agents.visible) { pick in
+                Button {
+                    choice.wrappedValue = pick.id
+                } label: {
+                    if pick.id == choice.wrappedValue { Label(pick.name, systemImage: "checkmark") } else { Text(pick.name) }
+                }
+            }
+        } label: {
+            Text(agents.choice(choice.wrappedValue)?.name ?? choice.wrappedValue)
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
+    }
+
+    /// pi's models by provider, or pi's own default.
+    private func picker(_ choice: Binding<String>) -> some View {
+        Menu {
+            Button {
+                choice.wrappedValue = ""
+            } label: {
+                if choice.wrappedValue.isEmpty { Label("pi's default", systemImage: "checkmark") } else { Text("pi's default") }
+            }
+            if pi.models.isEmpty {
+                Text(pi.loading ? "Asking pi…" : "pi didn't list any models")
+            }
+            ForEach(pi.providers, id: \.self) { provider in
+                Section(provider) {
+                    ForEach(pi.models.filter { $0.provider == provider }) { model in
+                        Button {
+                            choice.wrappedValue = model.key
+                        } label: {
+                            if model.key == choice.wrappedValue { Label(model.id, systemImage: "checkmark") } else { Text(model.id) }
+                        }
+                    }
+                }
+            }
+        } label: {
+            Text(choice.wrappedValue.isEmpty ? "pi's default" : choice.wrappedValue)
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
+    }
+
+    /// The side agent, chosen from the ones found: another one clears the
+    /// model kept for the last, which its menu wouldn't list.
+    private var sideAgentChoice: Binding<String> {
+        Binding(
+            get: { prefs.sideAgent },
+            set: { chosen in
+                guard chosen != prefs.sideAgent else { return }
+                prefs.sideAgent = chosen
+                prefs.sideModel = ""
+            }
+        )
+    }
+
+    private var sideName: String { agents.choice(prefs.sideAgent)?.name ?? prefs.sideAgent }
+
+    /// Whether the side agent keeps every one-shot in its own list of
+    /// sessions: pi's are Search's, Claude Code's are suppressed for a
+    /// one-shot, and Codex's are in Search's own home.
+    private var sideKeepsHistory: Bool {
+        guard prefs.sideAgent != "pi", let spec = agents.choice(prefs.sideAgent)?.spec else { return false }
+        return !spec.structuralTools.contains(.claude) && !spec.structuralTools.contains(.codex)
+    }
+
+    /// Ask the side agent for its models, keeping the answer only while it
+    /// is still the agent that was asked and the ask wasn't given up on.
+    private func askSideModels() async {
+        let asked = prefs.sideAgent
+        guard asked != "pi" else { sideModels = nil; return }
+        sideModels = nil
+        let result = await AgentOnce.models(agent: asked)
+        guard !Task.isCancelled, prefs.sideAgent == asked else { return }
+        sideModels = result
+    }
+
+    /// What the model line says: what is being done, or why it can't be.
+    private var sideModelDetail: String {
+        switch sideModels {
+        case .loaded:
+            return "The model \(sideName) is asked with for suggestions, titles and Sort Tabs"
+        case .needsSetUp:
+            return "Set up \(sideName) first"
+        case .needsSignIn:
+            return "\(sideName) needs you to sign in — open a chat with it to sign in"
+        case .failed(let why):
+            return why
+        case nil:
+            return "Asking \(sideName)…"
+        }
+    }
+
+    /// The model line's control: the menu once there are models, a way out
+    /// of whatever is wrong, nothing while the ask is away.
+    @ViewBuilder
+    private var sideModelControl: some View {
+        switch sideModels {
+        case .loaded(let choices):
+            sideModelMenu(choices)
+        case .needsSetUp:
+            Pill("Set Up") { setUpSideAgent() }
+        case .failed:
+            Pill("Try Again") { Task { await askSideModels() } }
+        case .needsSignIn, nil:
+            EmptyView()
+        }
+    }
+
+    /// Install the side agent's adapter, then ask it for its models again.
+    private func setUpSideAgent() {
+        guard case .needsSetUp(let wanted) = sideModels else { return }
+        sideModels = nil
+        Task {
+            do {
+                try await Adapters.setUp(wanted.adapter)
+                await askSideModels()
+            } catch {
+                guard !Task.isCancelled else { return }
+                sideModels = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// The side agent's models, or its own default. The empty choice is its
+    /// default, and there is nothing else when it lists none.
+    private func sideModelMenu(_ choices: [AgentOption.Choice]) -> some View {
+        Menu {
+            Button {
+                prefs.sideModel = ""
+            } label: {
+                if prefs.sideModel.isEmpty { Label("\(sideName)'s default", systemImage: "checkmark") }
+                else { Text("\(sideName)'s default") }
+            }
+            ForEach(choices) { model in
+                Button {
+                    prefs.sideModel = model.value
+                } label: {
+                    if model.value == prefs.sideModel { Label(model.name, systemImage: "checkmark") }
+                    else { Text(model.name) }
+                }
+            }
+        } label: {
+            Text(sideModelLabel(choices))
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
+    }
+
+    private func sideModelLabel(_ choices: [AgentOption.Choice]) -> String {
+        if prefs.sideModel.isEmpty { return "\(sideName)'s default" }
+        return choices.first { $0.value == prefs.sideModel }?.name ?? prefs.sideModel
+    }
+
+    /// Where the side agent's sessions are kept, when it keeps them itself.
+    private var sideHistoryNote: some View {
+        Text("Each one is kept in \(sideName)'s own list of sessions.")
+            .font(.system(size: 11.5))
+            .foregroundStyle(Palette.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
+    }
+}
+
+/// The sites the chat may act on without asking, in every chat: those
+/// answered "Always". Each can be taken back, or all of them.
+private struct ChatSites: View {
+    @ObservedObject var browser: Browser
+    @State private var sites = Chat.alwaysSites
+
+    var body: some View {
+        Card {
+            Line("Sites the chat acts on without asking", sites.isEmpty ? "None yet. Answer “Always” when pi asks, and the site is listed here." : "Answered “Always”, in every chat") {
+                if !sites.isEmpty {
+                    Pill("Forget All") {
+                        sites.forEach(Chat.forget)
+                        sites = []
+                        browser.announce("pi asks again on every site")
+                    }
+                }
+            }
+            ForEach(sites, id: \.self) { site in
+                Rule()
+                Line(site) {
+                    Pill("Forget") {
+                        Chat.forget(site)
+                        sites = Chat.alwaysSites
+                    }
+                }
+            }
+        }
+        .onAppear { sites = Chat.alwaysSites }
     }
 }

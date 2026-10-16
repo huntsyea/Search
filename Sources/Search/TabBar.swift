@@ -159,6 +159,7 @@ struct TabBar: View {
                         if !browser.prefs.navigationLeft {
                             Helm(browser: browser).padding(.trailing, 8)
                         }
+                        if browser.prefs.sortsTabs { SortDoor(browser: browser) }
                         BookmarkDoor(browser: browser, arrowEdge: .bottom)
                     }
                     .background {
@@ -224,8 +225,8 @@ struct TabBar: View {
         } else {
             let space = browser.spaces[index]
             let row = space.id == browser.spaceID
-                ? Parked(tabs: browser.tabs, active: browser.activeID, splits: browser.splits)
-                : browser.parked[space.id] ?? Parked(tabs: [], active: nil)
+                ? browser.onScreen
+                : browser.parked[space.id] ?? .empty
             let shown = rowTabs(row.tabs, splits: row.splits)
             let each = width(in: strip, tabs: shown, splits: row.splits)
             HStack(spacing: Metrics.tabGap) {
@@ -639,6 +640,13 @@ private struct TabPill: View {
                         .foregroundStyle(colour.opacity(0.8))
                         .help("Recording")
                 }
+                if tab.agent {
+                    // The chat's agent at work in this tab (AgentTools).
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Palette.unsafe)
+                        .help("pi is working in this tab")
+                }
                 Text(tab.label)
                     .font(.system(size: 12.5))
                     .lineLimit(1)
@@ -979,9 +987,9 @@ struct TabMenu: View {
                 if !browser.tabGroups.isEmpty { Divider() }
                 ForEach(browser.tabGroups) { group in
                     Button(group.name) { browser.move(tab, toGroup: group.id) }
-                        .disabled(tab.groupID == group.id)
+                        .disabled(browser.group(of: tab) == group.id)
                 }
-                if tab.groupID != nil {
+                if browser.group(of: tab) != nil {
                     Divider()
                     Button("Remove from Group") { browser.move(tab, toGroup: nil) }
                 }

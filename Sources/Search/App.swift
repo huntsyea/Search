@@ -5,7 +5,6 @@ import Combine
 // A window, a row of titles, and a field. Typing an address gets you a page;
 // there is nothing else to learn and nothing else to press.
 
-@main
 struct SearchApp: App {
     /// The window in front's browser, for the menus (see Windows.swift).
     @StateObject private var front = Front.shared
@@ -113,6 +112,11 @@ struct SearchApp: App {
                        ? (browser.folded ? "Show Sidebar" : "Hide Sidebar")
                        : (browser.folded ? "Show Tab Bar" : "Hide Tab Bar")) { browser.toggleFold() }
                     .shortcut("view.fold")
+                // Only once it is on (Settings › Tabs › Sidebar panel).
+                if browser.prefs.utilitySidebar {
+                    Button(browser.utility == nil ? "Show Sidebar Panel" : "Hide Sidebar Panel") { browser.toggleUtility() }
+                        .shortcut("view.utility")
+                }
                 Picker("Tabs Wear", selection: Binding(
                     get: { browser.prefs.glyph },
                     set: { browser.prefs.glyph = $0 }
@@ -370,6 +374,10 @@ struct ContentView: View {
     /// animation (see `make(room:after:)`); nil only before the window is up.
     @State private var room: CGSize?
     @State private var roomTicket = 0
+    /// The same for the far side, where the sidebar panel comes and goes
+    /// (see `make(far:after:)`).
+    @State private var farRoom: CGFloat?
+    @State private var farTicket = 0
     @State private var immersionRevision = 0
 
 
@@ -398,8 +406,8 @@ struct ContentView: View {
             // side by side are a card each (see PaneStage).
             stage
                 .modifier(CardEdge(on: cards && !browser.prefs.splitView))
-                .padding(.leading, sideOnRight ? farGap : 0)
-                .padding(.trailing, sideOnRight ? 0 : farGap)
+                .padding(.leading, sideOnRight ? farRoomed : 0)
+                .padding(.trailing, sideOnRight ? 0 : farRoomed)
                 .padding(.bottom, farGap)
                 .padding(.leading, sideOnRight ? 0 : roomed.width)
                 .padding(.trailing, sideOnRight ? roomed.width : 0)
@@ -421,12 +429,23 @@ struct ContentView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
 
+            // The sidebar panel, on the side away from the tabs, under the
+            // strip or level with the page's card (see UtilitySidebar.swift).
+            if utilityShown, let pane = browser.utility {
+                UtilitySidebar(browser: browser, prefs: browser.prefs, pane: pane,
+                               onLeft: utilityOnLeft, onFrame: cards)
+                    .padding(.top, chrome.height)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity,
+                           alignment: utilityOnLeft ? .topLeading : .topTrailing)
+                    .transition(.move(edge: utilityOnLeft ? .leading : .trailing))
+            }
+
             // The bookmarks bar, under the strip or beside the column's top —
             // there on the window's ground above the page's card, and no wider.
             if barShown {
                 BookmarksBar(browser: browser, bookmarks: browser.bookmarks, onFrame: cards)
-                    .padding(.leading, sideOnRight ? farGap : chrome.width)
-                    .padding(.trailing, sideOnRight ? chrome.width : farGap)
+                    .padding(.leading, sideOnRight ? farChrome : chrome.width)
+                    .padding(.trailing, sideOnRight ? chrome.width : farChrome)
                     .padding(.top, band)
                     .transition(.opacity)
             }
@@ -436,8 +455,13 @@ struct ContentView: View {
         .animation(Motion.glide, value: browser.prefs.sidebar)
         .animation(Motion.glide, value: browser.prefs.sidePosition)
         .animation(.easeOut(duration: 0.12), value: fullscreenTab?.id)
-        .onAppear { if room == nil { room = chrome } }
+        .animation(Motion.glide, value: utilityShown)
+        .onAppear {
+            if room == nil { room = chrome }
+            if farRoom == nil { farRoom = farChrome }
+        }
         .onChange(of: chrome) { old, new in make(room: new, after: old) }
+        .onChange(of: farChrome) { old, new in make(far: new, after: old) }
     }
 
     // With Split View off, the stage is the one it always was: a single
@@ -500,6 +524,39 @@ struct ContentView: View {
     /// The card's gap on the side away from the column, and along the bottom.
     private var farGap: CGFloat { cards ? Metrics.cardGap : 0 }
 
+    /// The sidebar panel is up: switched on, open in this window, and no
+    /// page filling the screen.
+    private var utilityShown: Bool {
+        browser.prefs.utilitySidebar && browser.utility != nil && fullscreenTab == nil
+    }
+
+    /// It sits away from the tabs: on the left only with them down the right.
+    private var utilityOnLeft: Bool { sideOnRight }
+
+    /// What the far side takes from the page right now: the sidebar panel,
+    /// gaps and all, or the card's gap.
+    private var farChrome: CGFloat { utilityShown ? browser.prefs.utilityWidth : farGap }
+
+    /// The room the page is laid out to leave there, which is not animated.
+    private var farRoomed: CGFloat { farRoom ?? farChrome }
+
+    /// As `make(room:after:)`, for the far side: the panel arriving slides
+    /// over the page at its old size, which gives up the room once the slide
+    /// is over; leaving, or pulled wider or narrower, the page follows at once.
+    private func make(far new: CGFloat, after old: CGFloat) {
+        let arriving = old <= Metrics.cardGap && new > Metrics.cardGap
+        farTicket += 1
+        var still = Transaction()
+        still.disablesAnimations = true
+        withTransaction(still) { farRoom = Motion.reduced || !arriving ? new : farRoomed }
+        guard !Motion.reduced, arriving else { return }
+        let ticket = farTicket
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.42) {
+            guard ticket == farTicket else { return }
+            withTransaction(still) { farRoom = farChrome }
+        }
+    }
+
     /// The bookmarks bar is up: asked for, there are bookmarks, and the tabs
     /// aren't folded away or under a video filling the screen.
     private var barShown: Bool {
@@ -554,6 +611,8 @@ struct ContentView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             StoreOffer(browser: browser)
+            // The chat's agent acting in the tabs (see ChatPanel.swift).
+            if let chat = browser.chat { AgentPill(chat: chat) }
             if browser.veiling {
                 hint("Click anything to hide it   ⌘Z undo   esc done")
                     .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -579,6 +638,9 @@ struct ContentView: View {
                 // with the page says otherwise.
                 .padding(.leading, sidebar && !sideOnRight ? browser.prefs.sideWidth : 0)
                 .padding(.trailing, sidebar && sideOnRight ? browser.prefs.sideWidth : 0)
+                // Nor the sidebar panel on the other side.
+                .padding(.leading, utilityShown && utilityOnLeft ? browser.prefs.utilityWidth : 0)
+                .padding(.trailing, utilityShown && !utilityOnLeft ? browser.prefs.utilityWidth : 0)
                 .transition(.scale(scale: 0.97).combined(with: .opacity))
         }
     }
@@ -654,6 +716,8 @@ struct ContentView: View {
                 PeekLayer(browser: browser)
                     .padding(.leading, sideOnRight ? 0 : chrome.width)
                     .padding(.trailing, sideOnRight ? chrome.width : 0)
+                    .padding(.leading, utilityShown && utilityOnLeft ? farChrome : 0)
+                    .padding(.trailing, utilityShown && !utilityOnLeft ? farChrome : 0)
                     .padding(.top, chrome.height)
                     // From the window's own top edge, as the page is:
                     // the title bar's band is page too.
@@ -767,11 +831,18 @@ struct ContentView: View {
                     Text("Show in Finder")
                         .foregroundStyle(Palette.muted)
                 }
+                // Something just done that can be put back (Sort Tabs).
+                if browser.announcedUndo != nil {
+                    Text("Undo")
+                        .fontWeight(.medium)
+                        .foregroundStyle(Palette.muted)
+                }
             }
                 .font(.system(size: 12))
                 .contentShape(Capsule())
                 .onTapGesture {
                     if let file = browser.announcedFile { NSWorkspace.shared.activateFileViewerSelecting([file]) }
+                    if let undo = browser.announcedUndo { undo() }
                 }
                 .padding(.horizontal, 15)
                 .padding(.vertical, 9)

@@ -116,29 +116,7 @@ final class Bench {
         try? FileManager.default.createDirectory(
             at: Bench.socket.deletingLastPathComponent(), withIntermediateDirectories: true
         )
-        unlink(path)
-
-        let fd = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
-        guard fd >= 0 else { return }
-        var address = sockaddr_un()
-        address.sun_family = sa_family_t(AF_UNIX)
-        let room = MemoryLayout.size(ofValue: address.sun_path)
-        guard path.utf8.count < room else { close(fd); return }
-        withUnsafeMutablePointer(to: &address.sun_path) { sun in
-            sun.withMemoryRebound(to: CChar.self, capacity: room) { bytes in
-                _ = strlcpy(bytes, path, room)
-            }
-        }
-        let size = socklen_t(MemoryLayout<sockaddr_un>.size)
-        let bound = withUnsafePointer(to: &address) { pointer in
-            pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { bind(fd, $0, size) }
-        }
-        guard bound == 0, chmod(path, 0o600) == 0, listen(fd, 8) == 0 else {
-            close(fd)
-            unlink(path)
-            return
-        }
-        fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
+        guard let fd = UnixSocket.listen(at: path) else { return }
 
         let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
         source.setEventHandler { [weak self] in self?.accept() }
@@ -169,9 +147,7 @@ final class Bench {
         guard fd >= 0 else { return }
         // Only this user. The file mode already says so; this says it again,
         // for the day the folder's permissions are not what they were.
-        var uid = uid_t(0)
-        var gid = gid_t(0)
-        guard getpeereid(fd, &uid, &gid) == 0, uid == getuid() else {
+        guard UnixSocket.peerIsMe(fd) else {
             close(fd)
             return
         }
@@ -274,7 +250,10 @@ final class Bench {
             given(reply)
         }
         let patience = (request["do"] as? String) == "wait" ? (request["seconds"] as? Double ?? 30) + 5 :
-            (request["do"] as? String) == "import-file" ? (request["timeout"] as? Double ?? 120) : 25
+            (request["do"] as? String) == "import-file" ? (request["timeout"] as? Double ?? 120) :
+            // Longer than PiOnce's own thirty seconds, so its answer — or its
+            // giving up — is what comes back.
+            (request["do"] as? String) == "aieval" ? 35 : 25
         DispatchQueue.main.asyncAfter(deadline: .now() + patience) { answer(["error": "no answer within \(Int(patience)) s"]) }
         // --window N: the Nth window's browser, oldest first; the first
         // window's otherwise.
@@ -648,6 +627,16 @@ final class Bench {
                 "sidebar": browser.prefs.sidebar,
                 "sidePosition": browser.prefs.sidePosition.rawValue,
                 "sideWidth": Double(browser.prefs.sideWidth),
+                // The sidebar panel (UtilitySidebar.swift): switched on, what it shows, how wide.
+                "utilityOn": browser.prefs.utilitySidebar,
+                "utility": browser.utility?.key ?? "",
+                "utilityWidth": Double(browser.prefs.utilityWidth),
+                // The chat's agent at work, as the pill over the page shows it.
+                "agentPill": browser.chat.map { $0.busy && ($0.acting || !$0.asking.isEmpty) } ?? false,
+                "sidePanels": {
+                    guard #available(macOS 15.4, *) else { return [[String: String]]() }
+                    return SidePanels.open.map { ["id": $0.id, "url": $0.url] }
+                }(),
                 "appearance": NSApp.appearance?.name.rawValue ?? "system",
                 "key": NSApp.keyWindow.map { "\(type(of: $0)) “\($0.title)”" } ?? "",
                 // What the keyboard goes to in the key window, or the browser's: a find field,
@@ -1451,6 +1440,167 @@ final class Bench {
             // seen is checked on a release candidate instead.
             answer(["error": "visible is switched off: it made a window, and no bench verb makes one for now — check this on a release candidate"])
 
+        case "chat":
+            // The sidebar panel's chat (Chats.swift): a new one, a message
+            // sent, stopped, an earlier one opened; always answering with
+            // the chat as the panel draws it. pi is the person's own, so a
+            // test run only.
+            guard Store.testing else { answer(["error": "chat only works on a --test run"]); return }
+            let action = request["action"] as? String ?? "state"
+            if action == "new" || browser.chat == nil { browser.chat = Chats.make() }
+            guard let chat = browser.chat else { return }
+            chat.browser = browser
+            switch action {
+            case "send":
+                browser.prefs.utilitySidebar = true
+                browser.showUtility(.chat)
+                chat.send(request["text"] as? String ?? "")
+            case "stop":
+                chat.stop()
+            case "pause":
+                chat.pause()
+            case "resume":
+                chat.resume()
+            case "model":
+                let key = request["model"] as? String ?? ""
+                guard let model = chat.option(.model), !model.choices.isEmpty else {
+                    answer(["error": "pi hasn't said its models yet"]); return
+                }
+                guard model.choices.contains(where: { $0.value == key }) else {
+                    answer(["error": "no model \(key)"]); return
+                }
+                chat.choose(model.id, key)
+            case "thinking":
+                chat.choose(chat.option(.thought)?.id ?? "thinking", request["level"] as? String ?? "")
+            case "mode":
+                guard let mode = (request["mode"] as? String).flatMap(Chat.Mode.init(rawValue:)) else {
+                    answer(["error": "mode is ask or act"]); return
+                }
+                chat.mode = mode
+            case "agent":
+                // The chat's agent changed, before its first message. Its menu
+                // is filled in by the new agent, as the panel does.
+                let id = request["agent"] as? String ?? ""
+                guard Agents.shared.choice(id) != nil else { answer(["error": "no agent \(id)"]); return }
+                guard !chat.begun, chat.use(id) else { answer(["error": "the chat has begun"]); return }
+                chat.loadOptions()
+            case "signin":
+                // The person signed in with this method, from the card.
+                guard let method = request["method"] as? String else { answer(["error": "signin needs a method"]); return }
+                chat.signIn(with: method)
+            case "retry":
+                chat.retry()
+            case "setup":
+                chat.setUpAdapter()
+            case "answer":
+                guard let choice = (request["choice"] as? String).flatMap(Chat.Choice.init(rawValue:)) else {
+                    answer(["error": "answer is once, chat, always or deny"]); return
+                }
+                guard !chat.asking.isEmpty else { answer(["error": "nothing is waiting for an answer"]); return }
+                chat.answer(choice)
+            case "forget":
+                // Every site allowed for good, in this test world.
+                Chat.alwaysSites.forEach(Chat.forget)
+            case "open":
+                let index = request["index"] as? Int ?? 0
+                guard Chats.all.indices.contains(index) else { answer(["error": "no chat \(index)"]); return }
+                browser.chat = Chats.all[index]
+                Chats.all[index].open(in: browser)
+            default:
+                break
+            }
+            let current = browser.chat ?? chat
+            answer([
+                "title": current.title, "busy": current.busy, "status": current.status ?? "",
+                "session": current.session ?? "", "chats": Chats.all.map(\.title),
+                "agent": current.agentID, "agents": Agents.shared.visible.map(\.id),
+                "agentMenu": Agents.shared.visible.count > 1,
+                "signIn": current.signIn.map { ["agent": $0.agent, "methods": $0.methods.map(\.id)] } ?? NSNull(),
+                "setUp": current.setUp?.adapter.package ?? NSNull(),
+                "mode": current.mode.rawValue, "acting": current.acting, "paused": current.paused,
+                "model": current.option(.model)?.current ?? "", "thinking": current.option(.thought)?.current ?? "",
+                "levels": current.option(.thought)?.choices.map(\.value) ?? [],
+                "models": current.option(.model)?.choices.map(\.value) ?? [], "sites": Chat.alwaysSites,
+                "marked": browser.tabs.filter(\.agent).map(\.label),
+                "pills": PageSuggestions.shared.pills, "pillsFor": PageSuggestions.shared.address ?? "",
+                "pillsLoading": PageSuggestions.shared.loading,
+                "asking": current.asking.map { ["action": $0.action, "site": $0.site] },
+                "items": current.items.map { ["kind": "\($0.kind)", "text": $0.text, "done": $0.done, "failed": $0.failed, "detail": $0.detail] },
+            ])
+        case "sorttabs":
+            // Sort Tabs (TabSort.swift): ordinary tabs opened to sort (seed),
+            // a sort, its undo, and the window's groups as they are. A test
+            // run only — pi is the person's own.
+            guard Store.testing else { answer(["error": "sorttabs only works on a --test run"]); return }
+            let sorter = TabSorter.shared
+            switch request["action"] as? String ?? "state" {
+            case "seed":
+                for address in request["urls"] as? [String] ?? [] {
+                    if let url = URL(string: address) { browser.open(url, foreground: false) }
+                }
+            case "run":
+                sorter.sort(browser)
+            case "undo":
+                sorter.undo(browser)
+            default:
+                break
+            }
+            answer([
+                "sorting": sorter.isSorting(browser),
+                "announcement": browser.announcement ?? "",
+                "groups": browser.tabGroups.map { group in
+                    ["name": group.name, "tabs": browser.tabs(in: group.id).map(\.label)] as [String: Any]
+                },
+                "loose": TabSorter.loose(in: browser).map(\.label),
+                "row": browser.tabs.map(\.label),
+            ])
+        case "aieval":
+            // The prompts pi is asked on the side (Suggestions.swift,
+            // TabSort.swift), on made-up input and a chosen model, with pi's
+            // whole answer and what Search reads out of it — for
+            // Tests/ai_prompts.py. A test run only: it spends the person's
+            // tokens.
+            guard Store.testing else { answer(["error": "aieval only works on a --test run"]); return }
+            let model = (request["model"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+            // pi unless the request names another agent.
+            let agent = request["agent"] as? String ?? "pi"
+            let started = Date()
+            func done(_ fields: [String: Any]) {
+                answer(fields.merging(["seconds": Date().timeIntervalSince(started)]) { a, _ in a })
+            }
+            switch request["kind"] as? String {
+            case "sort":
+                let items = (request["tabs"] as? [[String: String]] ?? []).enumerated().map { offset, tab in
+                    TabSorter.Item(name: "t\(offset + 1)", title: tab["title"] ?? "", url: tab["url"].flatMap(URL.init(string:)))
+                }
+                let existing = (request["existing"] as? [[String: Any]] ?? []).map { group in
+                    (name: group["name"] as? String ?? "", titles: group["titles"] as? [String] ?? [])
+                }
+                Task {
+                    let result = await TabSorter.answer(items, existing: existing, model: model, agent: agent)
+                    // As the app would put them in place.
+                    let groups = result.groups.map { TabSorter.resolved($0, items: items, existing: existing.map(\.name)) }
+                    done(["answer": result.answer ?? NSNull(),
+                          "raw": result.groups.map { $0.map { ["name": $0.name, "tabs": $0.tabs] } } ?? NSNull(),
+                          "groups": groups.map { $0.map { ["name": $0.name, "tabs": $0.tabs] } } ?? NSNull()])
+                }
+            case "title":
+                Task {
+                    let result = await PiOnce.titleAnswer(for: request["message"] as? String ?? "",
+                                                          on: request["page"] as? String, model: model, agent: agent)
+                    done(["answer": result.answer ?? NSNull(), "title": result.title ?? NSNull()])
+                }
+            case "suggest":
+                let read = AIPage.shaped(title: request["title"] as? String ?? "",
+                                         url: (request["url"] as? String).flatMap(URL.init(string:)),
+                                         text: request["text"] as? String ?? "", links: [])
+                Task {
+                    let result = await PageSuggestions.answer(about: read, model: model, agent: agent)
+                    done(["answer": result.answer ?? NSNull(), "pills": result.pills ?? NSNull()])
+                }
+            default:
+                answer(["error": "aieval kind is sort, title or suggest"])
+            }
         case "ai":
             // The AI add-on's requests against a stand-in on this Mac: "mock"
             // points every provider at it, "key" keeps a made-up key for the
@@ -2495,6 +2645,15 @@ final class Bench {
             // Open or close the app's own panels, to reproduce what a person
             // did without a person.
             if let on = request["settings"] as? Bool { browser.tuning = on }
+            // Settings opened on a named page, for a test that wants to see it.
+            if let name = request["settingspage"] as? String {
+                guard let page = SettingsPanel.Page(rawValue: name) else {
+                    answer(["error": "settingspage needs one of: \(SettingsPanel.Page.allCases.map(\.rawValue).joined(separator: ", "))"])
+                    return
+                }
+                browser.settingsPage = page
+                browser.tuning = true
+            }
             if let on = request["passwords"] as? Bool, Store.testing { browser.managing = on }
             if let on = request["welcome"] as? Bool { browser.welcoming = on }
             if let on = request["history"] as? Bool { browser.recalling = on }
@@ -2518,6 +2677,17 @@ final class Bench {
             }
             if let on = request["pages120"] as? Bool { browser.prefs.fastPages = on }
             if let on = request["sidebar"] as? Bool { browser.prefs.sidebar = on }
+            // The sidebar panel: its switch, and what it shows — chat,
+            // panel:<extension id>, or off.
+            if let on = request["utilityon"] as? Bool { browser.prefs.utilitySidebar = on }
+            if let what = request["utility"] as? String {
+                if ["off", "false", "0", "no"].contains(what) { browser.utility = nil }
+                else if let pane = UtilityPane(key: what) { browser.showUtility(pane) }
+                else { answer(["error": "utility needs chat, panel:<id> or off"]); return }
+            }
+            if let width = (request["utilitywidth"] as? String).flatMap(Double.init) {
+                browser.prefs.utilityWidth = min(Metrics.utilityMax, max(Metrics.utilityMin, CGFloat(width)))
+            }
             if let on = request["spaces"] as? Bool { browser.prefs.usesSpaces = on }
             if let on = request["hides"] as? Bool { browser.prefs.sideHides = on }
             if let on = request["folded"] as? Bool { browser.folded = on }
@@ -2550,7 +2720,7 @@ final class Bench {
 
         default:
             answer(["error": "unknown command “\(verb)”", "commands": [
-                "tabs", "open", "go", "close", "wait", "sleep", "select", "text", "eval", "click", "type", "submit", "shot", "probe", "key", "textcheck", "resize", "hit", "film", "float", "window", "pages", "picture", "place", "group", "tospace", "field", "bookmark", "marks", "menu", "keyeq", "fill", "pin", "middle", "windows", "quit", "towindow", "news", "pull", "space", "split", "strip", "column", "fold", "consent", "update", "site", "little", "ui", "import", "import-preview", "import-file", "import-file-start", "import-file-status", "import-file-cancel", "remove-folder", "accounts", "find", "answer", "visible", "ai", "notifications",
+                "tabs", "open", "go", "close", "wait", "sleep", "select", "text", "eval", "click", "type", "submit", "shot", "probe", "key", "textcheck", "resize", "hit", "film", "float", "window", "pages", "picture", "place", "group", "tospace", "field", "bookmark", "marks", "menu", "keyeq", "fill", "pin", "middle", "windows", "quit", "towindow", "news", "pull", "space", "split", "strip", "column", "fold", "consent", "update", "site", "little", "ui", "import", "import-preview", "import-file", "import-file-start", "import-file-status", "import-file-cancel", "remove-folder", "accounts", "find", "answer", "visible", "ai", "chat", "sorttabs", "aieval", "notifications",
             ]])
         }
     }
@@ -2899,7 +3069,7 @@ final class Bench {
             "visibleIDs": browser.tabs.filter { browser.visibleTabIDs.contains($0.id) }.map { Bench.short($0) },
             "shownIDs": browser.shownTabs.map { Bench.short($0) },
             "groups": browser.tabGroups.map { ["id": $0.id.uuidString, "collapsed": $0.collapsed] as [String: Any] },
-            "groupIDs": browser.tabs.map { $0.groupID?.uuidString ?? "" },
+            "groupIDs": browser.tabs.map { browser.row.member($0.id)?.group?.uuidString ?? "" },
             "enabled": browser.prefs.splitView,
             "finding": browser.finding,
             "needle": browser.needle,
