@@ -29,38 +29,12 @@ Every agent CLI on their login PATH shows up beside pi. A new chat starts on the
 
 Today `Chat` reads pi's RPC messages itself (ChatPi.swift, PR #3: the seam at pi's messages, chosen while there was one adapter). With ACP there are two real adapters, so the seam moves up to the conversation, where both can meet it (Design A of three; B — the adapter owning the transcript — would write "settled" and "Stopped." twice; C — ACP as the chat's language — would make pi, the default, the translated one).
 
-```swift
-/// Everything a chat's agent says, in order, on the main actor.
-enum AgentSays {
-    case user(String)                                       // a message of the person's (reopened)
-    case text(id: String, delta: String, done: Bool)        // the answer, streaming
-    case thinking(id: String, delta: String, done: Bool)
-    case toolStarted(id: String, name: String, args: [String: Any])
-    case toolEnded(id: String, failed: Bool, summary: String?, detail: String)
-    case settled(Ending?)                                   // nil: finished; or stopped, failed(why)
-    case options([AgentOption])                             // what the agent offers: models, thought levels
-    case named(String)                                      // a title the agent gave
-    case status(String?)                                    // "Retrying…"
-    case tool(call: [String: Any], reply: ([String: Any]) -> Void)  // a browser tool, by either route
-    case cancelTool                                         // a call given up on (Stop)
-    case ended(why: String?)                                // nothing after it
-}
+As built (ChatAgent.swift):
 
-/// One running agent, as the chat holds it.
-protocol AgentLink: AnyObject {
-    func prompt(_ text: String) async throws   // returns once the agent has the message
-    func cancel()                               // Stop
-    func set(_ option: String, to value: String) async throws
-    func stop()                                 // let go: .ended follows
-}
-
-/// What a chat needs of an agent kind: the app's adapters are pi's RPC and ACP;
-/// the tests' a scripted agent.
-struct ChatAgent {
-    var start: (_ session: String?, _ hear: @escaping (AgentSays) -> Void) async throws -> (link: AgentLink, session: String?)
-    var title: (_ words: String, _ page: String?) async -> String?
-}
-```
+- `AgentSays`: the transcript — `user`, `text(id, kind, text, whole, done)`, `done(id)`, `toolStarted`, `toolEnded(id, failed, summary, detail)`, `line` (the note or error an answer ends on) — and the rest: `settled`, `session` (once the agent has one), `named`, `status` ("Retrying…"), `options` (model, thought level), `tool(call, reply)` (a browser tool, by either route), `cancel` (a call given up on), `exit`.
+- `AgentLink`: `prompt`, `cancel`, `set(option, to:)`, `name`, `stop`.
+- `ChatAgent`: the agent's `name`, `start(session, hear)` and `title(words, page)`.
+- What a start says before it returns is the session's history: the chat holds the transcript aside until the start succeeds and shows it once; the session, options and the rest are taken at once.
 
 - A reopened chat's history arrives as the same events (pi: its `get_messages` translated; ACP: `session/load`'s replayed updates), so the live and reopened chat can't drift apart (PR #11's bug).
 - Every rule of the chat stays in `Chat`: busy, settle, "Stopped.", asks, pause, marks, gather. Every wire detail stays in its adapter.
@@ -68,9 +42,9 @@ struct ChatAgent {
 
 ## The browser tools over MCP
 
-- `MCPServer` (in the app) speaks MCP: `initialize` (protocol negotiated, up to 2025-11-25), `tools/list` from the catalogue, `tools/call` → `.tool(call, reply)` on the chat's link, `notifications/cancelled` → `.cancelTool`, `ping`. Each tool's annotations come from its kind: reads → `readOnlyHint`; acts → `destructiveHint` where the tool is destructive. A picture goes back as image content; a refusal as `isError`.
+- `MCPServer` (in the app) speaks MCP: `initialize` (protocol negotiated, up to 2025-11-25), `tools/list` from the catalogue, `tools/call` → `.tool(call, reply)` on the chat's link, `notifications/cancelled` → `.cancel`, `ping`. Each tool's annotations come from its kind: reads → `readOnlyHint`; acts → `destructiveHint` where the tool is destructive. A picture goes back as image content; a refusal as `isError`.
 - `Search --mcp <socket> <token>` is only a pipe: the Search binary, started by the agent as its stdio MCP server, connects to the chat's socket, sends the token, then copies bytes both ways. Nothing of MCP in it.
-- The socket: one per chat, in a 0700 folder of Search's, mode 0600; the peer's uid checked (`getpeereid`); the token one-time and per chat. The agent's environment carries nothing of Search's.
+- The socket: one per chat, in a 0700 folder of Search's, mode 0600; the peer's uid checked (`getpeereid`); the token per chat, for as long as its agent runs, each connection that gives it an MCP session of its own, since an agent may start its server again. The agent's environment carries nothing of Search's.
 
 ## ACP, the client side
 

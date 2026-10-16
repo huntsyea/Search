@@ -688,6 +688,20 @@ enum AgentTools {
         }
     }
 
+    /// The tools as an MCP server lists them (tools/list): the same names,
+    /// schemas and hints as pi's, in MCP's spelling of the same fields.
+    static var mcpTools: [[String: Any]] {
+        registrations.map { registration in
+            [
+                "name": registration["name"] as? String ?? "",
+                "title": registration["label"] as? String ?? "",
+                "description": registration["description"] as? String ?? "",
+                "inputSchema": registration["parameters"] as? [String: Any] ?? [:],
+                "annotations": registration["annotations"] as? [String: Any] ?? [:],
+            ]
+        }
+    }
+
     /// The registrations as the JSON the extension is written with.
     static var toolsJSON: String {
         let data = try? JSONSerialization.data(withJSONObject: registrations, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
