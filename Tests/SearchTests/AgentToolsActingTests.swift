@@ -260,11 +260,45 @@ final class AgentToolsActingTests: XCTestCase {
         }
     }
 
+    func testACallGivenUpWhilePausedDoesNotAct() async throws {
+        // A chat that is busy, so Pause can hold: the catalogue's rules are
+        // the test's here, not the agent's.
+        let script = ScriptedPi()
+        chat = Chat(title: "Test", mode: .ask, agent: .pi(script.pi))
+        chat.open(in: browser)
+        chat.send("go")
+        await until { script.sentTypes.contains("prompt") }
+        XCTAssertTrue(chat.busy)
+        defer { Chats.delete(chat) }
+
+        chat.pause()
+        XCTAssertTrue(chat.paused)
+
+        let before = browser.tabs.count
+        let pending = Pending()
+        AgentTools.run(["name": "browser_open", "args": ["url": fixture.url("/page").absoluteString]],
+                       for: chat, givenUp: { pending.givenUp }) { pending.answer = $0 }
+        await until { chat.waitingSteps == 1 }
+
+        // The agent gives the call up — its connection closed, say — while
+        // it is held, then the person resumes the chat.
+        pending.givenUp = true
+        chat.resume()
+
+        let refused = try await answer(pending)
+        XCTAssertTrue(isError(refused))
+        XCTAssertEqual(text(refused), "Stopped.")
+        XCTAssertEqual(browser.tabs.count, before)
+    }
+
     // MARK: - helpers
 
     /// A call made through the catalogue, as the chat makes it; its answer
-    /// arrives later.
-    final class Pending { var answer: [String: Any]? }
+    /// arrives later. `givenUp` is the test's to set while it runs.
+    final class Pending {
+        var answer: [String: Any]?
+        var givenUp = false
+    }
 
     private func start(_ name: String, _ args: [String: Any] = [:]) -> Pending {
         let pending = Pending()

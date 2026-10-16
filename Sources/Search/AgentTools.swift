@@ -144,8 +144,10 @@ struct BrowserTool {
 enum AgentTools {
     /// One call: a tool's name and arguments, answered with what pi's
     /// extension hands the model — `content` blocks, an error flag, and
-    /// `details.summary`, the line the chat shows for the step.
-    static func run(_ call: [String: Any], for chat: Chat?, reply: @escaping ([String: Any]) -> Void) {
+    /// `details.summary`, the line the chat shows for the step. `givenUp`
+    /// says the agent has since given the call up, so it isn't done now.
+    static func run(_ call: [String: Any], for chat: Chat?, givenUp: @escaping @MainActor () -> Bool = { false },
+                    reply: @escaping ([String: Any]) -> Void) {
         let name = call["name"] as? String ?? ""
         let args = call["args"] as? [String: Any] ?? [:]
         guard let chat, let browser = chat.browser else {
@@ -154,10 +156,12 @@ enum AgentTools {
         Task { @MainActor in
             // Paused: the step waits for Resume; stopped meanwhile, it isn't taken.
             guard await chat.whilePaused() else { return reply(failure("Stopped.")) }
+            // Given up on while it waited: it isn't taken now either.
+            guard !givenUp() else { return reply(failure("Stopped.")) }
             guard let tool = tools.first(where: { $0.name == name }) else {
                 return reply(failure("Search has no tool called \(name)."))
             }
-            reply(await take(tool, BrowserTool.Call(args: args, browser: browser), in: chat))
+            reply(await take(tool, BrowserTool.Call(args: args, browser: browser), in: chat, givenUp: givenUp))
         }
     }
 
@@ -166,7 +170,8 @@ enum AgentTools {
     /// site is allowed); once allowed, the tab it's in is marked, a tab it
     /// opens is marked and put in the chat's group, and the answer waits
     /// for the page to load. A refusal reaches the agent as the person's.
-    private static func take(_ tool: BrowserTool, _ call: BrowserTool.Call, in chat: Chat) async -> [String: Any] {
+    private static func take(_ tool: BrowserTool, _ call: BrowserTool.Call, in chat: Chat,
+                             givenUp: @MainActor () -> Bool) async -> [String: Any] {
         switch tool.body {
         case .reads(let look), .shows(let look):
             return await look(call)
@@ -176,6 +181,8 @@ enum AgentTools {
                 return answer
             case .act(let act):
                 if let refused = await chat.permit(act.asking, on: act.site) { return failure(refused) }
+                // Given up on while the person was asked: nothing is done.
+                guard !givenUp() else { return failure("Stopped.") }
                 chat.acted(on: act.tab)
                 let done = await act.perform()
                 if let opened = done.opened {
@@ -685,6 +692,20 @@ enum AgentTools {
             }
             return ["name": tool.name, "label": tool.title, "description": tool.description,
                     "parameters": schema, "annotations": annotations]
+        }
+    }
+
+    /// The tools as an MCP server lists them (tools/list): the same names,
+    /// schemas and hints as pi's, in MCP's spelling of the same fields.
+    static var mcpTools: [[String: Any]] {
+        registrations.map { registration in
+            [
+                "name": registration["name"] as? String ?? "",
+                "title": registration["label"] as? String ?? "",
+                "description": registration["description"] as? String ?? "",
+                "inputSchema": registration["parameters"] as? [String: Any] ?? [:],
+                "annotations": registration["annotations"] as? [String: Any] ?? [:],
+            ]
         }
     }
 

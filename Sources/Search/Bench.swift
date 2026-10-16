@@ -116,29 +116,7 @@ final class Bench {
         try? FileManager.default.createDirectory(
             at: Bench.socket.deletingLastPathComponent(), withIntermediateDirectories: true
         )
-        unlink(path)
-
-        let fd = Darwin.socket(AF_UNIX, SOCK_STREAM, 0)
-        guard fd >= 0 else { return }
-        var address = sockaddr_un()
-        address.sun_family = sa_family_t(AF_UNIX)
-        let room = MemoryLayout.size(ofValue: address.sun_path)
-        guard path.utf8.count < room else { close(fd); return }
-        withUnsafeMutablePointer(to: &address.sun_path) { sun in
-            sun.withMemoryRebound(to: CChar.self, capacity: room) { bytes in
-                _ = strlcpy(bytes, path, room)
-            }
-        }
-        let size = socklen_t(MemoryLayout<sockaddr_un>.size)
-        let bound = withUnsafePointer(to: &address) { pointer in
-            pointer.withMemoryRebound(to: sockaddr.self, capacity: 1) { bind(fd, $0, size) }
-        }
-        guard bound == 0, chmod(path, 0o600) == 0, listen(fd, 8) == 0 else {
-            close(fd)
-            unlink(path)
-            return
-        }
-        fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
+        guard let fd = UnixSocket.listen(at: path) else { return }
 
         let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
         source.setEventHandler { [weak self] in self?.accept() }
@@ -169,9 +147,7 @@ final class Bench {
         guard fd >= 0 else { return }
         // Only this user. The file mode already says so; this says it again,
         // for the day the folder's permissions are not what they were.
-        var uid = uid_t(0)
-        var gid = gid_t(0)
-        guard getpeereid(fd, &uid, &gid) == 0, uid == getuid() else {
+        guard UnixSocket.peerIsMe(fd) else {
             close(fd)
             return
         }
