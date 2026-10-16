@@ -539,11 +539,11 @@ final class ChatTests: XCTestCase {
         script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
 
         chat.loadOptions()
-        await until { chat.option("model")?.choices.count == 2 && chat.option("model")?.current == "p/a" && chat.option("thinking")?.choices.count == 3 }
-        XCTAssertEqual(chat.option("model")?.current, "p/a")
-        XCTAssertEqual(chat.option("thinking")?.current, "low")
-        XCTAssertEqual(chat.option("thinking")?.choices.map(\.value), ["off", "low", "high"])
-        XCTAssertEqual(chat.option("model")?.choices.map(\.group), ["p", "p"])
+        await until { chat.option(.model)?.choices.count == 2 && chat.option(.model)?.current == "p/a" && chat.option(.thought)?.choices.count == 3 }
+        XCTAssertEqual(chat.option(.model)?.current, "p/a")
+        XCTAssertEqual(chat.option(.thought)?.current, "low")
+        XCTAssertEqual(chat.option(.thought)?.choices.map(\.value), ["off", "low", "high"])
+        XCTAssertEqual(chat.option(.model)?.choices.map(\.group), ["p", "p"])
         // Loading models quietly says no "Starting pi…".
         XCTAssertNil(chat.status)
 
@@ -569,8 +569,8 @@ final class ChatTests: XCTestCase {
         script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
 
         chat.loadOptions()
-        await until { chat.option("model")?.current == "p/b" }
-        XCTAssertNil(chat.option("thinking"))
+        await until { chat.option(.model)?.current == "p/b" }
+        XCTAssertNil(chat.option(.thought))
     }
 
     func testAPiStartedAgainOnANewSessionKeepsTheEarlierAnswer() async {
@@ -623,13 +623,13 @@ final class ChatTests: XCTestCase {
         script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
 
         chat.loadOptions()
-        await until { chat.option("model")?.current == "p/a" }
+        await until { chat.option(.model)?.current == "p/a" }
 
         script.refusals["get_state"] = "busy"
         chat.choose("thinking", "high")
         await until { script.sentTypes.contains("set_thinking_level") }
         try? await Task.sleep(for: .milliseconds(100))
-        XCTAssertEqual(chat.option("model")?.current, "p/a")
+        XCTAssertEqual(chat.option(.model)?.current, "p/a")
     }
 
     func testAFailedReopenShowsNoHalfHistory() async {
