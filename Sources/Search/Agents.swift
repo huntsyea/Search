@@ -312,6 +312,54 @@ final class Agents: ObservableObject {
         })
     }
 
+    /// The agent a side prompt runs on, away from any chat: the same start as
+    /// a chat's — its sign-in, its adapter, its settings — but with no
+    /// browser tools and, for Claude Code, no session left in the person's
+    /// own history. One question is asked, then it is stopped.
+    func oneShotAgent(_ id: String) -> ChatAgent {
+        if id == "pi" { return .pi() }
+        let called = Agents.keptName(id) ?? id
+        return ChatAgent(name: called, start: { [weak self] chat, session, hear in
+            guard let self else { throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.") }
+            await self.ready()
+            guard let choice = self.choice(id), var spec = choice.spec else {
+                throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.")
+            }
+            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                throw AgentNeedsSetUp(agent: called, adapter: adapter)
+            }
+            // No browser tools: a one-shot is asked with no tools at all.
+            spec.browserTools = false
+            // Claude Code writes every session to the person's history: this
+            // one is not written there.
+            if spec.structuralTools.contains(.claude) { spec.sessionMeta = Agents.withoutClaudeSession(spec.sessionMeta) }
+            var signed = try Agents.prepared(spec)
+            signed.signIn = Agents.signIn(for: id)
+            do {
+                let link = try await ChatAgent.acp(signed).start(chat, session, hear)
+                if let used = signed.signIn { self.remember(signIn: used, for: id) }
+                return link
+            } catch let wanted as AgentSignIn {
+                if wanted.stale { self.forget(signInFor: id) }
+                throw wanted
+            }
+        }, title: { words, page in
+            await PiOnce.title(for: words, on: page)
+        })
+    }
+
+    /// Claude Code's session meta with its sessions not written to the
+    /// person's own history: a one-shot leaves nothing of itself behind.
+    nonisolated static func withoutClaudeSession(_ meta: [String: Any]?) -> [String: Any]? {
+        guard var meta else { return nil }
+        var claude = meta["claudeCode"] as? [String: Any] ?? [:]
+        var options = claude["options"] as? [String: Any] ?? [:]
+        options["persistSession"] = false
+        claude["options"] = options
+        meta["claudeCode"] = claude
+        return meta
+    }
+
     /// Open the agent's own sign-in in a terminal: the login command (or the
     /// one given), as a .command file Terminal runs. False when there is none.
     @discardableResult

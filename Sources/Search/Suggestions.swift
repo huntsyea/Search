@@ -5,7 +5,8 @@ import SwiftUI
 // want to do with the page in front (the pills over the chat's box), and a
 // short name for a chat from its first message. Each is one `pi --print`
 // run — no tools, no session, nothing of the person's added — on the model
-// chosen for it in Settings › AI, or pi's own default.
+// chosen for it in Settings › AI, or pi's own default. The person may choose
+// another agent for these (AgentOnce, over ACP), asked once the same way.
 
 enum PiOnce {
     struct Failure: LocalizedError {
@@ -13,8 +14,19 @@ enum PiOnce {
         var errorDescription: String? { why }
     }
 
-    /// pi's last answer to `prompt`, as text. Thirty seconds at most.
+    /// pi's last answer to `prompt`, as text. Thirty seconds at most. When
+    /// the person chose another agent for the side prompts, that agent is
+    /// asked over ACP instead, once and with no tools.
     static func answer(system: String, prompt: String, model: String?) async throws -> String {
+        let side = Store.settings.string(forKey: Chats.sideAgentKey) ?? ""
+        if !side.isEmpty, side != "pi" {
+            do {
+                return try await AgentOnce.answer(agent: side, system: system, prompt: prompt,
+                                                  model: Store.settings.string(forKey: Chats.sideModelKey))
+            } catch {
+                throw Failure(why: error.localizedDescription)
+            }
+        }
         var arguments = ["--print", "--mode", "json", "--no-session"]
             + Pi.confined(tools: [])
             + ["--thinking", "off", "--system-prompt", system]
