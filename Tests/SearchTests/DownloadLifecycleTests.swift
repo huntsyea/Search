@@ -250,16 +250,27 @@ final class DownloadLifecycleTests: XCTestCase {
     }
 
     /// A download started in code is kept before WebKit can ask where it goes,
-    /// however long the main thread is busy after asking for it. Holding the
-    /// main thread puts WebKit's handler and its question in line together; a
+    /// however long the main thread is busy after asking for it. The main
+    /// thread is held until the server has the request and a moment more, so
+    /// WebKit's handler and its question are both waiting when it's let go; a
     /// download kept one hop after the handler would be asked about first, with
     /// no delegate, and cancelled.
     func testADownloadStartedInCodeIsKeptBeforeWebKitAsks() async throws {
         let tab = try await openFixturePage()
         var started: WKDownload?
         browser.download(URLRequest(url: fixture.url("/range.bin")), through: tab.web) { started = $0 }
-        // The main thread busy while WebKit answers: both of its calls wait behind this.
-        Thread.sleep(forTimeInterval: 1.5)
+        // The main thread busy while WebKit answers: hold it until the server has
+        // the request, then a moment more for WebKit's answer to cross back, so
+        // both of its calls wait behind this.
+        let deadline = Date().addingTimeInterval(10)
+        while fixture.count("/range.bin") < 1 && Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.02)
+        }
+        guard fixture.count("/range.bin") >= 1 else {
+            XCTFail("The download's request never reached the server while the main thread was held, so the race wasn't set up")
+            return
+        }
+        Thread.sleep(forTimeInterval: 0.5)
         try await waitUntil { started != nil }
         let download = try XCTUnwrap(started)
         try await waitUntil { browser.fetches.entry(for: download) != nil }
