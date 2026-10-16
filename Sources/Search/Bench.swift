@@ -1487,12 +1487,15 @@ final class Bench {
                 chat.resume()
             case "model":
                 let key = request["model"] as? String ?? ""
-                guard let model = chat.models.first(where: { $0.key == key }) else {
-                    answer(["error": chat.models.isEmpty ? "pi hasn't said its models yet" : "no model \(key)"]); return
+                guard let model = chat.option("model"), !model.choices.isEmpty else {
+                    answer(["error": "pi hasn't said its models yet"]); return
                 }
-                chat.choose(model)
+                guard model.choices.contains(where: { $0.value == key }) else {
+                    answer(["error": "no model \(key)"]); return
+                }
+                chat.choose("model", key)
             case "thinking":
-                chat.choose(thinking: request["level"] as? String ?? "")
+                chat.choose("thinking", request["level"] as? String ?? "")
             case "mode":
                 guard let mode = (request["mode"] as? String).flatMap(Chat.Mode.init(rawValue:)) else {
                     answer(["error": "mode is ask or act"]); return
@@ -1520,8 +1523,9 @@ final class Bench {
                 "title": current.title, "busy": current.busy, "status": current.status ?? "",
                 "session": current.session ?? "", "chats": Chats.all.map(\.title),
                 "mode": current.mode.rawValue, "acting": current.acting, "paused": current.paused,
-                "model": current.model?.key ?? "", "thinking": current.thinking ?? "", "levels": current.levels,
-                "models": current.models.map(\.key), "sites": Chat.alwaysSites,
+                "model": current.option("model")?.current ?? "", "thinking": current.option("thinking")?.current ?? "",
+                "levels": current.option("thinking")?.choices.map(\.value) ?? [],
+                "models": current.option("model")?.choices.map(\.value) ?? [], "sites": Chat.alwaysSites,
                 "marked": browser.tabs.filter(\.agent).map(\.label),
                 "pills": PageSuggestions.shared.pills, "pillsFor": PageSuggestions.shared.address ?? "",
                 "pillsLoading": PageSuggestions.shared.loading,

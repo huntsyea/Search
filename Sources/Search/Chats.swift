@@ -1,10 +1,11 @@
 import Foundation
 
-// The chats in the sidebar panel. A chat is a pi session: pi keeps the
-// conversation itself, in its session file under Chats/sessions, and this
-// keeps only what it takes to list the chats and open one again —
-// chats.json: each chat's title, its session file, and when it was last
-// used. Opening one starts pi on that session and asks it for the messages.
+// The chats in the sidebar panel. A chat is its agent's session (pi's,
+// today): the agent keeps the conversation itself, in its session file
+// under Chats/sessions, and this keeps only what it takes to list the chats
+// and open one again — chats.json: each chat's title, its session file, and
+// when it was last used. Opening one starts the agent on that session and
+// asks it for the messages.
 
 @MainActor
 final class Chat: ObservableObject, Identifiable {
@@ -68,37 +69,31 @@ final class Chat: ObservableObject, Identifiable {
     /// Steps waiting for Resume now: what a test waits for before it stops a paused chat.
     var waitingSteps: Int { held.count }
 
-    /// A model pi can use, as its list names it.
-    struct Model: Hashable, Identifiable {
-        let provider: String
-        let id: String
-        let name: String
-        let reasoning: Bool
-        var key: String { provider + "/" + id }
-    }
-    /// What pi has to offer, and what this chat uses: known once pi is running.
-    @Published private(set) var models: [Model] = []
-    @Published private(set) var model: Model?
-    @Published private(set) var thinking: String?
-    @Published private(set) var levels: [String] = []
+    /// What the chat's agent offers, and what it uses: known once it runs.
+    @Published private(set) var options: [AgentOption] = []
 
-    private let pi: ChatPi
-    private var link: PiLink?
-    /// The start whose pi the chat is listening to.
+    /// The chat's agent by name, as the panel says it: "Starting pi…".
+    var agentName: String { agent.name }
+
+    private let agent: ChatAgent
+    private var link: AgentLink?
+    /// The start whose agent the chat is listening to.
     private var current: UUID?
-    /// Why a pi ended before it was held, for whoever sent to report.
+    /// Why an agent ended before it was held, for whoever sent to report.
     private var endedStarting: String?
     private var opened = false
-    /// Content blocks of the assistant message streaming now, by index.
-    private var streaming: [Int: String] = [:]
-    private var messageCount = 0
+    /// Whether the session's history is on screen: a new chat has none.
+    private var shown: Bool
+    /// The start whose history is being heard, so it is shown once.
+    private var replaying: UUID?
 
-    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask, pi: ChatPi? = nil) {
+    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask, agent: ChatAgent? = nil) {
         self.id = id
         self.title = title
         self.session = session
         self.updated = updated
-        self.pi = pi ?? .rpc
+        self.agent = agent ?? .pi()
+        self.shown = session == nil
         // The stored value itself: through the setter, a chat loaded in act
         // mode would save the list while the list is still being loaded.
         self._mode = Published(initialValue: mode)
@@ -114,12 +109,10 @@ final class Chat: ObservableObject, Identifiable {
             title = String(words.prefix(60))
             let page = browser?.active.flatMap { $0.pageAddress == nil ? nil : $0.label }
             Task {
-                guard let named = await pi.title(words, page) else { return }
+                guard let named = await agent.title(words, page) else { return }
                 title = named
                 Chats.save()
-                if session != nil, let link {
-                    _ = try? await link.request(["type": "set_session_name", "name": named])
-                }
+                if session != nil, let link { link.name(named) }
             }
         }
         updated = Date()
@@ -129,13 +122,7 @@ final class Chat: ObservableObject, Identifiable {
         Task {
             do {
                 let link = try await ready()
-                _ = try await link.request(["type": "prompt", "message": message])
-                if session == nil, let state = try? await link.request(["type": "get_state"]),
-                   let file = state["sessionFile"] as? String {
-                    session = file
-                    _ = try? await link.request(["type": "set_session_name", "name": title])
-                    Chats.remember(self)
-                }
+                try await link.prompt(message)
             } catch {
                 busy = false
                 status = nil
@@ -148,7 +135,7 @@ final class Chat: ObservableObject, Identifiable {
         dropAsks()
         release(false)
         guard busy, let link else { return }
-        Task { _ = try? await link.request(["type": "abort"]) }
+        link.cancel()
     }
 
     // MARK: - permission
@@ -240,58 +227,29 @@ final class Chat: ObservableObject, Identifiable {
         waiting.forEach { $0.resume(returning: go) }
     }
 
-    // MARK: - models
+    // MARK: - options
 
-    /// What pi offers and what it uses now, asked as it starts.
-    private func learnModels(_ link: PiLink) async {
-        if let list = try? await link.request(["type": "get_available_models"]),
-           let raw = list["models"] as? [[String: Any]] {
-            models = raw.compactMap { m in
-                guard let provider = m["provider"] as? String, let id = m["id"] as? String else { return nil }
-                return Model(provider: provider, id: id, name: m["name"] as? String ?? id, reasoning: m["reasoning"] as? Bool ?? false)
-            }
-        }
-        await learnState(link)
-    }
-
-    private func learnState(_ link: PiLink) async {
-        if let state = try? await link.request(["type": "get_state"]) {
-            if let m = state["model"] as? [String: Any], let provider = m["provider"] as? String, let id = m["id"] as? String {
-                model = models.first { $0.provider == provider && $0.id == id }
-                    ?? Model(provider: provider, id: id, name: m["name"] as? String ?? id, reasoning: m["reasoning"] as? Bool ?? false)
-            }
-            thinking = state["thinkingLevel"] as? String
-        }
-        if let data = try? await link.request(["type": "get_available_thinking_levels"]) {
-            levels = data["levels"] as? [String] ?? []
-        }
-    }
+    /// One of the agent's options by `id` — "model", "thinking" — when it
+    /// has said it.
+    func option(_ id: String) -> AgentOption? { options.first { $0.id == id } }
 
     /// The model menu: this chat's model. New chats start on the one chosen
     /// in Settings › AI.
-    func choose(_ model: Model) {
+    func choose(_ option: String, _ value: String) {
         Task {
             do {
                 let link = try await ready()
-                _ = try await link.request(["type": "set_model", "provider": model.provider, "modelId": model.id])
-                await learnState(link)
+                try await link.set(option, to: value)
             } catch {
                 items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
             }
         }
     }
 
-    func choose(thinking level: String) {
-        Task {
-            guard let link = try? await ready() else { return }
-            _ = try? await link.request(["type": "set_thinking_level", "level": level])
-            await learnState(link)
-        }
-    }
-
-    /// The menu wants the list before anything was sent: pi started for it.
-    func loadModels() {
-        guard models.isEmpty else { return }
+    /// The menu wants the list before anything was sent: the agent started
+    /// for it.
+    func loadOptions() {
+        guard options.isEmpty else { return }
         Task { _ = try? await ready(quietly: true) }
     }
 
@@ -303,7 +261,7 @@ final class Chat: ObservableObject, Identifiable {
             browser.move(tab, toGroup: group)
         } else {
             let made = browser.addTabGroup(containing: tab)
-            browser.renameTabGroup(made, to: "pi · " + String(title.prefix(30)))
+            browser.renameTabGroup(made, to: agent.name + " · " + String(title.prefix(30)))
             group = made
         }
     }
@@ -324,7 +282,7 @@ final class Chat: ObservableObject, Identifiable {
 
     static func forget(_ site: String) { Store.settings.removeObject(forKey: grantKey(site)) }
 
-    /// The panel is showing this chat: its messages, from pi, the first time.
+    /// The panel is showing this chat: its messages, from the agent, the first time.
     func open(in browser: Browser) {
         self.browser = browser
         guard !opened else { return }
@@ -333,9 +291,7 @@ final class Chat: ObservableObject, Identifiable {
         status = "Opening…"
         Task {
             do {
-                let link = try await ready()
-                let data = try await link.request(["type": "get_messages"])
-                rebuild(data["messages"] as? [[String: Any]] ?? [])
+                _ = try await ready(quietly: true)
                 status = nil
             } catch {
                 status = nil
@@ -368,13 +324,13 @@ final class Chat: ObservableObject, Identifiable {
         return String(text[end.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    // MARK: - pi
+    // MARK: - the agent
 
-    private func ready(quietly: Bool = false) async throws -> PiLink {
+    private func ready(quietly: Bool = false) async throws -> AgentLink {
         if let link { return link }
-        if !quietly { status = "Starting pi…" }
+        if !quietly { status = "Starting \(agent.name)…" }
         // Asked again while starting (the model menu, then a message): the
-        // one pi being started, not a second.
+        // one agent being started, not a second.
         if let starting { return try await starting.value }
         let start = Task { try await launch() }
         starting = start
@@ -382,41 +338,53 @@ final class Chat: ObservableObject, Identifiable {
         return try await start.value
     }
 
-    private var starting: Task<PiLink, Error>?
+    private var starting: Task<AgentLink, Error>?
 
-    private func launch() async throws -> PiLink {
+    private func launch() async throws -> AgentLink {
         let start = UUID()
         current = start
-        let link = try await pi.start(session.flatMap { FileManager.default.fileExists(atPath: $0) ? $0 : nil }) { [weak self] said in
-            if case let .tool(call, reply) = said {
-                // A pi let go of is told no; one the chat holds acts in its window.
-                guard let self, self.current == start else {
-                    return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
-                                  "details": ["summary": "Stopped."]])
+        endedStarting = nil
+        // The history a start says before returning is the session's, shown
+        // once: `replaying` marks whose it is.
+        replaying = start
+        let link: AgentLink
+        do {
+            link = try await agent.start(session) { [weak self] said in
+                if case let .tool(call, reply) = said {
+                    // An agent let go of is told no; one the chat holds acts in its window.
+                    guard let self, self.current == start else {
+                        return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
+                                      "details": ["summary": "Stopped."]])
+                    }
+                    return AgentTools.run(call, for: self, reply: reply)
                 }
-                return AgentTools.run(call, for: self, reply: reply)
+                self?.hear(said, from: start)
             }
-            self?.hear(said, from: start)
+        } catch {
+            replaying = nil
+            throw error
         }
-        // pi ended while starting, or the chat let go of it meanwhile: a
-        // start that failed, said once, by whoever sent.
+        replaying = nil
+        // The agent ended while starting, or the chat let go of it meanwhile:
+        // a start that failed, said once, by whoever sent.
         guard current == start else {
             link.stop()
             defer { endedStarting = nil }
-            throw PiProcess.Failure(why: endedStarting ?? "pi stopped.")
+            throw PiProcess.Failure(why: endedStarting ?? "\(agent.name) stopped.")
+        }
+        // A step the history began but never finished isn't left spinning.
+        if !shown {
+            shown = true
+            for i in items.indices { items[i].done = true }
         }
         self.link = link
         status = nil
-        Task { await learnModels(link) }
         return link
     }
 
-    /// Everything pi says, from the start it belongs to.
-    private func hear(_ said: PiSays, from start: UUID) {
+    /// Everything the agent says, from the start it belongs to.
+    private func hear(_ said: AgentSays, from start: UUID) {
         switch said {
-        case let .event(event):
-            guard start == current else { return }
-            handle(event)
         case .cancel:
             guard start == current else { return }
             dropAsks()
@@ -425,16 +393,22 @@ final class Chat: ObservableObject, Identifiable {
             current = nil
             // Ended before it was held: whoever sent reports it, once.
             guard link != nil else {
-                endedStarting = why.map { "pi stopped: \($0)" } ?? "pi stopped."
+                endedStarting = why.map { "\(agent.name) stopped: \($0)" } ?? "\(agent.name) stopped."
                 return
             }
             link = nil
             let wasBusy = busy
             settle()
-            if wasBusy { items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "pi stopped: \($0)" } ?? "pi stopped.")) }
+            if wasBusy { items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "\(agent.name) stopped: \($0)" } ?? "\(agent.name) stopped.")) }
         case .tool:
-            // Answered where pi said it, so it still gets a reply.
+            // Answered where it was heard, so it still gets a reply.
             break
+        default:
+            // The history once, and let go after: an agent started again
+            // says it again, into a chat already showing it.
+            guard start == current else { return }
+            if replaying == start, shown { return }
+            handle(said)
         }
     }
 
@@ -452,134 +426,57 @@ final class Chat: ObservableObject, Identifiable {
         status = nil
     }
 
-    private func handle(_ event: [String: Any]) {
-        switch event["type"] as? String {
-        case "message_start":
-            guard let message = event["message"] as? [String: Any] else { return }
-            if message["role"] as? String == "user" {
-                let text = Chat.withoutContext(Chat.text(of: message["content"]))
-                items.append(Item(id: UUID().uuidString, kind: .user, text: text))
-            } else if message["role"] as? String == "assistant" {
-                messageCount += 1
-                streaming = [:]
-            }
-        case "message_update":
-            guard let update = event["assistantMessageEvent"] as? [String: Any],
-                  let index = update["contentIndex"] as? Int else { return }
-            let kind = update["type"] as? String ?? ""
-            let delta = update["delta"] as? String ?? ""
-            if kind == "text_delta" {
-                put(index, .assistant, append: delta, done: false)
-            } else if kind == "thinking_delta" {
-                put(index, .thinking, append: delta, done: false)
-            } else if kind == "text_end", let content = update["content"] as? String {
-                put(index, .assistant, replace: content, done: true)
-            } else if kind == "thinking_end", let content = update["content"] as? String {
-                put(index, .thinking, replace: content, done: true)
-            }
-        case "message_end":
-            guard let message = event["message"] as? [String: Any], message["role"] as? String == "assistant" else { return }
-            for key in streaming.keys { finish(key) }
-            if let end = Chat.ending(message) { items.append(Item(id: UUID().uuidString, kind: end.kind, text: end.text)) }
-        case "tool_execution_start":
-            guard let call = event["toolCallId"] as? String else { return }
-            let name = event["toolName"] as? String ?? ""
-            items.append(Item(id: "tool-" + call, kind: .tool, text: Chat.label(name, event["args"] as? [String: Any] ?? [:]), done: false))
-        case "tool_execution_end":
-            guard let call = event["toolCallId"] as? String,
-                  let at = items.firstIndex(where: { $0.id == "tool-" + call }) else { return }
-            let result = event["result"] as? [String: Any] ?? [:]
+    /// Everything the agent says that the chat draws, once it is the start
+    /// being listened to.
+    private func handle(_ said: AgentSays) {
+        switch said {
+        case let .user(text):
+            items.append(Item(id: UUID().uuidString, kind: .user, text: Chat.withoutContext(text)))
+        case let .text(id, kind, text, whole, done):
+            put(id, kind, text, whole: whole, done: done)
+        case let .done(id):
+            guard let at = items.firstIndex(where: { $0.id == id }) else { return }
             items[at].done = true
-            items[at].failed = event["isError"] as? Bool ?? false
-            if let summary = (result["details"] as? [String: Any])?["summary"] as? String, !items[at].failed {
-                items[at].text = summary
-            }
-            if items[at].failed { items[at].detail = Chat.text(of: result["content"]) }
-        case "auto_retry_start":
-            status = "Retrying…"
-        case "auto_retry_end":
-            status = nil
-        case "session_info_changed":
-            if let name = event["name"] as? String, !name.isEmpty { title = name }
-        case "agent_settled":
+        case let .toolStarted(id, name, args):
+            items.append(Item(id: "tool-" + id, kind: .tool, text: Chat.label(name, args), done: false))
+        case let .toolEnded(id, failed, summary, detail):
+            guard let at = items.firstIndex(where: { $0.id == "tool-" + id }) else { return }
+            items[at].done = true
+            items[at].failed = failed
+            if let summary, !failed { items[at].text = summary }
+            if failed { items[at].detail = detail }
+        case let .line(kind, text):
+            items.append(Item(id: UUID().uuidString, kind: kind, text: text))
+        case .settled:
             settle()
             updated = Date()
             Chats.remember(self)
-        default:
+        case let .session(file):
+            guard session == nil else { return }
+            session = file
+            link?.name(title)
+            Chats.remember(self)
+        case let .named(name):
+            title = name
+        case let .status(text):
+            status = text
+        case let .options(list):
+            options = list
+        case .tool, .cancel, .exit:
             break
         }
     }
 
-    /// The line an assistant message ends on, live or reopened: the person's
-    /// Stop, or the model failing; none when it just finished.
-    private static func ending(_ message: [String: Any]) -> (kind: Item.Kind, text: String)? {
-        var stop = message["stopReason"] as? String
-        // Stopped between steps, the request in flight fails as an error:
-        // still the person's Stop, not a failure.
-        if stop == "error", (message["errorMessage"] as? String)?.localizedCaseInsensitiveContains("aborted") == true { stop = "aborted" }
-        switch stop {
-        case "error": return (.error, message["errorMessage"] as? String ?? "The model couldn't answer.")
-        case "aborted": return (.note, "Stopped.")
-        default: return nil
-        }
-    }
-
-    private func put(_ index: Int, _ kind: Item.Kind, append: String = "", replace: String? = nil, done: Bool) {
-        let key = "\(messageCount)-\(index)"
-        if let at = items.firstIndex(where: { $0.id == key }) {
-            if let replace { items[at].text = replace } else { items[at].text += append }
+    /// Words of an item: put in its place when `whole`, else added to it;
+    /// and made done or not, as said.
+    private func put(_ id: String, _ kind: Item.Kind, _ text: String, whole: Bool, done: Bool) {
+        if let at = items.firstIndex(where: { $0.id == id }) {
+            if whole { items[at].text = text } else { items[at].text += text }
             items[at].done = done
         } else {
-            guard !(replace ?? append).isEmpty || kind == .assistant else { return }
-            items.append(Item(id: key, kind: kind, text: replace ?? append, done: done))
-            streaming[index] = key
+            guard !text.isEmpty || kind == .assistant else { return }
+            items.append(Item(id: id, kind: kind, text: text, done: done))
         }
-    }
-
-    private func finish(_ index: Int) {
-        guard let key = streaming[index], let at = items.firstIndex(where: { $0.id == key }) else { return }
-        items[at].done = true
-    }
-
-    /// A chat opened again: its messages as pi kept them.
-    private func rebuild(_ messages: [[String: Any]]) {
-        var out: [Item] = []
-        for (n, message) in messages.enumerated() {
-            switch message["role"] as? String {
-            case "user":
-                out.append(Item(id: "m\(n)", kind: .user, text: Chat.withoutContext(Chat.text(of: message["content"]))))
-            case "assistant":
-                for (i, block) in (message["content"] as? [[String: Any]] ?? []).enumerated() {
-                    switch block["type"] as? String {
-                    case "text":
-                        let text = block["text"] as? String ?? ""
-                        if !text.isEmpty { out.append(Item(id: "m\(n)-\(i)", kind: .assistant, text: text)) }
-                    case "thinking":
-                        let text = block["thinking"] as? String ?? ""
-                        if !text.isEmpty { out.append(Item(id: "m\(n)-\(i)", kind: .thinking, text: text)) }
-                    case "toolCall":
-                        let id = block["id"] as? String ?? "\(n)-\(i)"
-                        out.append(Item(id: "tool-" + id, kind: .tool,
-                                        text: Chat.label(block["name"] as? String ?? "", block["arguments"] as? [String: Any] ?? [:])))
-                    default:
-                        break
-                    }
-                }
-                if let end = Chat.ending(message) { out.append(Item(id: "m\(n)-end", kind: end.kind, text: end.text)) }
-            case "toolResult":
-                guard let call = message["toolCallId"] as? String,
-                      let at = out.firstIndex(where: { $0.id == "tool-" + call }) else { continue }
-                out[at].failed = message["isError"] as? Bool ?? false
-                if let summary = (message["details"] as? [String: Any])?["summary"] as? String, !out[at].failed {
-                    out[at].text = summary
-                }
-                if out[at].failed { out[at].detail = Chat.text(of: message["content"]) }
-            default:
-                break
-            }
-        }
-        items = out
-        messageCount = messages.count
     }
 
     // MARK: - words

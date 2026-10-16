@@ -28,7 +28,7 @@ final class ChatTests: XCTestCase {
     /// A chat on a scripted pi, and the script behind it.
     private func made(_ title: String = "Test") -> (chat: Chat, script: ScriptedPi) {
         let script = ScriptedPi()
-        let chat = Chat(title: title, pi: script.pi)
+        let chat = Chat(title: title, agent: .pi(script.pi))
         chats.append(chat)
         return (chat, script)
     }
@@ -149,7 +149,7 @@ final class ChatTests: XCTestCase {
         _ = NSApplication.shared
         let browser = Browser(record: WindowRecord())
         browsers.append(browser)
-        let chat = Chat(title: "Test", mode: mode, pi: script.pi)
+        let chat = Chat(title: "Test", mode: mode, agent: .pi(script.pi))
         chats.append(chat)
         chat.open(in: browser)
         chat.send("go")
@@ -425,7 +425,7 @@ final class ChatTests: XCTestCase {
 
         let script = ScriptedPi()
         script.answers["get_messages"] = PiTranscripts.messagesData
-        let chat = Chat(title: "Test", session: path.path, pi: script.pi)
+        let chat = Chat(title: "Test", session: path.path, agent: .pi(script.pi))
         chats.append(chat)
         defer { try? FileManager.default.removeItem(at: path) }
 
@@ -462,7 +462,7 @@ final class ChatTests: XCTestCase {
 
         let script = ScriptedPi()
         script.answers["get_messages"] = PiTranscripts.messagesData
-        let reopened = Chat(title: "Test", session: path.path, pi: script.pi)
+        let reopened = Chat(title: "Test", session: path.path, agent: .pi(script.pi))
         chats.append(reopened)
         defer { try? FileManager.default.removeItem(at: path) }
 
@@ -477,7 +477,7 @@ final class ChatTests: XCTestCase {
 
     func testGoneSessionFileStartsANewOne() async {
         let script = ScriptedPi()
-        let chat = Chat(title: "Test", session: "/tmp/gone-\(UUID().uuidString).jsonl", pi: script.pi)
+        let chat = Chat(title: "Test", session: "/tmp/gone-\(UUID().uuidString).jsonl", agent: .pi(script.pi))
         chats.append(chat)
 
         chat.send("hello")
@@ -538,25 +538,39 @@ final class ChatTests: XCTestCase {
         script.answers["get_state"] = ["model": ["provider": "p", "id": "a"], "thinkingLevel": "low"]
         script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
 
-        chat.loadModels()
-        await until { chat.models.count == 2 && chat.model?.key == "p/a" && chat.levels.count == 3 }
-        XCTAssertEqual(chat.model?.key, "p/a")
-        XCTAssertEqual(chat.thinking, "low")
-        XCTAssertEqual(chat.levels, ["off", "low", "high"])
+        chat.loadOptions()
+        await until { chat.option("model")?.choices.count == 2 && chat.option("model")?.current == "p/a" && chat.option("thinking")?.choices.count == 3 }
+        XCTAssertEqual(chat.option("model")?.current, "p/a")
+        XCTAssertEqual(chat.option("thinking")?.current, "low")
+        XCTAssertEqual(chat.option("thinking")?.choices.map(\.value), ["off", "low", "high"])
+        XCTAssertEqual(chat.option("model")?.choices.map(\.group), ["p", "p"])
         // Loading models quietly says no "Starting pi…".
         XCTAssertNil(chat.status)
 
-        guard let b = chat.models.first(where: { $0.id == "b" }) else { return XCTFail("model b wasn't listed") }
-        chat.choose(b)
+        chat.choose("model", "p/b")
         await until { script.sentTypes.contains("set_model") }
         let chosen = script.sent.first { $0["type"] as? String == "set_model" }
         XCTAssertEqual(chosen?["provider"] as? String, "p")
         XCTAssertEqual(chosen?["modelId"] as? String, "b")
 
-        chat.choose(thinking: "high")
+        chat.choose("thinking", "high")
         await until { script.sentTypes.contains("set_thinking_level") }
         let level = script.sent.first { $0["type"] as? String == "set_thinking_level" }
         XCTAssertEqual(level?["level"] as? String, "high")
+    }
+
+    func testThinkingIsOfferedOnlyForAModelThatReasons() async {
+        let (chat, script) = made()
+        script.answers["get_available_models"] = ["models": [
+            ["provider": "p", "id": "a", "name": "A", "reasoning": true],
+            ["provider": "p", "id": "b", "name": "B"],
+        ]]
+        script.answers["get_state"] = ["model": ["provider": "p", "id": "b"], "thinkingLevel": "low"]
+        script.answers["get_available_thinking_levels"] = ["levels": ["off", "low", "high"]]
+
+        chat.loadOptions()
+        await until { chat.option("model")?.current == "p/b" }
+        XCTAssertNil(chat.option("thinking"))
     }
 
     func testRefusedCommandIsALine() async {
