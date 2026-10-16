@@ -754,6 +754,11 @@ enum Chats {
     static let agentKey = "chat.agent"
     static let suggestModelKey = "chat.suggest.model"
     static let titleModelKey = "chat.title.model"
+    /// Settings › AI: the agent the side prompts run on (pi unless chosen),
+    /// and its model (empty: the agent's own default). Read off the main
+    /// actor by PiOnce, so they are nonisolated like Prefs' own keys.
+    nonisolated static let sideAgentKey = "chat.side.agent"
+    nonisolated static let sideModelKey = "chat.side.model"
     static let suggestsKey = "chat.suggests"
     /// The model Sort Tabs asks (TabSort.swift); empty: pi's default.
     static let sortModelKey = "tabs.sort.model"

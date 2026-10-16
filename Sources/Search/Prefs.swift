@@ -335,6 +335,14 @@ final class Preferences: ObservableObject {
     @Published var chatTitleModel: String {
         didSet { store.set(chatTitleModel, forKey: Chats.titleModelKey) }
     }
+    /// Settings › AI: the agent the side prompts run on, by id (pi unless
+    /// chosen), and its model (empty: the agent's own default).
+    @Published var sideAgent: String {
+        didSet { store.set(sideAgent, forKey: Chats.sideAgentKey) }
+    }
+    @Published var sideModel: String {
+        didSet { store.set(sideModel, forKey: Chats.sideModelKey) }
+    }
     @Published var chatSuggests: Bool {
         didSet { store.set(chatSuggests, forKey: Chats.suggestsKey) }
     }
@@ -473,6 +481,8 @@ final class Preferences: ObservableObject {
         chatAgent = store.string(forKey: Chats.agentKey) ?? "pi"
         chatSuggestModel = store.string(forKey: Chats.suggestModelKey) ?? ""
         chatTitleModel = store.string(forKey: Chats.titleModelKey) ?? ""
+        sideAgent = store.string(forKey: Chats.sideAgentKey) ?? "pi"
+        sideModel = store.string(forKey: Chats.sideModelKey) ?? ""
         chatSuggests = store.object(forKey: Chats.suggestsKey) as? Bool ?? true
         sortsTabs = store.bool(forKey: "tabs.sort")
         sortModel = store.string(forKey: Chats.sortModelKey) ?? ""

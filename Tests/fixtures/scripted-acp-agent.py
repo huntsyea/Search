@@ -61,6 +61,8 @@ class Scripted:
         # Sign-in: the methods initialize lists, and which one counts as done.
         self.auth = scenario.get("auth")
         self.signed_in = False
+        # So a test can tell when the process is gone.
+        self.log.line({"pid": os.getpid()})
 
     # ----- transport -----
 
@@ -168,7 +170,10 @@ class Scripted:
         elif method == "session/prompt":
             self.handle_prompt(rid, params)
         elif method == "session/set_config_option":
-            self.answer(rid, self.scenario.get("setConfig", {"configOptions": []}))
+            spec = self.scenario.get("setConfig", {"configOptions": []})
+            if spec.get("hang"):
+                return
+            self.answer(rid, spec)
         elif method == "session/set_model":
             self.answer(rid, self.scenario.get("setModel", {}))
         else:
@@ -256,6 +261,11 @@ class Scripted:
 
     def call_mcp(self, step):
         if self.mcp is None:
+            if not self.mcp_server:
+                # No server was given (a one-shot): the step can't run, and
+                # the script says so rather than starting nothing.
+                self.log.line({"mcpResult": {"error": "No MCP server was given"}})
+                return
             self.start_mcp()
         self.mcp_id += 1
         rid = self.mcp_id

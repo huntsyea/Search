@@ -113,32 +113,46 @@ final class ACPConnection: @unchecked Sendable {
     }
 
     /// A request, and its result; throws its ACPError, or a ChildProcess.Failure "\(name) stopped" when the agent
-    /// ended first. Past `timeout`, it fails as one that didn't answer.
+    /// ended first. Past `timeout`, it fails as one that didn't answer. A request whose task is cancelled is given
+    /// up on: the agent is told nothing, and the caller sees a CancellationError.
     func request(_ method: String, _ params: [String: Any], timeout: TimeInterval? = nil) async throws -> Any {
         let id = newID()
         let message: [String: Any] = ["jsonrpc": "2.0", "id": id, "method": method, "params": params]
         ACPConnection.recorder?("out", message)
         let name = name
-        return try await withCheckedThrowingContinuation { continuation in
-            lock.lock()
-            waiting[id] = { continuation.resume(with: $0) }
-            lock.unlock()
-            if let timeout {
-                DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { [weak self] in
-                    guard let self else { return }
-                    self.lock.lock()
-                    let done = self.waiting.removeValue(forKey: id)
-                    self.lock.unlock()
-                    done?(.failure(ChildProcess.Failure(why: "\(name) didn't answer \(method)")))
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                lock.lock()
+                // Cancelled before it was registered: there is nothing to wait for.
+                if Task.isCancelled {
+                    lock.unlock()
+                    continuation.resume(throwing: CancellationError())
+                    return
+                }
+                waiting[id] = { continuation.resume(with: $0) }
+                lock.unlock()
+                if let timeout {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { [weak self] in
+                        guard let self else { return }
+                        self.lock.lock()
+                        let done = self.waiting.removeValue(forKey: id)
+                        self.lock.unlock()
+                        done?(.failure(ChildProcess.Failure(why: "\(name) didn't answer \(method)")))
+                    }
+                }
+                guard process.send(message) else {
+                    lock.lock()
+                    let done = waiting.removeValue(forKey: id)
+                    lock.unlock()
+                    done?(.failure(ChildProcess.Failure(why: "\(name) stopped")))
+                    return
                 }
             }
-            guard process.send(message) else {
-                lock.lock()
-                let done = waiting.removeValue(forKey: id)
-                lock.unlock()
-                done?(.failure(ChildProcess.Failure(why: "\(name) stopped")))
-                return
-            }
+        } onCancel: {
+            lock.lock()
+            let done = waiting.removeValue(forKey: id)
+            lock.unlock()
+            done?(.failure(CancellationError()))
         }
     }
 
@@ -251,6 +265,9 @@ struct ACPSpec {
     /// The adapter shapes a structural tool identity is trusted from. Empty
     /// for every agent whose adapter isn't known to send one.
     var structuralTools: StructuralTools = []
+    /// Whether the agent is given Search's browser tools over MCP. False for
+    /// a side prompt's run: it is asked one question with no tools at all.
+    var browserTools = true
     /// What session/new and session/load carry as `_meta`, for agents that take settings there (Claude's adapter:
     /// its own tools off). Nil: none.
     var sessionMeta: [String: Any]? = nil
@@ -291,7 +308,7 @@ extension ACPSpec: Equatable {
         a.id == b.id && a.name == b.name && a.path == b.path
             && a.arguments == b.arguments && a.environment == b.environment
             && a.startOptions == b.startOptions && a.structuralTools == b.structuralTools
-            && a.unsetEnvironment == b.unsetEnvironment
+            && a.unsetEnvironment == b.unsetEnvironment && a.browserTools == b.browserTools
     }
 }
 
@@ -375,19 +392,24 @@ private final class ACPAgent: AgentLink {
         let folder = Chats.workspace(chat)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
-        // The browser's tools, over MCP, on a door only this chat reaches.
-        guard let door = MCPDoor(call: { [weak agent] call, givenUp, reply in
-            guard let agent else {
-                return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
-                              "details": ["summary": "Stopped."]])
+        // The browser's tools, over MCP, on a door only this chat reaches. A
+        // one-shot (browserTools false) is given none at all.
+        var door: MCPDoor?
+        if spec.browserTools {
+            guard let opened = MCPDoor(call: { [weak agent] call, givenUp, reply in
+                guard let agent else {
+                    return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
+                                  "details": ["summary": "Stopped."]])
+                }
+                agent.called(call, givenUp, reply)
+            }, cancel: { [weak agent] in
+                agent?.hear(.cancel)
+            }) else {
+                throw ChildProcess.Failure(why: "Search couldn't open the browser's tools for \(spec.name).")
             }
-            agent.called(call, givenUp, reply)
-        }, cancel: { [weak agent] in
-            agent?.hear(.cancel)
-        }) else {
-            throw ChildProcess.Failure(why: "Search couldn't open the browser's tools for \(spec.name).")
+            door = opened
+            agent.door = opened
         }
-        agent.door = door
 
         let connection = ACPConnection()
         connection.onNotification = { [weak agent] method, params in agent?.updated(method, params) }
@@ -428,7 +450,8 @@ private final class ACPAgent: AgentLink {
                 }
             }
 
-            var sessionParams: [String: Any] = ["cwd": folder.path, "mcpServers": [door.server]]
+            // No door, no servers: a one-shot is asked without any tool.
+            var sessionParams: [String: Any] = ["cwd": folder.path, "mcpServers": door.map { [$0.server] } ?? []]
             if let meta = spec.sessionMeta { sessionParams["_meta"] = meta }
             if let session, agent.loadSession {
                 // The session being loaded is known before its updates come,
@@ -450,7 +473,7 @@ private final class ACPAgent: AgentLink {
             try await agent.applyStartOptions()
         } catch {
             connection.stop()
-            door.close()
+            door?.close()
             if let acp = error as? ACPError, acp.code == ACPError.authRequired {
                 throw AgentSignIn(agent: spec.name, methods: methods)
             }
@@ -885,6 +908,18 @@ private final class ACPAgent: AgentLink {
     private func asked(_ method: String, _ params: [String: Any], _ respond: @escaping (Result<Any, ACPError>) -> Void) {
         guard method == "session/request_permission" else {
             respond(.failure(ACPError(code: -32601, message: "Search doesn't offer \(method).", data: nil)))
+            return
+        }
+        // A one-shot is given no tools, so it approves nothing: reject
+        // before any browser-tool identity is considered.
+        if !spec.browserTools {
+            let options = params["options"] as? [[String: Any]] ?? []
+            let chosen = firstOption(options, kinds: ["reject_once", "reject_always"])
+            guard let chosen else {
+                respond(.success(["outcome": ["outcome": "cancelled"]]))
+                return
+            }
+            respond(.success(["outcome": ["outcome": "selected", "optionId": chosen]]))
             return
         }
         if cancelling {

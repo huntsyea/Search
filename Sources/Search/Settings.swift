@@ -983,7 +983,7 @@ private struct AgentsCard: View {
     /// to its own tools, its adapter when it has one, and how its last start
     /// went. A failure setting the adapter up is shown here too.
     private func detail(_ choice: AgentChoice) -> String {
-        var parts = [choice.path ?? "Not found"]
+        var parts = [choice.cliPath ?? choice.path ?? "Not found"]
         parts.append(choice.ownTools == .off
             ? "Its own tools are switched off"
             : "Its own tools are refused when it asks, and it runs in an empty folder")
@@ -1066,6 +1066,8 @@ private struct ChatSettings: View {
     @ObservedObject var prefs: Preferences
     @ObservedObject private var pi = PiModels.shared
     @ObservedObject private var agents = Agents.shared
+    /// What asking the side agent for its models came to; nil while asking.
+    @State private var sideModels: AgentOnce.Models?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -1081,16 +1083,26 @@ private struct ChatSettings: View {
             }
             AgentsCard()
             Card {
+                Line("Agent for suggestions, titles and Sort Tabs", "Asked once each time, with no tools: the pills over the chat's box, a chat's title, Sort Tabs") {
+                    agentPicker(sideAgentChoice)
+                }
+                Rule()
                 Line("Model for new chats", "pi's model for new chats. Other agents use their own default; each chat can change its model from the menu under its box.") {
                     picker($prefs.chatModel)
                 }
-                Rule()
-                Line("Model for suggestions", "Reads the page in front and offers things to do with it, over the chat's box") {
-                    picker($prefs.chatSuggestModel)
-                }
-                Rule()
-                Line("Model for titles", "Names each chat in 3 to 5 words from its first message") {
-                    picker($prefs.chatTitleModel)
+                if prefs.sideAgent == "pi" {
+                    Rule()
+                    Line("Model for suggestions", "Reads the page in front and offers things to do with it, over the chat's box") {
+                        picker($prefs.chatSuggestModel)
+                    }
+                    Rule()
+                    Line("Model for titles", "Names each chat in 3 to 5 words from its first message") {
+                        picker($prefs.chatTitleModel)
+                    }
+                } else {
+                    Rule()
+                    Line("Model", sideModelDetail) { sideModelControl }
+                    if sideKeepsHistory { sideHistoryNote }
                 }
             }
             Card {
@@ -1104,14 +1116,21 @@ private struct ChatSettings: View {
                     Switch(on: $prefs.sortsTabs)
                 }
                 if prefs.sortsTabs {
-                    Rule()
-                    Line("Model for sorting tabs") {
-                        picker($prefs.sortModel)
+                    // The side agent's one model does the sorting too: no
+                    // picker of its own then.
+                    if prefs.sideAgent == "pi" {
+                        Rule()
+                        Line("Model for sorting tabs") {
+                            picker($prefs.sortModel)
+                        }
                     }
                 }
             }
         }
         .onAppear { pi.load() }
+        .task(id: prefs.sideAgent) {
+            await askSideModels()
+        }
     }
 
     /// The agent a new chat starts on: the ones found, or pi.
@@ -1166,6 +1185,131 @@ private struct ChatSettings: View {
         .menuStyle(.borderlessButton)
         .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: 200, alignment: .trailing)
+    }
+
+    /// The side agent, chosen from the ones found: another one clears the
+    /// model kept for the last, which its menu wouldn't list.
+    private var sideAgentChoice: Binding<String> {
+        Binding(
+            get: { prefs.sideAgent },
+            set: { chosen in
+                guard chosen != prefs.sideAgent else { return }
+                prefs.sideAgent = chosen
+                prefs.sideModel = ""
+            }
+        )
+    }
+
+    private var sideName: String { agents.choice(prefs.sideAgent)?.name ?? prefs.sideAgent }
+
+    /// Whether the side agent keeps every one-shot in its own list of
+    /// sessions: pi's are Search's, Claude Code's are suppressed for a
+    /// one-shot, and Codex's are in Search's own home.
+    private var sideKeepsHistory: Bool {
+        guard prefs.sideAgent != "pi", let spec = agents.choice(prefs.sideAgent)?.spec else { return false }
+        return !spec.structuralTools.contains(.claude) && !spec.structuralTools.contains(.codex)
+    }
+
+    /// Ask the side agent for its models, keeping the answer only while it
+    /// is still the agent that was asked and the ask wasn't given up on.
+    private func askSideModels() async {
+        let asked = prefs.sideAgent
+        guard asked != "pi" else { sideModels = nil; return }
+        sideModels = nil
+        let result = await AgentOnce.models(agent: asked)
+        guard !Task.isCancelled, prefs.sideAgent == asked else { return }
+        sideModels = result
+    }
+
+    /// What the model line says: what is being done, or why it can't be.
+    private var sideModelDetail: String {
+        switch sideModels {
+        case .loaded:
+            return "The model \(sideName) is asked with for suggestions, titles and Sort Tabs"
+        case .needsSetUp:
+            return "Set up \(sideName) first"
+        case .needsSignIn:
+            return "\(sideName) needs you to sign in — open a chat with it to sign in"
+        case .failed(let why):
+            return why
+        case nil:
+            return "Asking \(sideName)…"
+        }
+    }
+
+    /// The model line's control: the menu once there are models, a way out
+    /// of whatever is wrong, nothing while the ask is away.
+    @ViewBuilder
+    private var sideModelControl: some View {
+        switch sideModels {
+        case .loaded(let choices):
+            sideModelMenu(choices)
+        case .needsSetUp:
+            Pill("Set Up") { setUpSideAgent() }
+        case .failed:
+            Pill("Try Again") { Task { await askSideModels() } }
+        case .needsSignIn, nil:
+            EmptyView()
+        }
+    }
+
+    /// Install the side agent's adapter, then ask it for its models again.
+    private func setUpSideAgent() {
+        guard case .needsSetUp(let wanted) = sideModels else { return }
+        sideModels = nil
+        Task {
+            do {
+                try await Adapters.setUp(wanted.adapter)
+                await askSideModels()
+            } catch {
+                guard !Task.isCancelled else { return }
+                sideModels = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    /// The side agent's models, or its own default. The empty choice is its
+    /// default, and there is nothing else when it lists none.
+    private func sideModelMenu(_ choices: [AgentOption.Choice]) -> some View {
+        Menu {
+            Button {
+                prefs.sideModel = ""
+            } label: {
+                if prefs.sideModel.isEmpty { Label("\(sideName)'s default", systemImage: "checkmark") }
+                else { Text("\(sideName)'s default") }
+            }
+            ForEach(choices) { model in
+                Button {
+                    prefs.sideModel = model.value
+                } label: {
+                    if model.value == prefs.sideModel { Label(model.name, systemImage: "checkmark") }
+                    else { Text(model.name) }
+                }
+            }
+        } label: {
+            Text(sideModelLabel(choices))
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
+    }
+
+    private func sideModelLabel(_ choices: [AgentOption.Choice]) -> String {
+        if prefs.sideModel.isEmpty { return "\(sideName)'s default" }
+        return choices.first { $0.value == prefs.sideModel }?.name ?? prefs.sideModel
+    }
+
+    /// Where the side agent's sessions are kept, when it keeps them itself.
+    private var sideHistoryNote: some View {
+        Text("Each one is kept in \(sideName)'s own list of sessions.")
+            .font(.system(size: 11.5))
+            .foregroundStyle(Palette.muted)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 11)
     }
 }
 

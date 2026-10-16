@@ -73,9 +73,9 @@
     ./bench ai mock URL | key PROVIDER KEY | ask PROVIDER MODEL TEXT | read ID | check TEXT | signin | engine [PATH MODELS] | use PROVIDER [MODEL] | summarize ID | question ID TEXT | agree | state | picture DIR
                                        test run: the AI add-on's requests, against a stand-in on this Mac;
                                        what of a page would go to the model, and an answer checked against it
-    ./bench aieval REQUEST.json        test run: one of pi's side prompts (sort, title, suggest) on made-up
-                                       input and a model — pi's answer and what Search reads from it
-                                       (Tests/ai_prompts.py)
+    ./bench aieval REQUEST.json        test run: one of the side prompts (sort, title, suggest) on made-up
+                                       input, a model and an agent — the agent's answer and what Search reads
+                                       from it (Tests/ai_prompts.py)
     ./bench sorttabs [state|run|undo|seed URL...]
                                        test run: Sort Tabs — ordinary tabs opened to sort, a sort, its undo;
                                        prints the window's groups, loose tabs and row

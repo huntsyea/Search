@@ -170,6 +170,8 @@ final class Agents: ObservableObject {
     func refresh() {
         LoginShell.forget()
         looked = false
+        // What the agents can list may have changed with them.
+        AgentOnce.forgetModels()
         look()
     }
 
@@ -248,6 +250,8 @@ final class Agents: ObservableObject {
     func add(name: String, command: String) -> Result<AgentChoice, AgentAddError> {
         guard let words = Agents.words(command) else { return .failure(.unclosedQuote) }
         guard let program = words.first, !program.isEmpty else { return .failure(.noProgram) }
+        // A newer agent may list other models.
+        AgentOnce.forgetModels()
         // A relative path would mean something else run from the chat's own
         // folder: only a full path, a "~/" path, or a name on the PATH.
         let relative = program.contains("/") && !program.hasPrefix("/") && !program.hasPrefix("~/")
@@ -266,6 +270,7 @@ final class Agents: ObservableObject {
     /// A custom one the person took away. Known agents and pi are not removed.
     func remove(_ id: String) {
         guard id.hasPrefix("custom.") else { return }
+        AgentOnce.forgetModels()
         var entries = Agents.customEntries()
         entries.removeAll { $0["id"] == id }
         Store.settings.set(entries, forKey: Agents.customKey)
@@ -310,6 +315,54 @@ final class Agents: ObservableObject {
         }, title: { words, page in
             await PiOnce.title(for: words, on: page)
         })
+    }
+
+    /// The agent a side prompt runs on, away from any chat: the same start as
+    /// a chat's — its sign-in, its adapter, its settings — but with no
+    /// browser tools and, for Claude Code, no session left in the person's
+    /// own history. One question is asked, then it is stopped.
+    func oneShotAgent(_ id: String) -> ChatAgent {
+        if id == "pi" { return .pi() }
+        let called = Agents.keptName(id) ?? id
+        return ChatAgent(name: called, start: { [weak self] chat, session, hear in
+            guard let self else { throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.") }
+            await self.ready()
+            guard let choice = self.choice(id), var spec = choice.spec else {
+                throw ChildProcess.Failure(why: "\(called) isn't on this Mac any more.")
+            }
+            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                throw AgentNeedsSetUp(agent: called, adapter: adapter)
+            }
+            // No browser tools: a one-shot is asked with no tools at all.
+            spec.browserTools = false
+            // Claude Code writes every session to the person's history: this
+            // one is not written there.
+            if spec.structuralTools.contains(.claude) { spec.sessionMeta = Agents.withoutClaudeSession(spec.sessionMeta) }
+            var signed = try Agents.prepared(spec)
+            signed.signIn = Agents.signIn(for: id)
+            do {
+                let link = try await ChatAgent.acp(signed).start(chat, session, hear)
+                if let used = signed.signIn { self.remember(signIn: used, for: id) }
+                return link
+            } catch let wanted as AgentSignIn {
+                if wanted.stale { self.forget(signInFor: id) }
+                throw wanted
+            }
+        }, title: { words, page in
+            await PiOnce.title(for: words, on: page)
+        })
+    }
+
+    /// Claude Code's session meta with its sessions not written to the
+    /// person's own history: a one-shot leaves nothing of itself behind.
+    nonisolated static func withoutClaudeSession(_ meta: [String: Any]?) -> [String: Any]? {
+        guard var meta else { return nil }
+        var claude = meta["claudeCode"] as? [String: Any] ?? [:]
+        var options = claude["options"] as? [String: Any] ?? [:]
+        options["persistSession"] = false
+        claude["options"] = options
+        meta["claudeCode"] = claude
+        return meta
     }
 
     /// Open the agent's own sign-in in a terminal: the login command (or the

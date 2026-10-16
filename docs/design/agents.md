@@ -1,6 +1,6 @@
 # Choosing the chat's agent: pi and every ACP agent, found as bb finds them
 
-Status: design, agreed 15 Oct 2026; building on branch `bb/agents-pi-and-every-acp-agent-discovered-thr_4ym88zxjvc`, merged into `sidebar-agent` a phase at a time. Follows [right-sidebar-and-agent.md](right-sidebar-and-agent.md), whose chat runs pi only.
+Status: agreed 15 Oct 2026 and built in six phases (PRs #13–#17 and the side prompts' agent), merged into `sidebar-agent`; off unless the sidebar's switch is on, and pi stays the default everywhere. Follows [right-sidebar-and-agent.md](right-sidebar-and-agent.md), whose chat runs pi only.
 
 ## What changes for the person
 
@@ -23,7 +23,7 @@ Every agent CLI on their login PATH shows up beside pi. A new chat starts on the
 | Custom agents? | "Add agent…" in Settings › AI: a name and a command line, spoken to over ACP under the same rules. No environment editor. |
 | Sign-in? | Not probed ahead. When `session/new` answers ACP's `auth_required`, the chat shows a card: **Sign in** (ACP `authenticate`, for a method of type `agent`), else **Open in Terminal** with the agent's own login command; and **Try again**. Settings shows each agent's last known state: Ready, Needs sign-in, Not used yet. |
 | Model and mode menus? | The footer's model menu shows what the chat's agent offers as ACP `configOptions` (model, thought level), set with `session/set_config_option`. Modes stay hidden: they exist to unlock the agent's own tools. An agent's last chosen model is remembered for its next chat; "Model for new chats" stays pi's. |
-| The side prompts? | Settings › AI: an agent for suggestions, titles and Sort Tabs (pi), and its model. Another agent there gets a one-shot run over ACP. |
+| The side prompts? | Settings › AI: an agent for suggestions, titles and Sort Tabs (pi), and its model. Another agent there gets a one-shot run over ACP, with no browser tools and one fixed empty folder of its own; Claude Code's session is not persisted. |
 
 ## Found on this Mac (15 Oct 2026)
 
@@ -87,7 +87,8 @@ wanted kind, or nothing matched exactly → `cancelled`.
 - `fs/*`, `terminal/*`, anything unknown → "method not found".
 - `session/cancel` on Stop; `session/set_config_option` for the model menu; `authenticate` for sign-in.
 - One agent process per chat, stopped when the chat closes, as pi is: stdin closed, then SIGTERM, then SIGKILL, to its process group.
-- A one-shot run: spawn, `initialize`, `session/new` with no MCP servers and tools off, the model set, one `session/prompt` (the system prompt ahead of the words), its text collected, the process stopped. Thirty seconds at most, as `PiOnce`.
+- A one-shot run (the side prompts' agent, Settings › AI): spawn, `initialize`, `session/new` with `browserTools` false — no MCP server (`mcpServers: []`), so it has no tools at all — the model from "chat.side.model" set first when the session lists it and the agent doesn't keep a model as its own, one `session/prompt` (the system prompt ahead of the words), its text collected, the process stopped. Sixty seconds at most, as `PiOnce`. Claude Code's session is not persisted (`persistSession: false`); every one-shot runs in one fixed empty folder of its own.
+- An agent that keeps every session in its own list (opencode, omp, grok, hermes, gemini, cursor, kimi) gets one there for each one-shot, which Settings › AI says.
 
 ## Phases
 
