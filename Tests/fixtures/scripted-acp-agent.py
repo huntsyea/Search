@@ -58,6 +58,9 @@ class Scripted:
         self.mcp_server = None
         self.mcp = None
         self.mcp_id = 0
+        # Sign-in: the methods initialize lists, and which one counts as done.
+        self.auth = scenario.get("auth")
+        self.signed_in = False
 
     # ----- transport -----
 
@@ -128,8 +131,20 @@ class Scripted:
         rid = message.get("id")
         params = message.get("params") or {}
         if method == "initialize":
-            self.answer(rid, self.scenario.get("initialize", DEFAULT_INITIALIZE))
+            result = dict(self.scenario.get("initialize", DEFAULT_INITIALIZE))
+            if self.auth:
+                result["authMethods"] = self.auth.get("methods", [])
+            self.answer(rid, result)
+        elif method == "authenticate":
+            if self.auth and params.get("methodId") == self.auth.get("accept"):
+                self.signed_in = True
+                self.answer(rid, {})
+            else:
+                self.fail(rid, -32000, "Wrong method")
         elif method == "session/new":
+            if self.auth and not self.signed_in:
+                self.fail(rid, -32000, "Authentication required")
+                return
             self.remember_mcp(params)
             spec = self.scenario.get("new", {"sessionId": "s-1"})
             if spec.get("hang"):
@@ -139,6 +154,9 @@ class Scripted:
             else:
                 self.answer(rid, spec)
         elif method == "session/load":
+            if self.auth and not self.signed_in:
+                self.fail(rid, -32000, "Authentication required")
+                return
             self.remember_mcp(params)
             spec = self.scenario.get("load", {})
             if "error" in spec:

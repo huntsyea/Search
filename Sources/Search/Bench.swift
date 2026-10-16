@@ -1477,6 +1477,19 @@ final class Bench {
                     answer(["error": "mode is ask or act"]); return
                 }
                 chat.mode = mode
+            case "agent":
+                // The chat's agent changed, before its first message. Its menu
+                // is filled in by the new agent, as the panel does.
+                let id = request["agent"] as? String ?? ""
+                guard Agents.shared.choice(id) != nil else { answer(["error": "no agent \(id)"]); return }
+                guard !chat.begun, chat.use(id) else { answer(["error": "the chat has begun"]); return }
+                chat.loadOptions()
+            case "signin":
+                // The person signed in with this method, from the card.
+                guard let method = request["method"] as? String else { answer(["error": "signin needs a method"]); return }
+                chat.signIn(with: method)
+            case "retry":
+                chat.retry()
             case "answer":
                 guard let choice = (request["choice"] as? String).flatMap(Chat.Choice.init(rawValue:)) else {
                     answer(["error": "answer is once, chat, always or deny"]); return
@@ -1498,6 +1511,9 @@ final class Bench {
             answer([
                 "title": current.title, "busy": current.busy, "status": current.status ?? "",
                 "session": current.session ?? "", "chats": Chats.all.map(\.title),
+                "agent": current.agentID, "agents": Agents.shared.visible.map(\.id),
+                "agentMenu": Agents.shared.visible.count > 1,
+                "signIn": current.signIn.map { ["agent": $0.agent, "methods": $0.methods.map(\.id)] } ?? NSNull(),
                 "mode": current.mode.rawValue, "acting": current.acting, "paused": current.paused,
                 "model": current.option(.model)?.current ?? "", "thinking": current.option(.thought)?.current ?? "",
                 "levels": current.option(.thought)?.choices.map(\.value) ?? [],
@@ -2624,6 +2640,15 @@ final class Bench {
             // Open or close the app's own panels, to reproduce what a person
             // did without a person.
             if let on = request["settings"] as? Bool { browser.tuning = on }
+            // Settings opened on a named page, for a test that wants to see it.
+            if let name = request["settingspage"] as? String {
+                guard let page = SettingsPanel.Page(rawValue: name) else {
+                    answer(["error": "settingspage needs one of: \(SettingsPanel.Page.allCases.map(\.rawValue).joined(separator: ", "))"])
+                    return
+                }
+                browser.settingsPage = page
+                browser.tuning = true
+            }
             if let on = request["passwords"] as? Bool, Store.testing { browser.managing = on }
             if let on = request["welcome"] as? Bool { browser.welcoming = on }
             if let on = request["history"] as? Bool { browser.recalling = on }

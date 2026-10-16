@@ -301,8 +301,9 @@ final class ACPChatTests: XCTestCase {
         made.chat.send("hi")
         await until { !made.chat.busy }
 
-        XCTAssertEqual(made.chat.items.last?.kind, .error)
-        XCTAssertEqual(made.chat.items.last?.text, "scripted needs you to sign in first.")
+        // The agent asked for a sign-in: the card, not an error line.
+        XCTAssertEqual(made.chat.signIn?.agent, "scripted")
+        XCTAssertFalse(made.chat.items.contains { $0.kind == .error })
     }
 
     func testTheAgentEndingMidAnswer() async throws {

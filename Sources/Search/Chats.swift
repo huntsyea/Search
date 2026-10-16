@@ -26,8 +26,17 @@ final class Chat: ObservableObject, Identifiable {
     @Published private(set) var items: [Item] = []
     /// From a message sent until pi says it has settled.
     @Published private(set) var busy = false
+    /// A chat that has been written in: its agent is fixed, and a start for
+    /// its menu alone doesn't count.
+    var begun: Bool { busy || !items.isEmpty }
     /// "Starting pi…" and the like, while there is no answer to show yet.
     @Published private(set) var status: String?
+    /// The agent asked the person to sign in, and how: the card over the box
+    /// shows it, and the message that asked is kept to send again.
+    @Published private(set) var signIn: AgentSignIn?
+    private var unsent: String?
+    /// Whether a message is waiting for a sign-in before it can be sent.
+    var hasUnsent: Bool { unsent != nil }
     var session: String?
     var updated: Date
     /// The window whose tabs the chat's tools act on.
@@ -72,10 +81,13 @@ final class Chat: ObservableObject, Identifiable {
     /// What the chat's agent offers, and what it uses: known once it runs.
     @Published private(set) var options: [AgentOption] = []
 
-    /// The chat's agent by name, as the panel says it: "Starting pi…".
-    var agentName: String { agent.name }
+    /// The chat's agent by name, as the panel says it: "Starting pi…", or
+    /// the name kept with a chat whose agent isn't here any more.
+    private(set) var agentName: String
+    /// Which agent the chat runs on: "pi", a known agent's id, or "custom.<uuid>".
+    private(set) var agentID: String
 
-    private let agent: ChatAgent
+    private var agent: ChatAgent
     private var link: AgentLink?
     /// The start whose agent the chat is listening to.
     private var current: UUID?
@@ -93,13 +105,21 @@ final class Chat: ObservableObject, Identifiable {
     private var history: [AgentSays] = []
     /// A session name heard before the link was held: given to it once it is.
     private var nameOnStart = false
+    /// This start is a new chat, not a reopened one, and this run hasn't
+    /// asked for the agent's remembered model yet.
+    private var startedFresh = false
+    private var askedRememberedModel = false
 
-    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask, agent: ChatAgent? = nil) {
+    init(id: UUID = UUID(), title: String = "New chat", session: String? = nil, updated: Date = Date(), mode: Mode = .ask,
+         agentID: String = "pi", agentName: String? = nil, agent: ChatAgent? = nil) {
         self.id = id
         self.title = title
         self.session = session
         self.updated = updated
-        self.agent = agent ?? .pi()
+        self.agentID = agentID
+        let built = agent ?? Agents.shared.chatAgent(agentID, name: agentName)
+        self.agent = built
+        self.agentName = agentName ?? built.name
         self.shown = session == nil
         // The stored value itself: through the setter, a chat loaded in act
         // mode would save the list while the list is still being loaded.
@@ -133,7 +153,14 @@ final class Chat: ObservableObject, Identifiable {
             } catch {
                 busy = false
                 status = nil
-                items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
+                if let wanted = error as? AgentSignIn {
+                    // The person is asked to sign in; their message is kept to
+                    // send again once they have. No error line: it isn't one.
+                    signIn = wanted
+                    unsent = words
+                } else {
+                    items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
+                }
             }
         }
     }
@@ -243,12 +270,19 @@ final class Chat: ObservableObject, Identifiable {
     /// The model menu: this chat's model. New chats start on the one chosen
     /// in Settings › AI.
     func choose(_ option: String, _ value: String) {
+        // What the person picked for this agent's model is used for its next
+        // chat too; pi's comes from Settings, so only the others are kept.
+        // An agent that keeps the model as its own default is left alone.
+        if agentID != "pi", option == self.option(.model)?.id, !Agents.shared.modelIsTheAgentsOwn(agentID) {
+            Agents.shared.remember(model: value, for: agentID)
+        }
         Task {
             do {
                 let link = try await ready()
                 try await link.set(option, to: value)
             } catch {
-                items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
+                if let wanted = error as? AgentSignIn { signIn = wanted }
+                else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
     }
@@ -258,6 +292,19 @@ final class Chat: ObservableObject, Identifiable {
     func loadOptions() {
         guard options.isEmpty else { return }
         Task { _ = try? await ready(quietly: true) }
+    }
+
+    /// A new chat on an agent that isn't pi starts on the model that agent's
+    /// last chat used, when there is one: set once, as the menu would.
+    private func useRememberedModel() {
+        guard agentID != "pi", startedFresh, !askedRememberedModel,
+              !Agents.shared.modelIsTheAgentsOwn(agentID) else { return }
+        askedRememberedModel = true
+        guard let remembered = Agents.model(for: agentID),
+              let model = option(.model),
+              remembered != model.current,
+              model.choices.contains(where: { $0.value == remembered }) else { return }
+        choose(model.id, remembered)
     }
 
     /// A tab the agent opened goes in the chat's group, when groups are on,
@@ -302,9 +349,55 @@ final class Chat: ObservableObject, Identifiable {
                 status = nil
             } catch {
                 status = nil
-                items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
+                if let wanted = error as? AgentSignIn { signIn = wanted }
+                else { items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription)) }
             }
         }
+    }
+
+    /// The chat's agent changed, before anything was sent: no message, no
+    /// session, nothing busy. A link started already (the model menu starts
+    /// one) is let go of, and the agent is built again from the new choice.
+    /// False when it is too late to change.
+    @discardableResult
+    func use(_ id: String) -> Bool {
+        guard !begun else { return false }
+        close()
+        agentID = id
+        if let kept = Agents.shared.choice(id)?.name ?? Agents.keptName(id) { agentName = kept }
+        agent = Agents.shared.chatAgent(id, name: agentName)
+        options = []
+        // The old agent opened a session as it started, only for its menu:
+        // it is the agent's and empty, so it is let go of, not kept.
+        session = nil
+        return true
+    }
+
+    /// The person signed in with `method`: remembered for this agent's next
+    /// chats, and this one's agent built again so it signs in as it starts,
+    /// then the message that asked is sent again.
+    func signIn(with method: String) {
+        Agents.shared.remember(signIn: method, for: agentID)
+        close()
+        agent = Agents.shared.chatAgent(agentID, name: agentName)
+        signIn = nil
+        retry()
+    }
+
+    /// Try the thing that wanted a sign-in again: the message kept when it
+    /// failed, sent once more. Nothing when there was none.
+    func retry() {
+        signIn = nil
+        guard let text = unsent else { return }
+        unsent = nil
+        send(text)
+    }
+
+    /// The person said no to signing in: the card goes, and the kept message
+    /// with it.
+    func dismissSignIn() {
+        signIn = nil
+        unsent = nil
     }
 
     /// pi let go of: closed, deleted, or idle. A chat closed while working
@@ -315,6 +408,9 @@ final class Chat: ObservableObject, Identifiable {
         let link = self.link
         self.link = nil
         current = nil
+        // A start still in flight is forgotten too, so the next look starts
+        // the agent now chosen; the old start stops its own link when it lands.
+        starting = nil
         link?.stop()
         settle()
     }
@@ -339,19 +435,28 @@ final class Chat: ObservableObject, Identifiable {
         // Asked again while starting (the model menu, then a message): the
         // one agent being started, not a second.
         if let starting { return try await starting.value }
+        // The newest start's own token, so an earlier ready() that returns
+        // later can't clear the one that has taken its place.
+        startToken += 1
+        let token = startToken
         let start = Task { try await launch() }
         starting = start
-        defer { starting = nil }
+        defer { if startToken == token { starting = nil } }
         return try await start.value
     }
 
     private var starting: Task<AgentLink, Error>?
+    private var startToken = 0
 
     private func launch() async throws -> AgentLink {
         let start = UUID()
         current = start
         endedStarting = nil
         history = []
+        // A chat with no session is a new one: this start may take the
+        // agent's remembered model, and hasn't asked for it yet.
+        startedFresh = session == nil
+        askedRememberedModel = false
         // The history a start says before returning is the session's, kept
         // aside until the start succeeds: a start that failed shows none of it.
         replaying = start
@@ -492,13 +597,17 @@ final class Chat: ObservableObject, Identifiable {
             // The session can be said while the link isn't held yet: the name
             // is given once it is.
             if let link { link.name(title) } else { nameOnStart = true }
-            Chats.remember(self)
+            // A session alone doesn't list a chat: an agent started only for
+            // its menu mustn't appear in the list with nothing in it. A chat
+            // already listed is written down again with its session.
+            if Chats.all.contains(where: { $0 === self }) { Chats.save() }
         case let .named(name):
             title = name
         case let .status(text):
             status = text
         case let .options(list):
             options = list
+            useRememberedModel()
         case .tool, .cancel, .exit:
             break
         }
@@ -537,6 +646,8 @@ enum Chats {
     /// what to do with the page and name chats (empty: pi's default), and
     /// whether suggestions are made at all.
     static let modelKey = "chat.model"
+    /// Settings › AI: the agent new chats start on (pi).
+    static let agentKey = "chat.agent"
     static let suggestModelKey = "chat.suggest.model"
     static let titleModelKey = "chat.title.model"
     static let suggestsKey = "chat.suggests"
@@ -565,12 +676,21 @@ enum Chats {
         var session: String?
         var updated: Date
         var mode: String?
+        var agent: String?
+        var agentName: String?
     }
 
     private(set) static var all: [Chat] = load()
 
-    /// A new chat, not listed until something is sent in it.
-    static func make() -> Chat { Chat() }
+    /// A new chat, not listed until something is sent in it. It starts on the
+    /// agent chosen in Settings › AI, when that one is found; pi otherwise.
+    static func make() -> Chat {
+        if let chosen = Store.settings.string(forKey: agentKey),
+           let choice = Agents.shared.visible.first(where: { $0.id == chosen }) {
+            return Chat(agentID: choice.id, agentName: choice.name)
+        }
+        return Chat()
+    }
 
     /// Listed, or listed again: put first, and written down.
     static func remember(_ chat: Chat) {
@@ -600,12 +720,14 @@ enum Chats {
               let entries = try? JSONDecoder().decode([Entry].self, from: data) else { return [] }
         return entries.sorted { $0.updated > $1.updated }
             .map { Chat(id: $0.id, title: $0.title, session: $0.session, updated: $0.updated,
-                        mode: $0.mode.flatMap(Chat.Mode.init(rawValue:)) ?? .ask) }
+                        mode: $0.mode.flatMap(Chat.Mode.init(rawValue:)) ?? .ask,
+                        agentID: $0.agent ?? "pi", agentName: $0.agentName) }
     }
 
     static func save() {
         let entries = all.filter { $0.session != nil || !$0.items.isEmpty }
-            .map { Entry(id: $0.id, title: $0.title, session: $0.session, updated: $0.updated, mode: $0.mode.rawValue) }
+            .map { Entry(id: $0.id, title: $0.title, session: $0.session, updated: $0.updated, mode: $0.mode.rawValue,
+                         agent: $0.agentID, agentName: $0.agentName) }
         let file = file
         Disk.write(file) { try? JSONEncoder().encode(entries) }
     }

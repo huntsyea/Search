@@ -325,6 +325,10 @@ final class Preferences: ObservableObject {
     @Published var chatModel: String {
         didSet { store.set(chatModel, forKey: Chats.modelKey) }
     }
+    /// Settings › AI: the agent new chats start on, by id (pi unless chosen).
+    @Published var chatAgent: String {
+        didSet { store.set(chatAgent, forKey: Chats.agentKey) }
+    }
     @Published var chatSuggestModel: String {
         didSet { store.set(chatSuggestModel, forKey: Chats.suggestModelKey) }
     }
@@ -466,6 +470,7 @@ final class Preferences: ObservableObject {
         let utility = store.object(forKey: "utility.width") as? Double ?? Double(Metrics.utility)
         utilityWidth = min(Metrics.utilityMax, max(Metrics.utilityMin, CGFloat(utility)))
         chatModel = store.string(forKey: Chats.modelKey) ?? ""
+        chatAgent = store.string(forKey: Chats.agentKey) ?? "pi"
         chatSuggestModel = store.string(forKey: Chats.suggestModelKey) ?? ""
         chatTitleModel = store.string(forKey: Chats.titleModelKey) ?? ""
         chatSuggests = store.object(forKey: Chats.suggestsKey) as? Bool ?? true
