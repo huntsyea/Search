@@ -249,6 +249,27 @@ final class DownloadLifecycleTests: XCTestCase {
         XCTAssertTrue(fixture.cookies("/private.bin").contains { $0?.contains("download-session=fixture-cookie") == true })
     }
 
+    /// A download started in code is kept before WebKit can ask where it goes,
+    /// however long the main thread is busy after asking for it. Holding the
+    /// main thread puts WebKit's handler and its question in line together; a
+    /// download kept one hop after the handler would be asked about first, with
+    /// no delegate, and cancelled.
+    func testADownloadStartedInCodeIsKeptBeforeWebKitAsks() async throws {
+        let tab = try await openFixturePage()
+        var started: WKDownload?
+        browser.download(URLRequest(url: fixture.url("/range.bin")), through: tab.web) { started = $0 }
+        // The main thread busy while WebKit answers: both of its calls wait behind this.
+        Thread.sleep(forTimeInterval: 1.5)
+        try await waitUntil { started != nil }
+        let download = try XCTUnwrap(started)
+        try await waitUntil { browser.fetches.entry(for: download) != nil }
+        let entry = try XCTUnwrap(browser.fetches.entry(for: download))
+        try await waitUntil { entry.completedBytes > 0 || entry.state != .downloading }
+        XCTAssertNotEqual(entry.state, .failed, "WebKit gave up on it: \(downloadsNow())")
+        XCTAssertGreaterThan(entry.completedBytes, 0, downloadsNow())
+        browser.cancelDownload(entry)
+    }
+
     private func openFixturePage() async throws -> BrowserTab {
         let tab = browser.open(URL(string: "about:blank")!, foreground: true)
         page = tab

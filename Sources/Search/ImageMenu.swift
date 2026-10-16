@@ -200,9 +200,7 @@ extension Browser {
     /// directly, since a context menu's "Download Image" never reaches
     /// WKNavigationDelegate to ask for one on its own.
     func downloadImage(at url: URL, from webView: WKWebView) {
-        webView.startDownload(using: URLRequest(url: url)) { [weak self] download in
-            self?.keep(download)
-        }
+        download(URLRequest(url: url), through: webView)
     }
 }
 

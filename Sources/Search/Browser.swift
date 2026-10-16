@@ -4486,6 +4486,20 @@ extension Browser: WKNavigationDelegate, WKUIDelegate {
         }
     }
 
+    /// A download asked for in code rather than by a page — an extension's
+    /// downloads.download, Download Image — kept inside WebKit's handler, so
+    /// its delegate is there before WebKit asks where the file goes. Kept one
+    /// hop later, a busy Mac let WebKit ask first, find no one, and cancel it.
+    func download(_ request: URLRequest, through webView: WKWebView,
+                  started: @escaping @MainActor (WKDownload) -> Void = { _ in }) {
+        webView.startDownload(using: request) { download in
+            MainActor.assumeIsolated {
+                self.keep(download, from: webView)
+                started(download)
+            }
+        }
+    }
+
     /// Pause an active download. WebKit's cancellation callback is the
     /// authoritative source of resume data and also owns cleanup if no
     /// delegate failure callback arrives.
