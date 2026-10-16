@@ -10,10 +10,24 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import split_view as sv  # noqa: E402
 
+
+
+def searched(address, site="reddit.com", words="coffee beans"):
+    """Whether `address` is the site's search for `words`. Read as an address,
+    not matched as text: Reddit sends a browser it doesn't know through a
+    check first, which comes back with its own parameters ahead of `q`
+    (`?solution=…&js_challenge=1&…&q=coffee+beans`) and the space as `+`."""
+    if not address:
+        return False
+    parts = urlsplit(address)
+    host = parts.hostname or ""
+    return (host == site or host.endswith("." + site)) and parts.path.rstrip("/") == "/search" \
+        and parse_qs(parts.query).get("q") == [words]
 
 def field(text):
     return sv.cmd({"do": "field", "text": text})
@@ -47,7 +61,8 @@ def main():
         s = site()
         t.ok("words after the chip: Reddit's search", s["offers"] and s["offers"][0][1] == "https://www.reddit.com/search/?q=coffee%20beans", s["offers"])
         s = site("go")
-        t.ok("Return searches Reddit, the chip goes", "reddit.com/search/?q=coffee%20beans" in (s["address"] + s["pending"]) and s["chip"] == "", s)
+        t.ok("Return searches Reddit", searched(s["address"]) or searched(s["pending"]), s)
+        t.ok("…and the chip goes", s["chip"] == "", s)
         field("yout"); time.sleep(0.2); site("tab")
         s = site("delete")
         t.ok("⌫ in the empty field takes the site out", s["chip"] == "" and s["editing"], s)
