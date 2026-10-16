@@ -434,7 +434,8 @@ final class ChatTests: XCTestCase {
 
         XCTAssertEqual(script.starts, [path.path])
         XCTAssertEqual(chat.items.map(\.kind),
-                       [.user, .assistant, .tool, .thinking, .tool, .thinking, .assistant, .user, .thinking, .assistant])
+                       [.user, .assistant, .tool, .thinking, .tool, .thinking, .assistant, .user, .thinking, .assistant, .note])
+        XCTAssertEqual(chat.items.last?.text, "Stopped.")
         XCTAssertEqual(chat.items[2].text, "Looked at 1 tab")
         XCTAssertTrue(chat.items[4].failed)
         XCTAssertTrue(chat.items[4].detail.hasPrefix("The person didn't allow that"))
@@ -445,6 +446,33 @@ final class ChatTests: XCTestCase {
         chat.open(in: browser)
         try? await Task.sleep(for: .milliseconds(100))
         XCTAssertEqual(script.sentTypes.filter { $0 == "get_messages" }.count, asked)
+    }
+
+    func testReopenedChatShowsWhatTheLiveOneShowed() async {
+        let (live, liveScript) = await sent()
+        liveScript.replay(PiTranscripts.events(PiTranscripts.toolTurn))
+        liveScript.replay(PiTranscripts.events(PiTranscripts.abortedTurn))
+
+        _ = NSApplication.shared
+        let browser = Browser(record: WindowRecord())
+        browsers.append(browser)
+        let path = FileManager.default.temporaryDirectory
+            .appendingPathComponent("chat-\(UUID().uuidString).jsonl")
+        FileManager.default.createFile(atPath: path.path, contents: Data())
+
+        let script = ScriptedPi()
+        script.answers["get_messages"] = PiTranscripts.messagesData
+        let reopened = Chat(title: "Test", session: path.path, pi: script.pi)
+        chats.append(reopened)
+        defer { try? FileManager.default.removeItem(at: path) }
+
+        reopened.open(in: browser)
+        await until { reopened.status == nil && !reopened.items.isEmpty }
+
+        func lines(_ chat: Chat) -> [String] {
+            chat.items.map { "\($0.kind)|\($0.text)|\($0.failed)|\($0.detail)" }
+        }
+        XCTAssertEqual(lines(live), lines(reopened))
     }
 
     func testGoneSessionFileStartsANewOne() async {
@@ -573,13 +601,55 @@ final class ChatTests: XCTestCase {
         XCTAssertFalse(chat.acting)
     }
 
+    func testClosingABusyChatSettlesIt() async {
+        let script = ScriptedPi()
+        let (chat, browser) = await busyChat(script)
+        let before = Set(browser.tabs.map(\.id))
+
+        let open = script.call("browser_open", ["url": "data:text/html,one"])
+        await until { chat.asking.count == 1 }
+        chat.answer(.once)
+        _ = await reply(open)
+        guard let tab = openedTab(browser, notIn: before) else {
+            return XCTFail("no tab was opened")
+        }
+        XCTAssertEqual(tab.agent, true)
+
+        let second = script.call("browser_open", ["url": "data:text/html,two"])
+        await until { chat.asking.count == 1 }
+
+        chat.pause()
+        let tabs = script.call("browser_tabs")
+        await until { chat.waitingSteps == 1 }
+
+        chat.close()
+
+        XCTAssertFalse(chat.busy)
+        XCTAssertFalse(chat.acting)
+        XCTAssertFalse(chat.paused)
+        XCTAssertTrue(chat.asking.isEmpty)
+        XCTAssertEqual(tab.agent, false)
+        guard let refused = await reply(second) else { return }
+        XCTAssertEqual(refused["isError"] as? Bool, true)
+        XCTAssertTrue(replyText(refused).hasPrefix("The person didn't allow that"))
+        guard let held = await reply(tabs) else { return }
+        XCTAssertEqual(held["isError"] as? Bool, true)
+        XCTAssertEqual(replyText(held), "Stopped.")
+        XCTAssertEqual(script.stops, 1)
+        XCTAssertFalse(chat.items.contains { $0.kind == .error })
+    }
+
     func testCloseStopsPi() async {
         // Closing a busy chat stops its pi, and letting go before stopping
         // means the exit isn't heard as pi ending on its own: no "pi stopped." line.
         let (busy, busyScript) = await sent()
         busy.close()
         XCTAssertEqual(busyScript.stops, 1)
+        XCTAssertFalse(busy.busy)
         XCTAssertFalse(busy.items.contains { $0.kind == .error })
+
+        busy.send("again")
+        await until { busyScript.starts.count == 2 }
 
         // A chat that is done and let go of starts a fresh pi on the next send.
         let (chat, script) = made()

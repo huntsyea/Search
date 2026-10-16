@@ -344,7 +344,8 @@ final class Chat: ObservableObject, Identifiable {
         }
     }
 
-    /// pi let go of: closed, deleted, or idle.
+    /// pi let go of: closed, deleted, or idle. A chat closed while working
+    /// is settled the same way, without an error line: the person closed it.
     func close() {
         // Let go first: the exit that stopping it brings is then not heard
         // as pi ending on its own, however soon it comes.
@@ -352,6 +353,7 @@ final class Chat: ObservableObject, Identifiable {
         self.link = nil
         current = nil
         link?.stop()
+        settle()
     }
 
     /// What the person is looking at, said ahead of what they typed: the
@@ -427,15 +429,9 @@ final class Chat: ObservableObject, Identifiable {
                 return
             }
             link = nil
-            dropAsks()
-            release(false)
-            unmark()
-            acting = false
-            if busy {
-                busy = false
-                items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "pi stopped: \($0)" } ?? "pi stopped."))
-            }
-            status = nil
+            let wasBusy = busy
+            settle()
+            if wasBusy { items.append(Item(id: UUID().uuidString, kind: .error, text: why.map { "pi stopped: \($0)" } ?? "pi stopped.")) }
         case .tool:
             // Answered where pi said it, so it still gets a reply.
             break
@@ -443,6 +439,18 @@ final class Chat: ObservableObject, Identifiable {
     }
 
     // MARK: - what pi says
+
+    /// The person's message is done with, however it ended: nothing is
+    /// busy, no act waits for an answer or a Resume, and the tabs acted on
+    /// are unmarked.
+    private func settle() {
+        busy = false
+        acting = false
+        dropAsks()
+        release(false)
+        unmark()
+        status = nil
+    }
 
     private func handle(_ event: [String: Any]) {
         switch event["type"] as? String {
@@ -472,15 +480,7 @@ final class Chat: ObservableObject, Identifiable {
         case "message_end":
             guard let message = event["message"] as? [String: Any], message["role"] as? String == "assistant" else { return }
             for key in streaming.keys { finish(key) }
-            var stop = message["stopReason"] as? String
-            // Stopped between steps, the request in flight fails as an error:
-            // still the person's Stop, not a failure.
-            if stop == "error", (message["errorMessage"] as? String)?.localizedCaseInsensitiveContains("aborted") == true { stop = "aborted" }
-            if stop == "error" {
-                items.append(Item(id: UUID().uuidString, kind: .error, text: message["errorMessage"] as? String ?? "The model couldn't answer."))
-            } else if stop == "aborted" {
-                items.append(Item(id: UUID().uuidString, kind: .note, text: "Stopped."))
-            }
+            if let end = Chat.ending(message) { items.append(Item(id: UUID().uuidString, kind: end.kind, text: end.text)) }
         case "tool_execution_start":
             guard let call = event["toolCallId"] as? String else { return }
             let name = event["toolName"] as? String ?? ""
@@ -502,16 +502,25 @@ final class Chat: ObservableObject, Identifiable {
         case "session_info_changed":
             if let name = event["name"] as? String, !name.isEmpty { title = name }
         case "agent_settled":
-            busy = false
-            acting = false
-            dropAsks()
-            release(false)
-            unmark()
-            status = nil
+            settle()
             updated = Date()
             Chats.remember(self)
         default:
             break
+        }
+    }
+
+    /// The line an assistant message ends on, live or reopened: the person's
+    /// Stop, or the model failing; none when it just finished.
+    private static func ending(_ message: [String: Any]) -> (kind: Item.Kind, text: String)? {
+        var stop = message["stopReason"] as? String
+        // Stopped between steps, the request in flight fails as an error:
+        // still the person's Stop, not a failure.
+        if stop == "error", (message["errorMessage"] as? String)?.localizedCaseInsensitiveContains("aborted") == true { stop = "aborted" }
+        switch stop {
+        case "error": return (.error, message["errorMessage"] as? String ?? "The model couldn't answer.")
+        case "aborted": return (.note, "Stopped.")
+        default: return nil
         }
     }
 
@@ -556,10 +565,7 @@ final class Chat: ObservableObject, Identifiable {
                         break
                     }
                 }
-                if message["stopReason"] as? String == "error",
-                   (message["errorMessage"] as? String)?.localizedCaseInsensitiveContains("aborted") != true {
-                    out.append(Item(id: "m\(n)-error", kind: .error, text: message["errorMessage"] as? String ?? "The model couldn't answer."))
-                }
+                if let end = Chat.ending(message) { out.append(Item(id: "m\(n)-end", kind: end.kind, text: end.text)) }
             case "toolResult":
                 guard let call = message["toolCallId"] as? String,
                       let at = out.firstIndex(where: { $0.id == "tool-" + call }) else { continue }
