@@ -313,20 +313,36 @@ final class DownloadLifecycleTests: XCTestCase {
         throw WaitError.timedOut
     }
 
+    /// Waits on the downloads, not on a clock: it gives up when nothing about
+    /// them has changed for `idle` seconds — the shape of a real hang — or
+    /// after two minutes in all. A busy machine makes a download slow, not
+    /// still, so a download that is still moving is never mistaken for a stuck
+    /// one.
     private func waitUntil(
-        timeout: TimeInterval = 15,
+        idle: TimeInterval = 15,
         file: StaticString = #filePath,
         line: UInt = #line,
         _ condition: @MainActor () -> Bool
     ) async throws {
-        let deadline = Date().addingTimeInterval(timeout)
-        while Date() < deadline {
+        let start = Date()
+        let cap = start.addingTimeInterval(120)
+        var last = downloadsNow()
+        var quietSince = Date()
+        while Date().timeIntervalSince(quietSince) < idle && Date() < cap {
             try nothingShown(file: file, line: line)
             if condition() { return }
+            let now = downloadsNow()
+            if now != last {
+                last = now
+                quietSince = Date()
+            }
             try await Task.sleep(nanoseconds: 20_000_000)
         }
         if condition() { return }   // woken late with it already true: not a timeout
-        XCTFail("Timed out waiting for the download state: \(downloadsNow())", file: file, line: line)
+        let message = Date() >= cap
+            ? "Still not there after 120 s waiting for the download state: \(downloadsNow())"
+            : "Nothing moved for \(Int(idle)) s waiting for the download state: \(downloadsNow())"
+        XCTFail(message, file: file, line: line)
         throw WaitError.timedOut
     }
 
