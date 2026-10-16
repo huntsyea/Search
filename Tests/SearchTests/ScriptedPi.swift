@@ -192,5 +192,6 @@ func until(_ seconds: Double = 5, file: StaticString = #filePath, line: UInt = #
         if condition() { return }
         try? await Task.sleep(for: .milliseconds(10))
     }
+    if condition() { return }   // woken late with it already true: not a timeout
     XCTFail("timed out", file: file, line: line)
 }

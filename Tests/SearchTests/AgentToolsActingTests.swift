@@ -19,18 +19,8 @@ final class AgentToolsActingTests: XCTestCase {
 
     override class func setUp() {
         // A test world of its own, never the person's profile.
-        setenv("SEARCH_PROBE", "agent-tools-\(getpid())", 1)
+        TestWorld.enter()
         super.setUp()
-    }
-
-    override class func tearDown() {
-        Disk.drain()
-        if let world = Store.world {
-            let suite = "com.officecommun.search.test.\(world)"
-            UserDefaults.standard.removePersistentDomain(forName: suite)
-            try? FileManager.default.removeItem(at: Store.folder)
-        }
-        super.tearDown()
     }
 
     override func setUp() async throws {
@@ -309,6 +299,7 @@ final class AgentToolsActingTests: XCTestCase {
             if condition() { return }
             try await Task.sleep(nanoseconds: 20_000_000)
         }
+        if condition() { return }   // woken late with it already true: not a timeout
         XCTFail("Timed out waiting for the agent tools")
         throw WaitError.timedOut
     }

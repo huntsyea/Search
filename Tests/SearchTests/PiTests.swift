@@ -41,6 +41,7 @@ final class PiTests: XCTestCase {
             }
             Thread.sleep(forTimeInterval: 0.05)
         }
+        if let text = try? String(contentsOf: file, encoding: .utf8), !text.isEmpty { return text }   // woken late with it already true: not a timeout
         XCTFail("\(name) was never written")
         throw NSError(domain: "PiTests", code: 1, userInfo: [NSLocalizedDescriptionKey: "\(name) was never written"])
     }
