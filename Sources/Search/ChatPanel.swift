@@ -230,14 +230,14 @@ private struct ChatBody: View {
     /// The choice is also where new chats start.
     private var modelMenu: some View {
         Menu {
-            let model = chat.option("model")
+            let model = chat.option(.model)
             if model?.choices.isEmpty ?? true {
                 Text("Starting \(chat.agentName)…")
             }
             // An agent may name no provider: those choices come first, plain.
             ForEach(model?.choices.filter { $0.group == nil } ?? []) { choice in
                 Button {
-                    chat.choose("model", choice.value)
+                    chat.choose(model?.id ?? "model", choice.value)
                 } label: {
                     if choice.value == model?.current { Label(choice.name, systemImage: "checkmark") } else { Text(choice.name) }
                 }
@@ -246,19 +246,19 @@ private struct ChatBody: View {
                 Section(provider) {
                     ForEach(model?.choices.filter { $0.group == provider } ?? []) { choice in
                         Button {
-                            chat.choose("model", choice.value)
+                            chat.choose(model?.id ?? "model", choice.value)
                         } label: {
                             if choice.value == model?.current { Label(choice.name, systemImage: "checkmark") } else { Text(choice.name) }
                         }
                     }
                 }
             }
-            if let thinking = chat.option("thinking"), !thinking.choices.isEmpty {
+            if let thinking = chat.option(.thought), !thinking.choices.isEmpty {
                 Divider()
                 Section(thinking.name) {
                     ForEach(thinking.choices) { choice in
                         Button {
-                            chat.choose("thinking", choice.value)
+                            chat.choose(thinking.id, choice.value)
                         } label: {
                             if choice.value == thinking.current { Label(choice.name, systemImage: "checkmark") } else { Text(choice.name) }
                         }
@@ -286,12 +286,12 @@ private struct ChatBody: View {
 
     private var providers: [String] {
         var seen = Set<String>()
-        return (chat.option("model")?.choices ?? []).compactMap { $0.group }.filter { seen.insert($0).inserted }
+        return (chat.option(.model)?.choices ?? []).compactMap { $0.group }.filter { seen.insert($0).inserted }
     }
 
     private var modelLabel: String {
-        guard let model = chat.option("model"), let chosen = model.chosen else { return "Model" }
-        if let level = chat.option("thinking")?.current, level != "off" { return "\(chosen.name) · \(level)" }
+        guard let model = chat.option(.model), let chosen = model.chosen else { return "Model" }
+        if let level = chat.option(.thought)?.current, level != "off" { return "\(chosen.name) · \(level)" }
         return chosen.name
     }
 

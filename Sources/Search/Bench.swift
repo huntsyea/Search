@@ -1463,15 +1463,15 @@ final class Bench {
                 chat.resume()
             case "model":
                 let key = request["model"] as? String ?? ""
-                guard let model = chat.option("model"), !model.choices.isEmpty else {
+                guard let model = chat.option(.model), !model.choices.isEmpty else {
                     answer(["error": "pi hasn't said its models yet"]); return
                 }
                 guard model.choices.contains(where: { $0.value == key }) else {
                     answer(["error": "no model \(key)"]); return
                 }
-                chat.choose("model", key)
+                chat.choose(model.id, key)
             case "thinking":
-                chat.choose("thinking", request["level"] as? String ?? "")
+                chat.choose(chat.option(.thought)?.id ?? "thinking", request["level"] as? String ?? "")
             case "mode":
                 guard let mode = (request["mode"] as? String).flatMap(Chat.Mode.init(rawValue:)) else {
                     answer(["error": "mode is ask or act"]); return
@@ -1499,9 +1499,9 @@ final class Bench {
                 "title": current.title, "busy": current.busy, "status": current.status ?? "",
                 "session": current.session ?? "", "chats": Chats.all.map(\.title),
                 "mode": current.mode.rawValue, "acting": current.acting, "paused": current.paused,
-                "model": current.option("model")?.current ?? "", "thinking": current.option("thinking")?.current ?? "",
-                "levels": current.option("thinking")?.choices.map(\.value) ?? [],
-                "models": current.option("model")?.choices.map(\.value) ?? [], "sites": Chat.alwaysSites,
+                "model": current.option(.model)?.current ?? "", "thinking": current.option(.thought)?.current ?? "",
+                "levels": current.option(.thought)?.choices.map(\.value) ?? [],
+                "models": current.option(.model)?.choices.map(\.value) ?? [], "sites": Chat.alwaysSites,
                 "marked": browser.tabs.filter(\.agent).map(\.label),
                 "pills": PageSuggestions.shared.pills, "pillsFor": PageSuggestions.shared.address ?? "",
                 "pillsLoading": PageSuggestions.shared.loading,

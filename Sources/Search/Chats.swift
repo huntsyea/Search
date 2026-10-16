@@ -236,9 +236,9 @@ final class Chat: ObservableObject, Identifiable {
 
     // MARK: - options
 
-    /// One of the agent's options by `id` — "model", "thinking" — when it
-    /// has said it.
-    func option(_ id: String) -> AgentOption? { options.first { $0.id == id } }
+    /// One of the agent's options by `category` — the model, how hard it
+    /// thinks — when it has said one.
+    func option(_ category: AgentOption.Category) -> AgentOption? { options.first { $0.category == category } }
 
     /// The model menu: this chat's model. New chats start on the one chosen
     /// in Settings › AI.
