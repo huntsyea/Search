@@ -31,7 +31,7 @@ The chat's pi as tests give it: it answers the chat's commands from a table and 
 _Avoid_: mock chat, stub agent
 
 **Settled**:
-pi has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on.
+pi has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on. Closing a chat while it works settles it too.
 _Avoid_: done, idle, finished (a step finishes; a message settles)
 
 ## The chat's browser tools
