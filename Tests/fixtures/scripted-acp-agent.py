@@ -132,6 +132,8 @@ class Scripted:
         elif method == "session/new":
             self.remember_mcp(params)
             spec = self.scenario.get("new", {"sessionId": "s-1"})
+            if spec.get("hang"):
+                return
             if "error" in spec:
                 self.send({"jsonrpc": "2.0", "id": rid, "error": spec["error"]})
             else:

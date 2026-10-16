@@ -98,8 +98,9 @@ struct ChatAgent {
     let name: String
     /// The agent started on `session`, or on a new session when nil or when
     /// the agent no longer has it, with `hear` told everything it says from
-    /// then on — the session's history first.
-    var start: (_ session: String?, _ hear: @escaping (AgentSays) -> Void) async throws -> AgentLink
+    /// then on — the session's history first. `chat` is the chat's id, which
+    /// an agent that keeps sessions by folder runs in.
+    var start: (_ chat: UUID, _ session: String?, _ hear: @escaping (AgentSays) -> Void) async throws -> AgentLink
     /// A chat's name, in a few words, from its first message and the page it
     /// was sent on; nil when none came.
     var title: (_ words: String, _ page: String?) async -> String?

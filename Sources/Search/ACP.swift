@@ -49,15 +49,25 @@ final class ACPConnection: @unchecked Sendable {
     }
 
     /// A request, and its result; throws its ACPError, or a ChildProcess.Failure "\(name) stopped" when the agent
-    /// ended first.
-    func request(_ method: String, _ params: [String: Any]) async throws -> Any {
+    /// ended first. Past `timeout`, it fails as one that didn't answer.
+    func request(_ method: String, _ params: [String: Any], timeout: TimeInterval? = nil) async throws -> Any {
         let id = newID()
         let message: [String: Any] = ["jsonrpc": "2.0", "id": id, "method": method, "params": params]
         ACPConnection.recorder?("out", message)
+        let name = name
         return try await withCheckedThrowingContinuation { continuation in
             lock.lock()
             waiting[id] = { continuation.resume(with: $0) }
             lock.unlock()
+            if let timeout {
+                DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { [weak self] in
+                    guard let self else { return }
+                    self.lock.lock()
+                    let done = self.waiting.removeValue(forKey: id)
+                    self.lock.unlock()
+                    done?(.failure(ChildProcess.Failure(why: "\(name) didn't answer \(method)")))
+                }
+            }
             guard process.send(message) else {
                 lock.lock()
                 let done = waiting.removeValue(forKey: id)
@@ -175,11 +185,17 @@ struct ACPSpec {
     var sessionMeta: [String: Any]? = nil
 }
 
+/// How long a start waits on the agent; the session one is short in tests.
+enum ACPTimeouts {
+    nonisolated(unsafe) static var initialize: TimeInterval = 30
+    nonisolated(unsafe) static var session: TimeInterval = 60
+}
+
 extension ChatAgent {
     /// An ACP agent as a chat's agent.
     static func acp(_ spec: ACPSpec) -> ChatAgent {
-        ChatAgent(name: spec.name, start: { session, hear in
-            try await ACPAgent.start(spec, session, hear)
+        ChatAgent(name: spec.name, start: { chat, session, hear in
+            try await ACPAgent.start(spec, chat, session, hear)
         }, title: { words, page in
             await PiOnce.title(for: words, on: page)
         })
@@ -191,6 +207,17 @@ extension ChatAgent {
 /// ACP's. ACP's wire never leaves this file.
 @MainActor
 private final class ACPAgent: AgentLink {
+    /// One tool call as its updates build it up.
+    private struct ToolState {
+        var browser: String?
+        var title: String?
+        var rawInput: [String: Any]?
+        var content: Any?
+        /// What the agent said the tool does ("execute", "read", …), as its
+        /// first word on it or any later one.
+        var kind: String?
+    }
+
     private let spec: ACPSpec
     private let hear: (AgentSays) -> Void
     /// This agent's own, so one started again can't name an item an earlier one named.
@@ -202,16 +229,15 @@ private final class ACPAgent: AgentLink {
     private var hasEnded = false
     private var cancelling = false
     private var counter = 0
-    private var currentText: (id: String, kind: Chat.Item.Kind)?
+    private var currentText: (id: String, kind: Chat.Item.Kind, messageId: String?)?
     private var pendingUser: String?
     private var options: [AgentOption] = []
     /// Whether the model option came from the legacy `models` result, set with session/set_model.
     private var legacyModels = false
-    /// A browser tool's summary by the tool's name, FIFO: taken when its step ends.
+    /// A browser tool's summary by its name and arguments, FIFO: taken when its step ends.
     private var summaries: [String: [String]] = [:]
-    /// Each toolCallId's browser tool name, or nil for the agent's own; an
-    /// absent id was never seen.
-    private var toolNames: [String: String?] = [:]
+    /// Each tool call, by id, as its updates build it up.
+    private var tools: [String: ToolState] = [:]
     /// Summaries from an earlier run, by tool call id, for a reopened chat.
     private var keptSteps: [String: String] = [:]
 
@@ -220,12 +246,12 @@ private final class ACPAgent: AgentLink {
         self.hear = hear
     }
 
-    static func start(_ spec: ACPSpec, _ session: String?, _ hear: @escaping (AgentSays) -> Void) async throws -> AgentLink {
+    static func start(_ spec: ACPSpec, _ chat: UUID, _ session: String?, _ hear: @escaping (AgentSays) -> Void) async throws -> AgentLink {
         let agent = ACPAgent(spec, hear)
-        // Agents run in one empty folder of the chats' own, the same each
-        // time: an agent keeps its sessions by folder, and an empty one gives
-        // its own tools nothing of the person's.
-        let folder = Chats.folder.appendingPathComponent("Workspace", isDirectory: true)
+        // Agents run in an empty folder of the chat's own, the same each time:
+        // an agent keeps its sessions by folder, and an empty one gives its
+        // own tools nothing of the person's.
+        let folder = Chats.workspace(chat)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 
         // The browser's tools, over MCP, on a door only this chat reaches.
@@ -259,7 +285,7 @@ private final class ACPAgent: AgentLink {
                 "protocolVersion": 1,
                 "clientCapabilities": ["fs": ["readTextFile": false, "writeTextFile": false], "terminal": false],
                 "clientInfo": ["name": "search", "title": "Search", "version": version],
-            ])
+            ], timeout: ACPTimeouts.initialize)
             let capabilities = (initialized as? [String: Any])?["agentCapabilities"] as? [String: Any]
             agent.loadSession = capabilities?["loadSession"] as? Bool ?? false
 
@@ -271,11 +297,12 @@ private final class ACPAgent: AgentLink {
                 agent.session = session
                 agent.keptSteps = ACPAgent.readSteps(session)
                 sessionParams["sessionId"] = session
-                let result = try await connection.request("session/load", sessionParams)
+                let result = try await connection.request("session/load", sessionParams, timeout: ACPTimeouts.session)
                 agent.flushedUser()
+                agent.finishedText()
                 agent.learn(result as? [String: Any] ?? [:])
             } else {
-                let result = try await connection.request("session/new", sessionParams)
+                let result = try await connection.request("session/new", sessionParams, timeout: ACPTimeouts.session)
                 let answer = result as? [String: Any] ?? [:]
                 agent.session = answer["sessionId"] as? String
                 if let id = agent.session { agent.hear(.session(id)) }
@@ -300,31 +327,29 @@ private final class ACPAgent: AgentLink {
         guard let update = params["update"] as? [String: Any] else { return }
         switch update["sessionUpdate"] as? String {
         case "user_message_chunk":
+            // A message of the person's starts a text item of its own, however
+            // the last answer ended.
+            finishedText()
             pendingUser = (pendingUser ?? "") + chunk(update["content"])
         case "agent_message_chunk":
             flushedUser()
-            putChunk(.assistant, chunk(update["content"]))
+            putChunk(.assistant, chunk(update["content"]), messageId: update["messageId"] as? String)
         case "agent_thought_chunk":
             flushedUser()
-            putChunk(.thinking, chunk(update["content"]))
+            putChunk(.thinking, chunk(update["content"]), messageId: update["messageId"] as? String)
         case "tool_call":
             flushedUser()
             finishedText()
             let id = update["toolCallId"] as? String ?? ""
-            let name = browserTool(update)
-            toolNames[id] = name
-            if let name {
-                hear(.toolStarted(id: id, name: name, args: update["rawInput"] as? [String: Any] ?? [:]))
-            } else {
-                hear(.toolStarted(id: id, name: update["title"] as? String ?? "A tool of its own", args: [:]))
-            }
+            if tools[id] == nil { startTool(id, update) } else { mergeTool(id, update) }
             if let status = update["status"] as? String, status == "completed" || status == "failed" {
-                endTool(id, failed: status == "failed", content: update["content"])
+                endTool(id, failed: status == "failed")
             }
         case "tool_call_update":
-            guard let id = update["toolCallId"] as? String,
-                  let status = update["status"] as? String, status == "completed" || status == "failed" else { return }
-            endTool(id, failed: status == "failed", content: update["content"])
+            let id = update["toolCallId"] as? String ?? ""
+            if tools[id] == nil { startTool(id, update) } else { mergeTool(id, update) }
+            guard let status = update["status"] as? String, status == "completed" || status == "failed" else { return }
+            endTool(id, failed: status == "failed")
         case "config_option_update":
             if let list = update["configOptions"] { learn(["configOptions": list]) }
         case "session_info_update":
@@ -347,12 +372,14 @@ private final class ACPAgent: AgentLink {
     }
 
     /// Words of the answer: put in the item streaming now when it is the same
-    /// kind, else in a new one, the last being done.
-    private func putChunk(_ kind: Chat.Item.Kind, _ text: String) {
-        if currentText?.kind != kind {
+    /// message and kind, else in a new one, the last being done.
+    private func putChunk(_ kind: Chat.Item.Kind, _ text: String, messageId: String?) {
+        let changed = currentText?.kind != kind
+            || (messageId != nil && currentText?.messageId != messageId)
+        if changed {
             finishedText()
             counter += 1
-            currentText = (id: "\(run)-\(counter)", kind: kind)
+            currentText = (id: "\(run)-\(counter)", kind: kind, messageId: messageId)
         }
         if let currentText {
             hear(.text(id: currentText.id, kind: kind, text: text, whole: false, done: false))
@@ -365,14 +392,39 @@ private final class ACPAgent: AgentLink {
         currentText = nil
     }
 
+    /// A step begun: what the agent said of it, kept as its updates come.
+    private func startTool(_ id: String, _ update: [String: Any]) {
+        let browser = browserTool(update)
+        let title = update["title"] as? String
+        let rawInput = update["rawInput"] as? [String: Any]
+        tools[id] = ToolState(browser: browser, title: title, rawInput: rawInput, content: update["content"],
+                              kind: update["kind"] as? String)
+        if let browser {
+            hear(.toolStarted(id: id, name: browser, args: rawInput ?? [:]))
+        } else {
+            hear(.toolStarted(id: id, name: title ?? "A tool of its own", args: [:]))
+        }
+    }
+
+    /// What later updates say of a step already begun.
+    private func mergeTool(_ id: String, _ update: [String: Any]) {
+        guard var state = tools[id] else { return }
+        if let title = update["title"] as? String { state.title = title }
+        if let rawInput = update["rawInput"] as? [String: Any] { state.rawInput = rawInput }
+        if let content = update["content"] { state.content = content }
+        if let kind = update["kind"] as? String { state.kind = kind }
+        if state.browser == nil, let browser = browserTool(update) { state.browser = browser }
+        tools[id] = state
+    }
+
     /// A step finished: its line from the browser tool's own answer when it was
     /// one, else what the agent said.
-    private func endTool(_ id: String, failed: Bool, content: Any?) {
-        guard let entry = toolNames[id] else { return }
-        var detail = toolDetail(content)
+    private func endTool(_ id: String, failed: Bool) {
+        guard let state = tools[id] else { return }
+        var detail = toolDetail(state.content)
         var summary: String?
-        if let name = entry {
-            if let live = takeSummary(name) {
+        if let name = state.browser {
+            if let live = takeSummary(name, state.rawInput) {
                 summary = live
                 recordStep(id, live)
             } else {
@@ -384,42 +436,52 @@ private final class ACPAgent: AgentLink {
         hear(.toolEnded(id: id, failed: failed, summary: summary, detail: detail))
     }
 
-    private func takeSummary(_ name: String) -> String? {
-        guard var list = summaries[name], !list.isEmpty else { return nil }
+    /// The summary for a browser tool's call: its own when the arguments are
+    /// known, else the only one waiting for that tool.
+    private func takeSummary(_ name: String, _ rawInput: [String: Any]?) -> String? {
+        if let rawInput {
+            let key = ACPAgent.summaryKey(name, rawInput)
+            guard var list = summaries[key], !list.isEmpty else { return nil }
+            let first = list.removeFirst()
+            summaries[key] = list
+            return first
+        }
+        let keys = summaries.keys.filter { $0.hasPrefix(name + "|") }
+        let waiting = keys.reduce(0) { $0 + (summaries[$1]?.count ?? 0) }
+        guard waiting == 1, let key = keys.first(where: { !(summaries[$0]?.isEmpty ?? true) }) else { return nil }
+        var list = summaries[key] ?? []
         let first = list.removeFirst()
-        summaries[name] = list
+        summaries[key] = list
         return first
     }
 
-    /// Where a reopened chat's step lines are kept, beside the chats.
-    private static func stepsFile(_ session: String) -> URL {
-        let safe = String(session.map { character -> Character in
-            character.isASCII && (character.isLetter || character.isNumber) || character == "_" || character == "-"
-                ? character : "_"
-        })
-        return Chats.folder.appendingPathComponent("Steps", isDirectory: true).appendingPathComponent(safe + ".json")
+    /// A tool and its arguments, as one key: the same tool with other
+    /// arguments is another call, and its line is another line.
+    private static func summaryKey(_ name: String, _ args: [String: Any]) -> String {
+        let data = (try? JSONSerialization.data(withJSONObject: args, options: [.sortedKeys])) ?? Data()
+        return name + "|" + (String(data: data, encoding: .utf8) ?? "")
     }
 
     private static func readSteps(_ session: String) -> [String: String] {
-        guard let data = try? Data(contentsOf: stepsFile(session)),
+        guard let data = try? Data(contentsOf: Chats.stepsFile(session)),
               let steps = try? JSONDecoder().decode([String: String].self, from: data) else { return [:] }
         return steps
     }
 
-    /// Keep a tool call's line with the chat's session, for when it is reopened.
+    /// Keep a tool call's line with the chat's session, for when it is
+    /// reopened: the whole of what is kept, so a write that follows another
+    /// loses nothing.
     private func recordStep(_ id: String, _ summary: String) {
         guard let session else { return }
-        let file = ACPAgent.stepsFile(session)
-        Disk.write(file) {
-            let kept = (try? Data(contentsOf: file)).flatMap { try? JSONDecoder().decode([String: String].self, from: $0) } ?? [:]
-            var steps = kept
-            steps[id] = summary
-            return try? JSONEncoder().encode(steps)
-        }
+        keptSteps[id] = summary
+        let snapshot = keptSteps
+        Disk.write(Chats.stepsFile(session)) { try? JSONEncoder().encode(snapshot) }
     }
 
     /// The browser's tool name an update names, if any: Claude's adapter says
-    /// it under `_meta`, the rest in the title (or a tool name).
+    /// it under `_meta`, the rest in the title (or a tool name). It must be
+    /// exactly one of Search's tools: a title that merely mentions one is the
+    /// agent's own words, not the tool.
     private func browserTool(_ update: [String: Any]) -> String? {
         var candidates: [String] = []
         if let meta = update["_meta"] as? [String: Any],
@@ -428,16 +490,9 @@ private final class ACPAgent: AgentLink {
         if let title = update["title"] as? String { candidates.append(title) }
         if let tool = update["toolName"] as? String { candidates.append(tool) }
         if let name = update["name"] as? String { candidates.append(name) }
-        let stripped = candidates.map { ACPAgent.stripped($0) }
-        // A known name the candidate equals or ends with, longest first; else
-        // one it merely contains.
-        for test in [{ (name: String, text: String) in text == name || text.hasSuffix(name) },
-                     { (name: String, text: String) in text.contains(name) }] {
-            var best: String?
-            for name in AgentTools.names where stripped.contains(where: { test(name, $0) }) {
-                if best.map({ name.count > $0.count }) ?? true { best = name }
-            }
-            if let best { return best }
+        for candidate in candidates {
+            let name = ACPAgent.stripped(candidate)
+            if AgentTools.names.contains(name) { return name }
         }
         return nil
     }
@@ -451,13 +506,21 @@ private final class ACPAgent: AgentLink {
         return text
     }
 
-    /// The text of a tool update's content blocks, joined.
+    /// The text of a tool update's content blocks, joined: a change or a
+    /// command run is said too, so it can't vanish.
     private func toolDetail(_ content: Any?) -> String {
         (content as? [[String: Any]] ?? []).compactMap { item -> String? in
-            guard item["type"] as? String == "content",
-                  let inner = item["content"] as? [String: Any],
-                  inner["type"] as? String == "text" else { return nil }
-            return inner["text"] as? String
+            switch item["type"] as? String {
+            case "content":
+                guard let inner = item["content"] as? [String: Any], inner["type"] as? String == "text" else { return nil }
+                return inner["text"] as? String
+            case "diff":
+                return "Changed \(item["path"] as? String ?? "")"
+            case "terminal":
+                return "Ran a command"
+            default:
+                return nil
+            }
         }.joined(separator: "\n")
     }
 
@@ -604,24 +667,36 @@ private final class ACPAgent: AgentLink {
         }
         let toolCall = params["toolCall"] as? [String: Any] ?? [:]
         let id = toolCall["toolCallId"] as? String ?? ""
-        let browser = knownBrowserTool(id) || browserTool(toolCall) != nil
-        // Search asks the person for a browser tool itself; an agent's own
-        // tools are refused, since it is given only the browser's.
-        let wanted = browser ? ["allow_once", "allow_always"] : ["reject_once", "reject_always"]
+        // The kind the request says, else the one the step was begun with:
+        // a request that leaves it out doesn't make a command harmless.
+        let kind = toolCall["kind"] as? String ?? tools[id]?.kind
+        // A title is the agent's words and could be a shell command's; only an
+        // exact name of one of Search's tools, of a kind that isn't running or
+        // changing anything of the Mac's, is let through, and only once.
+        let harmless = kind.map { ["other", "read", "fetch", "search"].contains($0) } ?? true
+        let browser = harmless && (knownBrowserTool(id) || browserTool(toolCall) != nil)
         let available = params["options"] as? [[String: Any]] ?? []
-        for kind in wanted {
-            if let option = available.first(where: { $0["kind"] as? String == kind }),
+        let allowed = browser ? firstOption(available, kinds: ["allow_once"]) : nil
+        let chosen = allowed ?? firstOption(available, kinds: ["reject_once", "reject_always"])
+        guard let chosen else {
+            respond(.success(["outcome": ["outcome": "cancelled"]]))
+            return
+        }
+        respond(.success(["outcome": ["outcome": "selected", "optionId": chosen]]))
+    }
+
+    private func firstOption(_ options: [[String: Any]], kinds: [String]) -> String? {
+        for kind in kinds {
+            if let option = options.first(where: { $0["kind"] as? String == kind }),
                let optionId = option["optionId"] as? String {
-                respond(.success(["outcome": ["outcome": "selected", "optionId": optionId]]))
-                return
+                return optionId
             }
         }
-        respond(.success(["outcome": ["outcome": "cancelled"]]))
+        return nil
     }
 
     private func knownBrowserTool(_ id: String) -> Bool {
-        if case .some(.some) = toolNames[id] { return true }
-        return false
+        tools[id]?.browser != nil
     }
 
     /// A tool call the agent makes: the chat runs it in its window, and its
@@ -629,9 +704,10 @@ private final class ACPAgent: AgentLink {
     private func called(_ call: [String: Any], _ givenUp: @escaping @MainActor () -> Bool,
                         _ reply: @escaping ([String: Any]) -> Void) {
         let name = call["name"] as? String ?? ""
+        let key = ACPAgent.summaryKey(name, call["args"] as? [String: Any] ?? [:])
         hear(.tool(call, givenUp: givenUp, reply: { [weak self] result in
             if let summary = (result["details"] as? [String: Any])?["summary"] as? String {
-                self?.summaries[name, default: []].append(summary)
+                self?.summaries[key, default: []].append(summary)
             }
             reply(result)
         }))

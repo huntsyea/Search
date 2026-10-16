@@ -85,7 +85,7 @@ extension ChatAgent {
     /// a scripted pi in tests.
     static func pi(_ pi: ChatPi? = nil) -> ChatAgent {
         let pi = pi ?? .rpc
-        return ChatAgent(name: "pi", start: { session, hear in
+        return ChatAgent(name: "pi", start: { _, session, hear in
             try await PiAgent.start(pi, session, hear)
         }, title: { words, page in
             await pi.title(words, page)

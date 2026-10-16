@@ -67,20 +67,28 @@ final class ACPChatTests: XCTestCase {
     }
 
     /// A chat on the scripted agent, with a browser for its tools.
-    private func made(_ scenario: [String: Any], session: String? = nil) throws -> Made {
+    private func made(_ scenario: [String: Any], session: String? = nil, mode: Chat.Mode = .ask,
+                      browser given: Browser? = nil) throws -> Made {
         let scenarioFile = folder.appendingPathComponent("scenario-\(UUID().uuidString).json")
         let log = folder.appendingPathComponent("log-\(UUID().uuidString).jsonl")
         try JSONSerialization.data(withJSONObject: scenario).write(to: scenarioFile)
         FileManager.default.createFile(atPath: log.path, contents: nil)
         _ = NSApplication.shared
-        let browser = Browser(record: WindowRecord())
-        browsers.append(browser)
-        let chat = Chat(title: "Test", session: session,
+        let browser = given ?? Browser(record: WindowRecord())
+        if given == nil { browsers.append(browser) }
+        let chat = Chat(title: "Test", session: session, mode: mode,
                         agent: .acp(ACPSpec(id: "scripted", name: "scripted", path: "/usr/bin/env",
                                             arguments: ["python3", Self.script.path, scenarioFile.path, log.path])))
         chats.append(chat)
         chat.browser = browser
         return Made(chat: chat, browser: browser, log: log)
+    }
+
+    /// The step lines kept for a chat's session.
+    private func steps(_ session: String) -> [String: String] {
+        guard let data = try? Data(contentsOf: Chats.stepsFile(session)),
+              let dict = try? JSONDecoder().decode([String: String].self, from: data) else { return [:] }
+        return dict
     }
 
     /// The log's lines, parsed. A half-written last line is let go.
@@ -309,5 +317,187 @@ final class ACPChatTests: XCTestCase {
 
         XCTAssertEqual(made.chat.items.last?.kind, .error)
         XCTAssertEqual(made.chat.items.last?.text, "scripted stopped: scripted agent exiting")
+    }
+
+    // MARK: - what may be let through
+
+    func testOnlyAnExactBrowserToolIsAllowed() async throws {
+        let made = try made([
+            "prompts": [
+                [["ask": ["toolCall": ["title": "search_browser_tabs", "kind": "execute"],
+                          "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                      ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]]],
+                [["ask": ["toolCall": ["title": "cat browser_read.txt"],
+                          "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                      ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]]],
+                [["ask": ["toolCall": ["title": "search_browser_tabs", "kind": "other"],
+                          "options": [["optionId": "k", "name": "Keep", "kind": "allow_always"],
+                                      ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]]],
+                // Begun as a command; its request leaves the kind out.
+                [["update": ["sessionUpdate": "tool_call", "toolCallId": "x1", "title": "search_browser_tabs",
+                             "kind": "execute", "status": "pending"]],
+                 ["ask": ["toolCall": ["toolCallId": "x1", "title": "search_browser_tabs"],
+                          "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                      ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]]],
+            ],
+        ])
+        for _ in 0..<4 {
+            made.chat.send("hi")
+            await until(5) { !made.chat.busy }
+        }
+        let outcomes = logged(made.log).compactMap { message -> String? in
+            let outcome = (message["result"] as? [String: Any])?["outcome"] as? [String: Any]
+            return outcome?["optionId"] as? String
+        }
+        XCTAssertEqual(outcomes, ["r", "r", "r", "r"])
+    }
+
+    // MARK: - items
+
+    func testAMessageStartsItsOwnItem() async throws {
+        let made = try made([
+            "load": ["updates": [
+                ["sessionUpdate": "user_message_chunk", "content": ["type": "text", "text": "Q1"]],
+                ["sessionUpdate": "agent_message_chunk", "content": ["type": "text", "text": "A1"]],
+                ["sessionUpdate": "user_message_chunk", "content": ["type": "text", "text": "Q2"]],
+                ["sessionUpdate": "agent_message_chunk", "content": ["type": "text", "text": "A2"]],
+            ]],
+            "prompts": [[["update": ["sessionUpdate": "agent_message_chunk", "content": ["type": "text", "text": "B"]]]]],
+        ], session: "s-9")
+        made.chat.open(in: made.browser)
+        await until { made.chat.items.count == 4 && !made.chat.busy && made.chat.status == nil }
+        XCTAssertEqual(made.chat.items.map(\.kind), [.user, .assistant, .user, .assistant])
+        XCTAssertEqual(made.chat.items.map(\.text), ["Q1", "A1", "Q2", "A2"])
+
+        // An answer after the load's last text is an item of its own.
+        made.chat.send("hi")
+        await until { !made.chat.busy }
+        XCTAssertEqual(made.chat.items.map(\.kind), [.user, .assistant, .user, .assistant, .user, .assistant])
+        XCTAssertEqual(made.chat.items.suffix(2).map(\.text), ["hi", "B"])
+    }
+
+    // MARK: - a start that hangs
+
+    func testAStartThatNeverAnswersGivesUp() async throws {
+        let old = ACPTimeouts.session
+        ACPTimeouts.session = 1
+        defer { ACPTimeouts.session = old }
+        let made = try made(["new": ["hang": true]])
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+        XCTAssertEqual(made.chat.items.last?.kind, .error)
+        XCTAssertTrue(made.chat.items.last?.text.contains("didn't answer session/new") ?? false,
+                      made.chat.items.last?.text ?? "")
+    }
+
+    // MARK: - steps kept for a reopen
+
+    func testThreeStepsAllKeepTheirSummaries() async throws {
+        let steps: [[String: Any]] = (1...3).flatMap { number -> [[String: Any]] in
+            [
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t\(number)",
+                            "title": "mcp__search__browser_tabs", "status": "pending", "rawInput": [:]]],
+                ["mcp": ["name": "browser_tabs", "arguments": [:]]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t\(number)", "status": "completed"]],
+            ]
+        }
+        let first = try made(["prompts": [steps]])
+        first.chat.send("hi")
+        await until { !first.chat.busy }
+        guard let expected = await summary("browser_tabs", for: first.chat) else { return XCTFail("no summary") }
+        await until(5) { self.steps("s-1").count == 3 }
+
+        let reopened = try made([
+            "load": ["updates": (1...3).map { number -> [String: Any] in
+                ["sessionUpdate": "tool_call", "toolCallId": "t\(number)",
+                 "title": "mcp__search__browser_tabs", "status": "completed", "rawInput": [:]]
+            }],
+        ], session: "s-1")
+        reopened.chat.open(in: reopened.browser)
+        await until { reopened.chat.items.filter { $0.kind == .tool }.count == 3 && !reopened.chat.busy && reopened.chat.status == nil }
+        XCTAssertEqual(reopened.chat.items.filter { $0.kind == .tool }.map(\.text), [expected, expected, expected])
+    }
+
+    // MARK: - summaries by their arguments
+
+    func testSummariesAreMatchedByTheirArguments() async throws {
+        _ = NSApplication.shared
+        let browser = Browser(record: WindowRecord())
+        browsers.append(browser)
+        let alpha = browser.open(URL(string: "data:text/html,%3Ctitle%3EALPHA%3C/title%3Eone")!, foreground: true, from: nil)
+        let beta = browser.open(URL(string: "data:text/html,%3Ctitle%3EBETA%3C/title%3Etwo")!, foreground: true, from: alpha)
+        await until(10) { alpha.built != nil && beta.built != nil && alpha.pageAddress != nil && beta.pageAddress != nil }
+        let tabA = AgentTools.short(alpha), tabB = AgentTools.short(beta)
+
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1", "title": "mcp__search__browser_read",
+                            "status": "pending", "rawInput": ["tab": tabA]]],
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t2", "title": "mcp__search__browser_read",
+                            "status": "pending", "rawInput": ["tab": tabB]]],
+                ["mcp": ["name": "browser_read", "arguments": ["tab": tabA]]],
+                ["mcp": ["name": "browser_read", "arguments": ["tab": tabB]]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t2", "status": "completed"]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t1", "status": "completed"]],
+            ]],
+        ], browser: browser)
+        made.chat.send("hi")
+        await until(30) { !made.chat.busy }
+        let t1 = made.chat.items.first { $0.id == "tool-t1" }
+        let t2 = made.chat.items.first { $0.id == "tool-t2" }
+        XCTAssertTrue(t1?.text.contains("ALPHA") ?? false, t1?.text ?? "")
+        XCTAssertTrue(t2?.text.contains("BETA") ?? false, t2?.text ?? "")
+    }
+
+    // MARK: - a tool's merging
+
+    func testAToolsContentIsKeptForItsFailedEnd() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t8", "title": "Run shell",
+                            "kind": "execute", "status": "pending"]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t8",
+                            "content": [["type": "content", "content": ["type": "text", "text": "it broke"]]]]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t8", "status": "failed"]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until { !made.chat.busy }
+        let tool = made.chat.items.first { $0.id == "tool-t8" }
+        XCTAssertTrue(tool?.failed ?? false)
+        XCTAssertEqual(tool?.detail, "it broke")
+    }
+
+    func testAToolUpdateForAnUnseenToolStillShowsDone() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t7", "title": "Some tool",
+                            "status": "completed"]],
+            ]],
+        ])
+        made.chat.send("hi")
+        await until { !made.chat.busy }
+        let tool = made.chat.items.first { $0.id == "tool-t7" }
+        XCTAssertNotNil(tool)
+        XCTAssertTrue(tool?.done ?? false)
+    }
+
+    // MARK: - a chat's own folder
+
+    func testEachChatRunsInItsOwnFolder() async throws {
+        let first = try made([:])
+        let second = try made([:])
+        first.chat.send("hi")
+        second.chat.send("hi")
+        await until(10) { !first.chat.busy && !second.chat.busy }
+
+        let firstNew = logged(first.log).first { $0["method"] as? String == "session/new" }
+        let secondNew = logged(second.log).first { $0["method"] as? String == "session/new" }
+        let firstCwd = (firstNew?["params"] as? [String: Any])?["cwd"] as? String
+        let secondCwd = (secondNew?["params"] as? [String: Any])?["cwd"] as? String
+        XCTAssertNotNil(firstCwd)
+        XCTAssertNotEqual(firstCwd, secondCwd)
+        XCTAssertTrue(firstCwd?.contains(first.chat.id.uuidString) ?? false, firstCwd ?? "")
+        XCTAssertTrue(secondCwd?.contains(second.chat.id.uuidString) ?? false, secondCwd ?? "")
     }
 }

@@ -357,7 +357,7 @@ final class Chat: ObservableObject, Identifiable {
         replaying = start
         let link: AgentLink
         do {
-            link = try await agent.start(session) { [weak self] said in
+            link = try await agent.start(id, session) { [weak self] said in
                 if case let .tool(call, givenUp, reply) = said {
                     // An agent let go of is told no; one the chat holds acts in its window.
                     guard let self, self.current == start else {
@@ -543,6 +543,20 @@ enum Chats {
     /// The model Sort Tabs asks (TabSort.swift); empty: pi's default.
     static let sortModelKey = "tabs.sort.model"
     static var sessions: URL { folder.appendingPathComponent("sessions", isDirectory: true) }
+    /// One chat's empty workspace folder, where an agent that keeps sessions
+    /// by folder runs: the same each time, so it finds its session again.
+    static func workspace(_ id: UUID) -> URL {
+        folder.appendingPathComponent("Workspaces", isDirectory: true).appendingPathComponent(id.uuidString, isDirectory: true)
+    }
+    /// Where an ACP chat's step lines are kept, by its session id with every
+    /// character outside [A-Za-z0-9_-] replaced by "_".
+    static func stepsFile(_ session: String) -> URL {
+        let safe = String(session.map { character -> Character in
+            character.isASCII && (character.isLetter || character.isNumber) || character == "_" || character == "-"
+                ? character : "_"
+        })
+        return folder.appendingPathComponent("Steps", isDirectory: true).appendingPathComponent(safe + ".json")
+    }
     private static var file: URL { folder.appendingPathComponent("chats.json") }
 
     private struct Entry: Codable {
@@ -565,13 +579,19 @@ enum Chats {
         save()
     }
 
-    /// Gone from the list, its pi stopped and its session file removed.
+    /// Gone from the list, its agent stopped, its session file removed (or
+    /// its ACP step lines), and its workspace folder.
     static func delete(_ chat: Chat) {
         chat.close()
         all.removeAll { $0 === chat }
-        if let session = chat.session, session.hasPrefix(sessions.path) {
-            try? FileManager.default.removeItem(atPath: session)
+        if let session = chat.session {
+            if session.hasPrefix(sessions.path) {
+                try? FileManager.default.removeItem(atPath: session)
+            } else {
+                try? FileManager.default.removeItem(at: stepsFile(session))
+            }
         }
+        try? FileManager.default.removeItem(at: workspace(chat.id))
         save()
     }
 

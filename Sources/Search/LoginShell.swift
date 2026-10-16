@@ -29,6 +29,14 @@ enum LoginShell {
         return path.map { $0 + "/" + name }.first { FileManager.default.isExecutableFile(atPath: $0) }
     }
 
+    /// Forget what the shell said, so the next look asks it again: a program
+    /// installed since Search started is found without a restart.
+    static func forget() {
+        lock.lock()
+        cached = nil
+        lock.unlock()
+    }
+
     /// The login shell's environment, read with `env -0` after a marker, so
     /// whatever a profile prints first is left out. Five seconds at most.
     private static func loginEnvironment() -> [String: String]? {

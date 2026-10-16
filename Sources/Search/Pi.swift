@@ -63,7 +63,11 @@ enum Pi {
         lock.lock()
         defer { lock.unlock() }
         if let found { return found }
-        guard let pi = LoginShell.find("pi") else { return nil }
+        guard let pi = LoginShell.find("pi") else {
+            // The shell's PATH may just have been missing pi: ask it again next time.
+            LoginShell.forget()
+            return nil
+        }
         found = (pi, LoginShell.environment)
         return found
     }

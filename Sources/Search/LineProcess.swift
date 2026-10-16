@@ -14,6 +14,9 @@ final class LineProcess: @unchecked Sendable {
     private var output: FileHandle?
     private var stdoutCarry = Data()
     private let lock = NSLock()
+    /// Writes to the program's stdin, one at a time: a program that has
+    /// stopped reading can't hold the main thread.
+    private let writeQueue = DispatchQueue(label: "search.line-process.write")
 
     var running: Bool { pid != 0 }
 
@@ -22,8 +25,8 @@ final class LineProcess: @unchecked Sendable {
         lock.lock()
         self.child = child
         pid = child.pid
-        lock.unlock()
         input = child.input
+        lock.unlock()
         output = child.output
 
         output?.readabilityHandler = { [weak self] handle in
@@ -50,12 +53,29 @@ final class LineProcess: @unchecked Sendable {
         onLine?(record)
     }
 
-    /// One object as a line on its stdin; false when it has gone.
+    /// One object as a line on its stdin; false when it has gone. The write
+    /// happens on a queue of its own: a full pipe waits there, not here.
     @discardableResult func send(_ object: Any) -> Bool {
-        guard let input, var data = try? JSONSerialization.data(withJSONObject: object) else { return false }
+        guard var data = try? JSONSerialization.data(withJSONObject: object) else { return false }
         data.append(0x0A)
-        do { try input.write(contentsOf: data) } catch { return false }
-        return true
+        lock.lock()
+        let input = self.input
+        if let input {
+            writeQueue.async { [weak self] in
+                do { try input.write(contentsOf: data) } catch { self?.closeInput() }
+            }
+        }
+        lock.unlock()
+        return input != nil
+    }
+
+    /// A write failed: the program has gone, so its input is closed too.
+    private func closeInput() {
+        lock.lock()
+        let input = self.input
+        self.input = nil
+        lock.unlock()
+        input?.closeFile()
     }
 
     /// Asked to stop: stdin closed is its orderly shutdown; `grace` seconds
@@ -63,14 +83,18 @@ final class LineProcess: @unchecked Sendable {
     /// SIGKILL, so even one that ignores the first still goes.
     func stop(grace: TimeInterval = 3) {
         // The child is taken under the lock, before stdin is closed: closing
-        // it can end its stdout, and `ended()` could clear `child` first.
+        // it can end its stdout, and `ended()` could clear `child` first. The
+        // close waits on the write queue, after whatever was queued for it;
+        // the signals don't, so a write stuck on a full pipe is freed when
+        // the program is signalled.
         lock.lock()
         let child = self.child
         let alive = pid != 0
+        let input = self.input
+        self.input = nil
+        if let input { writeQueue.async { input.closeFile() } }
         lock.unlock()
         guard let child, alive else { return }
-        try? input?.close()
-        input = nil
         DispatchQueue.global().asyncAfter(deadline: .now() + grace) {
             child.signal(SIGTERM)
         }
@@ -106,5 +130,10 @@ final class LineProcess: @unchecked Sendable {
         let child = self.child
         lock.unlock()
         child?.signal(SIGTERM)
+        if let child {
+            // Held until reaped: a connection dropped before its program
+            // ended leaves no zombie.
+            DispatchQueue.global().async { _ = child.wait() }
+        }
     }
 }
