@@ -108,6 +108,9 @@ final class Chat: ObservableObject, Identifiable {
     /// Why an agent ended before it was held, for whoever sent to report.
     private var endedStarting: String?
     private var opened = false
+    /// Bumped whenever the chat is closed or its agent is let go of: a set-up
+    /// that finishes after that must not retry into a chat that moved on.
+    private var life = 0
     /// Whether the session's history is on screen: a new chat has none, and
     /// a chat whose start failed has none yet.
     private var shown: Bool
@@ -329,10 +332,10 @@ final class Chat: ObservableObject, Identifiable {
                 _ = try await ready(quietly: true)
             } catch let wanted as AgentSignIn {
                 signIn = wanted
-                waiting = .load
+                if waiting == nil { waiting = .load }
             } catch let wanted as AgentNeedsSetUp {
                 setUp = wanted
-                waiting = .load
+                if waiting == nil { waiting = .load }
             } catch {
                 // Quiet: a menu is no reason to show an agent's failure.
             }
@@ -454,13 +457,19 @@ final class Chat: ObservableObject, Identifiable {
     func setUpAdapter() {
         guard let wanted = setUp else { return }
         setUp = nil
+        // What asked is retried only for the chat as it was: closed, deleted
+        // or switched while the install ran, it belongs to no one.
+        let mine = life
         Task {
+            guard life == mine else { return }
             status = "Setting up \(wanted.agent)…"
             do {
                 try await Adapters.setUp(wanted.adapter)
+                guard life == mine else { return }
                 status = nil
                 retry()
             } catch {
+                guard life == mine else { return }
                 status = nil
                 items.append(Item(id: UUID().uuidString, kind: .error, text: error.localizedDescription))
             }
@@ -477,6 +486,7 @@ final class Chat: ObservableObject, Identifiable {
     /// pi let go of: closed, deleted, or idle. A chat closed while working
     /// is settled the same way, without an error line: the person closed it.
     func close() {
+        life += 1
         // Let go first: the exit that stopping it brings is then not heard
         // as pi ending on its own, however soon it comes.
         let link = self.link

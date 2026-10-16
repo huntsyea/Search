@@ -244,6 +244,13 @@ struct ACPSpec {
     let path: String
     let arguments: [String]
     var environment: [String: String] = [:]
+    /// Variables to remove from the child's environment after the merge, for
+    /// an adapter whose own variable could run another binary (Codex's
+    /// CODEX_PATH, Claude Code's CLAUDE_CODE_EXECUTABLE).
+    var unsetEnvironment: [String] = []
+    /// The adapter shapes a structural tool identity is trusted from. Empty
+    /// for every agent whose adapter isn't known to send one.
+    var structuralTools: StructuralTools = []
     /// What session/new and session/load carry as `_meta`, for agents that take settings there (Claude's adapter:
     /// its own tools off). Nil: none.
     var sessionMeta: [String: Any]? = nil
@@ -255,13 +262,36 @@ struct ACPSpec {
     var signIn: String? = nil
 }
 
+/// The adapter shapes Search trusts a structural tool identity from: Codex
+/// names the server and tool, Claude Code its prefixed tool name. An adapter
+/// not listed here can never have its rawInput or meta taken for one of
+/// Search's tools.
+struct StructuralTools: OptionSet, Sendable, Equatable {
+    let rawValue: Int
+    static let codex = StructuralTools(rawValue: 1 << 0)
+    static let claude = StructuralTools(rawValue: 1 << 1)
+}
+
+extension ACPSpec {
+    /// The environment a started child gets: the login shell's, the spec's
+    /// own on top, and anything the spec unsets removed — an inherited
+    /// CODEX_PATH could otherwise run another binary.
+    func childEnvironment() -> [String: String] {
+        var environment = LoginShell.environment
+        self.environment.forEach { environment[$0] = $1 }
+        for name in unsetEnvironment { environment.removeValue(forKey: name) }
+        return environment
+    }
+}
+
 extension ACPSpec: Equatable {
     /// The same launch and environment. `sessionMeta` isn't compared: it holds
     /// agent-specific settings that aren't Equatable.
     static func == (a: ACPSpec, b: ACPSpec) -> Bool {
         a.id == b.id && a.name == b.name && a.path == b.path
             && a.arguments == b.arguments && a.environment == b.environment
-            && a.startOptions == b.startOptions
+            && a.startOptions == b.startOptions && a.structuralTools == b.structuralTools
+            && a.unsetEnvironment == b.unsetEnvironment
     }
 }
 
@@ -365,8 +395,7 @@ private final class ACPAgent: AgentLink {
         connection.onExit = { [weak agent] why in agent?.ended(why) }
         agent.connection = connection
 
-        var environment = LoginShell.environment
-        spec.environment.forEach { environment[$0] = $1 }
+        let environment = spec.childEnvironment()
 
         // How the agent can be signed in, from initialize: needed both to
         // sign in again with the method the person used before and to say how
@@ -510,7 +539,7 @@ private final class ACPAgent: AgentLink {
         let rawInput = ACPAgent.toolArguments(update)
         tools[id] = ToolState(browser: browser, title: title, rawInput: rawInput, content: update["content"],
                               kind: update["kind"] as? String,
-                              structural: ACPAgent.structuralBrowserTool(update) != nil)
+                              structural: structuralBrowserTool(update) != nil)
         if let browser {
             hear(.toolStarted(id: id, name: browser, args: rawInput ?? [:]))
         } else {
@@ -526,7 +555,11 @@ private final class ACPAgent: AgentLink {
         if let content = update["content"] { state.content = content }
         if let kind = update["kind"] as? String { state.kind = kind }
         if state.browser == nil, let browser = browserTool(update) { state.browser = browser }
-        if !state.structural, ACPAgent.structuralBrowserTool(update) != nil { state.structural = true }
+        // Recompute on anything that could identify it or contradict it: a
+        // later update naming another server or tool clears it.
+        if update["rawInput"] != nil || update["_meta"] != nil || update["title"] != nil {
+            state.structural = structuralBrowserTool(update) != nil
+        }
         tools[id] = state
     }
 
@@ -610,7 +643,7 @@ private final class ACPAgent: AgentLink {
     /// name. A title that merely mentions one is the agent's own words, not
     /// the tool.
     private func browserTool(_ update: [String: Any]) -> String? {
-        if let structural = ACPAgent.structuralBrowserTool(update) { return structural }
+        if let structural = structuralBrowserTool(update) { return structural }
         var candidates: [String] = []
         if let meta = update["_meta"] as? [String: Any],
            let claude = meta["claudeCode"] as? [String: Any],
@@ -625,26 +658,52 @@ private final class ACPAgent: AgentLink {
         return nil
     }
 
-    /// Whether an update is structurally one of Search's own tools: Codex
-    /// says `rawInput` server "search" and tool one of Search's names;
-    /// Claude's adapter says `_meta.claudeCode.toolName` as
-    /// "mcp__search__<name>". The agent named the tool itself, so this holds
-    /// whatever the title says.
-    private static func structuralBrowserTool(_ update: [String: Any]) -> String? {
-        if let rawInput = update["rawInput"] as? [String: Any],
-           rawInput["server"] as? String == "search",
-           let tool = rawInput["tool"] as? String,
-           AgentTools.names.contains(tool) {
-            return tool
-        }
-        if let meta = update["_meta"] as? [String: Any],
-           let claude = meta["claudeCode"] as? [String: Any],
-           let tool = claude["toolName"] as? String,
-           tool.hasPrefix("mcp__search__") {
-            let name = String(tool.dropFirst("mcp__search__".count))
-            if AgentTools.names.contains(name) { return name }
-        }
+    /// Whether an update is structurally one of Search's own tools, for the
+    /// adapters this spec trusts: Codex names the server and tool there and
+    /// marks the call as an MCP one; Claude's adapter names it as
+    /// "mcp__search__<name>". An adapter not trusted here never is, whatever
+    /// its rawInput or meta says.
+    private func structuralBrowserTool(_ update: [String: Any]) -> String? {
+        if spec.structuralTools.contains(.codex), let name = ACPAgent.codexNamesTool(update) { return name }
+        if spec.structuralTools.contains(.claude), let name = ACPAgent.claudeNamesTool(update) { return name }
         return nil
+    }
+
+    /// Codex's structural shape: the server and tool in `rawInput`, marked as
+    /// one of its MCP tool calls.
+    private static func codexNamesTool(_ update: [String: Any]) -> String? {
+        guard let meta = update["_meta"] as? [String: Any], meta["is_mcp_tool_call"] as? Bool == true else { return nil }
+        guard let rawInput = update["rawInput"] as? [String: Any],
+              rawInput["server"] as? String == "search",
+              let tool = rawInput["tool"] as? String,
+              AgentTools.names.contains(tool) else { return nil }
+        return tool
+    }
+
+    /// Claude's adapter's structural shape: the tool under its meta as
+    /// "mcp__search__<name>".
+    private static func claudeNamesTool(_ update: [String: Any]) -> String? {
+        guard let meta = update["_meta"] as? [String: Any],
+              let claude = meta["claudeCode"] as? [String: Any],
+              let tool = claude["toolName"] as? String,
+              tool.hasPrefix("mcp__search__") else { return nil }
+        let name = String(tool.dropFirst("mcp__search__".count))
+        return AgentTools.names.contains(name) ? name : nil
+    }
+
+    /// Whether a permission request is for one of Search's own tools: its own
+    /// toolCall says so, or — for Codex, whose request names no tool, only
+    /// that it approves one — the step it names is already known as
+    /// structural and the request is marked as an MCP approval.
+    private func requestIsStructural(_ toolCall: [String: Any], known: Bool) -> Bool {
+        if structuralBrowserTool(toolCall) != nil { return true }
+        if spec.structuralTools.contains(.codex),
+           let meta = toolCall["_meta"] as? [String: Any],
+           meta["is_mcp_tool_approval"] as? Bool == true,
+           known {
+            return true
+        }
+        return false
     }
 
     /// A candidate without the server's prefix, so "search_browser_tabs",
@@ -837,14 +896,16 @@ private final class ACPAgent: AgentLink {
         // The kind the request says, else the one the step was begun with:
         // a request that leaves it out doesn't make a command harmless.
         let kind = toolCall["kind"] as? String ?? tools[id]?.kind
-        // One of Search's own tools identified structurally — the agent named
-        // its server and tool, or Claude's prefixed name — is let through
-        // whatever kind it calls it: the kind is then the agent's label for a
-        // tool the catalogue asks the person about itself. One identified
-        // only by an exact name in a title is let through only when its kind
-        // runs nothing of the Mac's; a title that is the agent's own words is
-        // never enough. Allow once only, as the catalogue asks itself.
-        let structural = ACPAgent.structuralBrowserTool(toolCall) != nil || (tools[id]?.structural ?? false)
+        // One of Search's own tools identified structurally — the agent
+        // named its server and tool, or Claude's prefixed name — is let
+        // through whatever kind it calls it: the kind is then the agent's
+        // label for a tool the catalogue asks the person about itself. One
+        // identified only by an exact name in a title is let through only
+        // when its kind runs nothing of the Mac's; a title that is the
+        // agent's own words is never enough. Allow once only, as the
+        // catalogue asks itself.
+        let known = tools[id]?.structural ?? false
+        let structural = requestIsStructural(toolCall, known: known) || known
         let harmless = kind.map { ["other", "read", "fetch", "search"].contains($0) } ?? true
         let named = browserTool(toolCall) != nil || knownBrowserTool(id)
         let browser = structural || (named && harmless)

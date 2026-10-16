@@ -6,11 +6,16 @@ enum LoginShell {
     nonisolated(unsafe) private static var cached: [String: String]?
     private static let lock = NSLock()
 
+    /// For tests: the environment to use instead of the login shell's, so a
+    /// variable it inherits can be set without touching the person's shell.
+    nonisolated(unsafe) static var environmentForTests: [String: String]?
+
     /// The environment, with the usual install places added to PATH when the shell's missed them. Looked up once a
     /// run (five seconds at most), off the main thread; Search's own environment when the shell can't be read.
     static var environment: [String: String] {
         lock.lock()
         defer { lock.unlock() }
+        if let environmentForTests { return environmentForTests }
         if let cached { return cached }
         var environment = loginEnvironment() ?? ProcessInfo.processInfo.environment
         let home = FileManager.default.homeDirectoryForCurrentUser.path

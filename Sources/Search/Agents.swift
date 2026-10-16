@@ -27,6 +27,9 @@ struct AgentChoice: Identifiable, Equatable {
     /// The ACP adapter that carries it, for an agent that doesn't speak ACP
     /// itself (Claude Code, Codex). Nil for the rest.
     var adapter: Adapter? = nil
+    /// The agent's own CLI, found, when an adapter runs it: what a terminal
+    /// sign-in runs, rather than the adapter's node.
+    var cliPath: String? = nil
     var custom: Bool { id.hasPrefix("custom.") }
 }
 
@@ -290,7 +293,7 @@ final class Agents: ObservableObject {
             if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
                 throw AgentNeedsSetUp(agent: called, adapter: adapter)
             }
-            var signed = spec
+            var signed = try Agents.prepared(spec)
             signed.signIn = method ?? Agents.signIn(for: id)
             do {
                 let link = try await ChatAgent.acp(signed).start(chat, session, hear)
@@ -313,9 +316,7 @@ final class Agents: ObservableObject {
     /// one given), as a .command file Terminal runs. False when there is none.
     @discardableResult
     func openLogin(_ choice: AgentChoice, command: [String]? = nil, environment: [String: String] = [:]) -> Bool {
-        guard var words = command ?? choice.login, let first = words.first else { return false }
-        // The agent's own program, found, rather than whatever the shell finds.
-        if first == Agents.programName(choice), let path = choice.path { words[0] = path }
+        guard let words = Agents.loginCommand(choice, command: command) else { return false }
         let script = Agents.loginScript(command: words, environment: environment)
         let file = FileManager.default.temporaryDirectory
             .appendingPathComponent("Search sign-in – \(choice.name).command")
@@ -327,6 +328,14 @@ final class Agents: ObservableObject {
         }
         NSWorkspace.shared.open(file)
         return true
+    }
+
+    /// The words a terminal sign-in runs: the login command with the agent's
+    /// own program in place of its name — its CLI, not the adapter's node.
+    nonisolated static func loginCommand(_ choice: AgentChoice, command: [String]? = nil) -> [String]? {
+        guard var words = command ?? choice.login, let first = words.first else { return nil }
+        if first == Agents.programName(choice) { words[0] = choice.cliPath ?? choice.path ?? first }
+        return words
     }
 
     /// The .command file's text: the variables it needs, then the command,
@@ -387,24 +396,54 @@ final class Agents: ObservableObject {
 
     /// One an adapter carries: found when the person's own CLI — whose
     /// sign-in the adapter uses — and node are both on the PATH. Node runs
-    /// the adapter; each agent is given its own tools off.
+    /// the adapter; each agent is given its own tools off, and only the
+    /// adapters known to name Search's tools structurally are trusted to.
     nonisolated static func adapterChoice(_ known: KnownAgent, _ adapter: Adapter) -> AgentChoice? {
-        guard firstExecutable(named: known.program) != nil,
+        guard let cli = firstExecutable(named: known.program),
               let node = firstExecutable(named: "node") else { return nil }
         var environment: [String: String] = [:]
+        var unset: [String] = []
         var sessionMeta: [String: Any]?
+        var structural: StructuralTools = []
         switch adapter.agent {
-        case "claude": sessionMeta = Adapters.claudeMeta
-        case "codex": environment = Adapters.codexEnvironment()
-        default: break
+        case "claude":
+            sessionMeta = Adapters.claudeMeta
+            // Its adapter would run another Claude binary given this.
+            unset = ["CLAUDE_CODE_EXECUTABLE"]
+            structural = .claude
+        case "codex":
+            // Search's own config; the home itself is prepared fresh at each
+            // start, where a failure can stop it.
+            environment["CODEX_CONFIG"] = "{}"
+            unset = ["CODEX_PATH"]
+            structural = .codex
+        default:
+            break
         }
         let spec = ACPSpec(id: known.id, name: known.name, path: node,
                            arguments: [Adapters.script(adapter).path],
-                           environment: environment, sessionMeta: sessionMeta,
+                           environment: environment, unsetEnvironment: unset,
+                           structuralTools: structural, sessionMeta: sessionMeta,
                            startOptions: known.startOptions)
         return AgentChoice(id: known.id, name: known.name, path: node, spec: spec,
                            ownTools: known.ownTools, login: known.login,
-                           modelIsTheAgentsOwn: known.modelIsTheAgentsOwn, adapter: adapter)
+                           modelIsTheAgentsOwn: known.modelIsTheAgentsOwn,
+                           adapter: adapter, cliPath: cli)
+    }
+
+    /// The spec a start uses, with anything the agent needs prepared fresh:
+    /// Codex's own home is built here, so a failure stops this start rather
+    /// than the look that made the spec, and its sign-in link is reconciled
+    /// every time.
+    nonisolated static func prepared(_ spec: ACPSpec) throws -> ACPSpec {
+        guard spec.structuralTools.contains(.codex) else { return spec }
+        var out = spec
+        do {
+            out.environment.merge(try Adapters.codexEnvironment()) { _, new in new }
+        } catch {
+            throw ChildProcess.Failure(why: "Search couldn't prepare Codex's settings: \(error.localizedDescription)")
+        }
+        return out
     }
 
     /// The custom agents the person added, as choices.

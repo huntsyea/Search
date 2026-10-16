@@ -68,7 +68,8 @@ final class ACPChatTests: XCTestCase {
 
     /// A chat on the scripted agent, with a browser for its tools.
     private func made(_ scenario: [String: Any], session: String? = nil, mode: Chat.Mode = .ask,
-                      browser given: Browser? = nil, startOptions: [String: String] = [:]) throws -> Made {
+                      browser given: Browser? = nil, startOptions: [String: String] = [:],
+                      structuralTools: StructuralTools = []) throws -> Made {
         let scenarioFile = folder.appendingPathComponent("scenario-\(UUID().uuidString).json")
         let log = folder.appendingPathComponent("log-\(UUID().uuidString).jsonl")
         try JSONSerialization.data(withJSONObject: scenario).write(to: scenarioFile)
@@ -79,7 +80,7 @@ final class ACPChatTests: XCTestCase {
         let chat = Chat(title: "Test", session: session, mode: mode,
                         agent: .acp(ACPSpec(id: "scripted", name: "scripted", path: "/usr/bin/env",
                                             arguments: ["python3", Self.script.path, scenarioFile.path, log.path],
-                                            startOptions: startOptions)))
+                                            structuralTools: structuralTools, startOptions: startOptions)))
         chats.append(chat)
         chat.browser = browser
         return Made(chat: chat, browser: browser, log: log)
@@ -392,15 +393,42 @@ final class ACPChatTests: XCTestCase {
     }
 
     /// Codex calls Search's tools under its own names and asks to run one as
-    /// a command; the structured server and tool say it is Search's own, so
-    /// it is let through whatever the kind, and shown as the browser tool it is.
+    /// a command; the structured server and tool, marked as its MCP call, say
+    /// it is Search's own, so it is let through whatever the kind.
     func testAStructuredSearchToolIsAllowedWhateverItsKind() async throws {
         let made = try made([
             "prompts": [[
                 ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
                             "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
-                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]]]],
-                ["ask": ["toolCall": ["toolCallId": "t1", "kind": "execute"],
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]],
+                            "_meta": ["is_mcp_tool_call": true]]],
+                ["ask": ["toolCall": ["toolCallId": "t1", "kind": "execute",
+                                       "_meta": ["is_mcp_tool_approval": true]],
+                         "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                     ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]],
+            ]],
+        ], structuralTools: .codex)
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let permission = logged(made.log).first { ($0["result"] as? [String: Any])?["outcome"] != nil }
+        let outcome = (permission?["result"] as? [String: Any])?["outcome"] as? [String: Any]
+        XCTAssertEqual(outcome?["optionId"] as? String, "a")
+        XCTAssertEqual(made.chat.items.first { $0.kind == .tool }?.text, AgentTools.label("browser_tabs", [:]))
+    }
+
+    /// The same shape from an adapter not known to send it is not Search's:
+    /// the title names the tool, but as the agent's own words, and a command
+    /// is refused.
+    func testAnUntrustedAdapterIsNotStructural() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]],
+                            "_meta": ["is_mcp_tool_call": true]]],
+                ["ask": ["toolCall": ["toolCallId": "t1", "kind": "execute",
+                                       "_meta": ["is_mcp_tool_approval": true]],
                          "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
                                      ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]],
             ]],
@@ -410,8 +438,33 @@ final class ACPChatTests: XCTestCase {
 
         let permission = logged(made.log).first { ($0["result"] as? [String: Any])?["outcome"] != nil }
         let outcome = (permission?["result"] as? [String: Any])?["outcome"] as? [String: Any]
-        XCTAssertEqual(outcome?["optionId"] as? String, "a")
-        XCTAssertEqual(made.chat.items.first { $0.kind == .tool }?.text, AgentTools.label("browser_tabs", [:]))
+        XCTAssertEqual(outcome?["optionId"] as? String, "r")
+    }
+
+    /// A Codex call that later names another server loses the identity, and
+    /// its command is refused.
+    func testACodexCallLosesItsIdentityWhenItNamesAnotherServer() async throws {
+        let made = try made([
+            "prompts": [[
+                ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
+                            "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]],
+                            "_meta": ["is_mcp_tool_call": true]]],
+                ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t1",
+                            "rawInput": ["server": "other", "tool": "browser_tabs", "arguments": [:]],
+                            "_meta": ["is_mcp_tool_call": true]]],
+                ["ask": ["toolCall": ["toolCallId": "t1", "kind": "execute",
+                                       "_meta": ["is_mcp_tool_approval": true]],
+                         "options": [["optionId": "a", "name": "Allow", "kind": "allow_once"],
+                                     ["optionId": "r", "name": "Reject", "kind": "reject_once"]]]],
+            ]],
+        ], structuralTools: .codex)
+        made.chat.send("hi")
+        await until(10) { !made.chat.busy }
+
+        let permission = logged(made.log).first { ($0["result"] as? [String: Any])?["outcome"] != nil }
+        let outcome = (permission?["result"] as? [String: Any])?["outcome"] as? [String: Any]
+        XCTAssertEqual(outcome?["optionId"] as? String, "r")
     }
 
     /// A command merely titled like a browser tool, with no server and tool
@@ -457,11 +510,12 @@ final class ACPChatTests: XCTestCase {
             "prompts": [[
                 ["update": ["sessionUpdate": "tool_call", "toolCallId": "t1",
                             "title": "mcp.search.browser_tabs", "kind": "execute", "status": "pending",
-                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]]]],
+                            "rawInput": ["server": "search", "tool": "browser_tabs", "arguments": [:]],
+                            "_meta": ["is_mcp_tool_call": true]]],
                 ["mcp": ["name": "browser_tabs", "arguments": [:]]],
                 ["update": ["sessionUpdate": "tool_call_update", "toolCallId": "t1", "status": "completed"]],
             ]],
-        ])
+        ], structuralTools: .codex)
         made.chat.send("hi")
         await until(10) { !made.chat.busy }
 

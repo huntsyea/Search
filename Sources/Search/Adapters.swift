@@ -6,7 +6,7 @@ import Foundation
 // version into Search's own folder, with the person's npm and node.
 
 /// An ACP adapter Search sets up for an agent that doesn't speak ACP itself.
-struct Adapter: Equatable {
+struct Adapter: Equatable, Hashable {
     let agent: String        // "claude", "codex"
     let package: String      // "@agentclientprotocol/claude-agent-acp"
     let version: String      // "0.91.0"
@@ -35,41 +35,82 @@ enum Adapters {
     }
 
     /// Its program: <folder>/node_modules/<package>/<entry>.
-    static func script(_ adapter: Adapter) -> URL {
-        folder(adapter)
-            .appendingPathComponent("node_modules", isDirectory: true)
+    static func script(_ adapter: Adapter) -> URL { script(adapter, in: folder(adapter)) }
+
+    static func script(_ adapter: Adapter, in base: URL) -> URL {
+        base.appendingPathComponent("node_modules", isDirectory: true)
             .appendingPathComponent(adapter.package, isDirectory: true)
             .appendingPathComponent(adapter.entry)
     }
 
-    /// Whether it is set up: its script is there.
-    static func isSetUp(_ adapter: Adapter) -> Bool {
-        FileManager.default.fileExists(atPath: script(adapter).path)
+    /// Whether it is set up: its script and the package's own manifest at the
+    /// pinned version are both there, so a half-finished install isn't it.
+    static func isSetUp(_ adapter: Adapter) -> Bool { isInstalled(adapter, in: folder(adapter)) }
+
+    /// Whether an install in `base` landed whole: the entry script and the
+    /// package's package.json naming exactly the pinned version.
+    static func isInstalled(_ adapter: Adapter, in base: URL) -> Bool {
+        let manager = FileManager.default
+        guard manager.fileExists(atPath: script(adapter, in: base).path) else { return false }
+        let manifest = base.appendingPathComponent("node_modules", isDirectory: true)
+            .appendingPathComponent(adapter.package, isDirectory: true)
+            .appendingPathComponent("package.json")
+        guard let data = try? Data(contentsOf: manifest),
+              let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let version = object["version"] as? String else { return false }
+        return version == adapter.version
     }
 
-    /// npm install of exactly that version into its folder, with the login
-    /// shell's environment and npm from its PATH — five minutes at most, off
-    /// the main thread. Its own scripts never run (--ignore-scripts): nothing
-    /// of the package runs until the agent is started. A failure throws the
-    /// last line npm wrote.
+    /// One install at a time per adapter: a second caller waits for the one
+    /// already running rather than starting its own.
+    @MainActor private static var runningSetUps: [Adapter: Task<Void, Error>] = [:]
+
+    /// npm install of exactly that version into a staging folder beside the
+    /// final one, with the login shell's environment and npm from its PATH —
+    /// five minutes at most, off the main thread. Its own scripts never run
+    /// (--ignore-scripts): nothing of the package runs until the agent is
+    /// started. It must exit well and land whole, then the final folder is
+    /// replaced by the staging one; any failure leaves the final folder as it
+    /// was and removes the staging one.
+    @MainActor
     static func setUp(_ adapter: Adapter) async throws {
-        let folder = folder(adapter)
+        if let running = runningSetUps[adapter] { return try await running.value }
+        let task = Task { try await install(adapter) }
+        runningSetUps[adapter] = task
+        defer { runningSetUps[adapter] = nil }
+        try await task.value
+    }
+
+    nonisolated private static func install(_ adapter: Adapter) async throws {
         guard let npm = npmForTests ?? LoginShell.find("npm") else {
             throw ChildProcess.Failure(why: "Setting up \(adapter.agent) needs npm — install Node.js, then try again.")
         }
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        let arguments = ["install", "--prefix", folder.path, "--ignore-scripts", "--no-audit",
+        let final = folder(adapter)
+        let staging = final.deletingLastPathComponent()
+            .appendingPathComponent(final.lastPathComponent + ".partial-" + String(UUID().uuidString.prefix(8)),
+                                    isDirectory: true)
+        let arguments = ["install", "--prefix", staging.path, "--ignore-scripts", "--no-audit",
                          "--no-fund", "--omit=dev", "--loglevel=error",
                          "\(adapter.package)@\(adapter.version)"]
         let environment = LoginShell.environment
-        _ = try await Task.detached(priority: .userInitiated) {
-            let child = try ChildProcess.spawn(npm, arguments, in: folder, environment: environment, bridge: false)
-            return try child.finish(deadline: 300, name: "npm")
-        }.value
-        // npm can end well with nothing installed (a proxy page, say): the
-        // point of it all is the script.
-        guard isSetUp(adapter) else {
-            throw ChildProcess.Failure(why: "\(adapter.agent)'s adapter didn't install — try again.")
+        do {
+            try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
+            _ = try await Task.detached(priority: .userInitiated) {
+                let child = try ChildProcess.spawn(npm, arguments, in: staging, environment: environment, bridge: false)
+                return try child.finish(deadline: 300, name: "npm", requireSuccess: true)
+            }.value
+            // npm can end well with nothing installed (a proxy page, say), or
+            // with a part of it: the point of the install is the whole package.
+            guard isInstalled(adapter, in: staging) else {
+                throw ChildProcess.Failure(why: "\(adapter.agent)'s adapter didn't install — try again.")
+            }
+            // The old set-up folder goes only for a new one whole enough to
+            // replace it.
+            try? FileManager.default.removeItem(at: final)
+            try FileManager.default.moveItem(at: staging, to: final)
+        } catch {
+            try? FileManager.default.removeItem(at: staging)
+            throw error
         }
     }
 
@@ -99,24 +140,48 @@ enum Adapters {
     /// Codex's environment in Search's own home: the person's sign-in, a
     /// symlink, so their sign-in is used and one done here is theirs too; and
     /// Search's config.toml, because Codex reads these settings only from its
-    /// home's file, not from the environment. The home is made and the files
-    /// kept; auth.json is never copied.
-    static func codexEnvironment() -> [String: String] {
+    /// home's file, not from the environment. Throwing: a home that can't be
+    /// made or linked stops the start.
+    static func codexEnvironment() throws -> [String: String] {
         let home = codexHome()
-        try? FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
-        // Atomically: it is Search's own file, written afresh each time the
-        // spec is built, so a half-written one is never read.
-        try? codexConfig.write(to: home.appendingPathComponent("config.toml"), atomically: true, encoding: .utf8)
-        let link = home.appendingPathComponent("auth.json")
-        // A link already there is left alone, even one whose target is gone.
-        if (try? FileManager.default.destinationOfSymbolicLink(atPath: link.path)) == nil,
-           !FileManager.default.fileExists(atPath: link.path) {
-            let person = personCodexHome().appendingPathComponent("auth.json")
-            if FileManager.default.fileExists(atPath: person.path) {
-                try? FileManager.default.createSymbolicLink(at: link, withDestinationURL: person)
-            }
-        }
+        try FileManager.default.createDirectory(at: home, withIntermediateDirectories: true)
+        try codexConfig.write(to: home.appendingPathComponent("config.toml"), atomically: true, encoding: .utf8)
+        try linkCodexAuth()
         return ["CODEX_HOME": home.path]
+    }
+
+    /// Keep Search's `auth.json` a link to the person's own, so their sign-in
+    /// is used and one done here is theirs too. A link to the right file is
+    /// kept; a link anywhere else is replaced. A regular file is a sign-in
+    /// made here (or one Codex wrote in place of the link): if the person has
+    /// none, it becomes theirs; if they have one, theirs is kept and ours
+    /// goes. Codex is assumed to write auth.json in place, following the
+    /// link; if a write ever replaced it, the next start puts the person's
+    /// file first again.
+    static func linkCodexAuth() throws {
+        let manager = FileManager.default
+        let ours = codexHome().appendingPathComponent("auth.json")
+        let theirs = personCodexHome().appendingPathComponent("auth.json")
+        if let target = try? manager.destinationOfSymbolicLink(atPath: ours.path) {
+            if URL(fileURLWithPath: target).standardizedFileURL == theirs.standardizedFileURL { return }
+            try manager.removeItem(at: ours)
+            try manager.createSymbolicLink(at: ours, withDestinationURL: theirs)
+            return
+        }
+        if manager.fileExists(atPath: ours.path) {
+            if manager.fileExists(atPath: theirs.path) {
+                try manager.removeItem(at: ours)
+            } else {
+                try manager.createDirectory(at: theirs.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try manager.moveItem(at: ours, to: theirs)
+            }
+            try manager.createSymbolicLink(at: ours, withDestinationURL: theirs)
+            return
+        }
+        // Nothing: link, even if theirs isn't there yet — a sign-in in Search
+        // then writes theirs.
+        try manager.createDirectory(at: theirs.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try manager.createSymbolicLink(at: ours, withDestinationURL: theirs)
     }
 
     /// Codex's own config, in Search's own home. Its shell and the rest of
