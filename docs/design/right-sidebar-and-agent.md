@@ -17,7 +17,7 @@ The held-back AI add-on (Summarize Page / Ask About This Page…, gated by `AI.s
 |---|---|
 | Tabs down the right and the utility sidebar? | The utility sidebar moves to the left. It always sits opposite the tab column; with tabs across the top it sits on the right. |
 | Which tabs may the agent touch? | Any tab, read and write — not only tabs of its own. |
-| Which agents? | ACP agents (opencode, omp, hermes, grok, Claude Code via its ACP adapter, …) and pi. |
+| Which agents? | ACP agents (opencode, omp, hermes, grok, Claude Code via its ACP adapter, …) and pi. How a chat's agent is chosen, found and confined: [agents.md](agents.md). |
 | The held-back AI add-on? | Folded into the chat. |
 | Agents' own shell/file tools? | Off. The chat agent gets Search's browser tools only. pi is the first-class agent (`--no-builtin-tools`, tools via its extension API); ACP agents run with their tools disabled where they allow it, and their permission requests for anything else are refused by default. A per-agent "let it use its own tools" switch, off, for whoever wants a coding agent in the sidebar. |
 | Do chats survive a restart? | Yes, and there are many: a history of chats, each resumable. |

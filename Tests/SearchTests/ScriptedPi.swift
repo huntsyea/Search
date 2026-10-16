@@ -1,10 +1,11 @@
 import XCTest
 @testable import Search
 
-// The chat's pi, scripted: the seam's second adapter (ChatPi.swift). A test
-// gives `Chat(pi: script.pi)`, and then says exactly what pi answers, emits
-// the events a real pi would, calls the browser's tools, stops it, or kills
-// it — so the chat's lines, status and title can be checked without a
+// The chat's pi, scripted: pi as the tests give it, under the pi adapter
+// (`ChatAgent.pi(script.pi)`), so the chat and pi's adapter are tested
+// together against what a real pi said. A test says exactly what pi answers,
+// emits the events a real pi would, calls the browser's tools, stops it, or
+// kills it — so the chat's lines, status and title can be checked without a
 // provider (ChatTests.swift).
 
 @MainActor
@@ -32,7 +33,7 @@ final class ScriptedPi {
     /// Every link made, in order, so a test can still call into an older one.
     private var links: [Link] = []
 
-    /// The value to give `Chat(pi:)`.
+    /// The value to give the pi adapter: `Chat(agent: .pi(script.pi))`.
     var pi: ChatPi {
         ChatPi(
             start: { [weak self] session, hear in

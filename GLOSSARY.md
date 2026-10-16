@@ -1,6 +1,32 @@
 # Search
 
-A macOS web browser on WebKit. Its sidebar can hold a chat with an agent (pi) that reads and acts in the person's tabs.
+A macOS web browser on WebKit. Its sidebar can hold a chat with an agent — pi, or another the person has — that reads and acts in the person's tabs.
+
+## Agents
+
+**Agent**:
+A coding agent program on the person's Mac that a chat runs on: pi, or an ACP agent. Each chat runs on the one it was started with.
+_Avoid_: provider, model (a model is what an agent asks), backend
+
+**ACP agent**:
+An agent spoken to over the Agent Client Protocol: opencode, omp, grok, hermes, gemini, Cursor's, Kimi's, Claude Code and Codex through their adapters, or a custom agent.
+
+**Found agent**:
+An agent whose program is on the person's login shell's path, matched against the agents Search knows. Found once a run, again on Refresh.
+_Avoid_: installed agent, detected
+
+**Custom agent**:
+An ACP agent the person added by name and command line.
+
+**ACP adapter**:
+The small program that lets Claude Code or Codex speak ACP, which Search sets up in its own folder the first time that agent is chosen.
+
+**Own tools**:
+The tools an agent brings with it — a shell, files, the web. Never Search's to give: switched off where the agent allows, refused when it asks, and run in an empty folder where neither holds.
+_Avoid_: built-in tools
+
+**Signed in**:
+Whether an agent can answer: its own sign-in, done in the agent, never kept by Search.
 
 ## Running pi
 
@@ -9,15 +35,15 @@ The person's own coding agent, a program on their login shell's path, which Sear
 _Avoid_: the agent binary, the CLI
 
 **Confined**:
-How every pi Search starts is run: only the tools Search gives it, and none of the person's MCP servers, skills, prompt templates, context files or themes. Their providers, models and keys stay theirs.
+How every agent Search starts is run: only the tools Search gives it, and none of its own. For pi, none of the person's MCP servers, skills, prompt templates, context files or themes either. Their providers, models and keys stay theirs.
 _Avoid_: sandboxed, restricted
 
-**Chat's pi**:
-The pi behind one chat, kept running while the chat is open and talked to a line at a time.
-_Avoid_: pi process, session (a session is what pi keeps on disk)
+**Chat's agent**:
+The agent behind one chat, kept running while the chat is open. With pi, the chat's pi.
+_Avoid_: agent process, session (a session is what the agent keeps on disk)
 
 **One-shot run**:
-pi run once to its end for a single answer, away from any chat and with no tools: the pills over the chat's box, a chat's title, Sort Tabs.
+An agent run once to its end for a single answer, away from any chat and with no tools: the pills over the chat's box, a chat's title, Sort Tabs. On the agent set for them in Settings › AI, pi unless changed.
 _Avoid_: ask (that's the question put to the person), query, print
 
 **Fake pi**:
@@ -26,12 +52,15 @@ _Avoid_: mock pi, stub
 
 ## The chat
 
-**Scripted pi**:
-The chat's pi as tests give it: it answers the chat's commands from a table and says only what the test tells it to, replaying lines a real pi once said, so a chat's asks, pauses, stops and lines are checked without pi or a provider. It stands where the chat's pi stands; a fake pi stands where pi itself does.
+**Scripted agent**:
+The chat's agent as tests give it: it answers the chat from a table and says only what the test tells it to, so a chat's asks, pauses, stops and lines are checked without an agent or a provider. It stands where the chat's agent stands; a fake pi, or a scripted ACP agent, stands where the agent program itself does.
 _Avoid_: mock chat, stub agent
 
+**Scripted ACP agent**:
+A small script that stands in for an ACP agent in tests, saying over ACP what a real one once said, without its tokens.
+
 **Settled**:
-pi has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on. Closing a chat while it works settles it too.
+The agent has finished with the person's message: every step done or stopped, nothing more coming until the next message. The chat then stops being busy, refuses any act still waiting for an answer, and unmarks the tabs it acted on. Closing a chat while it works settles it too.
 _Avoid_: done, idle, finished (a step finishes; a message settles)
 
 ## The chat's browser tools
