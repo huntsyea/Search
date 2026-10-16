@@ -34,7 +34,12 @@ final class ACPLiveTests: XCTestCase {
     func testARealAgentUsesTheBrowsersTools() async throws {
         let setting = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP"]?
             .split(separator: " ").map(String.init) ?? []
-        guard let program = setting.first, let path = LoginShell.find(program) else {
+        // A known agent by id (SEARCH_LIVE_ACP_AGENT), or a plain command
+        // (SEARCH_LIVE_ACP).
+        let agentID = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_AGENT"]?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let byID = !(agentID?.isEmpty ?? true)
+        if !byID, setting.first == nil {
             throw XCTSkip("SEARCH_LIVE_ACP isn't set to an agent on this PATH")
         }
         guard let binary = searchBinary() else { throw XCTSkip("the Search binary isn't built") }
@@ -47,7 +52,8 @@ final class ACPLiveTests: XCTestCase {
             environment = object
         }
 
-        let transcript = FileManager.default.temporaryDirectory.appendingPathComponent("acp-live-\(program).jsonl")
+        let label = byID ? (agentID ?? "agent") : (setting.first ?? "agent")
+        let transcript = FileManager.default.temporaryDirectory.appendingPathComponent("acp-live-\(label).jsonl")
         let recorder = try WireRecorder(transcript)
         ACPConnection.recorder = { direction, message in recorder.append(direction, message) }
         defer {
@@ -61,9 +67,40 @@ final class ACPLiveTests: XCTestCase {
         // SEARCH_LIVE_ACP_ACT=1 tries the acting tools too: the chat asks
         // before acting, and the test answers each ask once.
         let acting = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_ACT"] == "1"
-        let chat = Chat(title: "Test", mode: acting ? .ask : .act,
+        let mode: Chat.Mode = acting ? .ask : .act
+
+        let chat: Chat
+        if byID, let agentID {
+            // The real known agent, through Agents: its spec, sessionMeta,
+            // environment and startOptions are the ones used.
+            await Agents.shared.ready()
+            guard let choice = Agents.shared.choice(agentID), let known = choice.spec else {
+                throw XCTSkip("\(agentID) isn't on this Mac")
+            }
+            // Only in this test, which never runs unless asked: install the
+            // adapter a chosen agent needs.
+            if let adapter = choice.adapter, !Adapters.isSetUp(adapter) {
+                try await Adapters.setUp(adapter)
+            }
+            if let json = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_META"],
+               let data = json.data(using: .utf8),
+               let meta = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                // Search's own spec with this session's meta merged into it:
+                // the chat still knows which agent it is.
+                var spec = known
+                spec.sessionMeta = ACPLiveTests.merged(spec.sessionMeta ?? [:], meta)
+                chat = Chat(title: "Test", mode: mode, agentID: agentID, agent: .acp(spec))
+            } else {
+                chat = Chat(title: "Test", mode: mode, agentID: agentID)
+            }
+        } else {
+            guard let program = setting.first, let path = LoginShell.find(program) else {
+                throw XCTSkip("SEARCH_LIVE_ACP isn't set to an agent on this PATH")
+            }
+            chat = Chat(title: "Test", mode: mode,
                         agent: .acp(ACPSpec(id: program, name: program, path: path,
                                             arguments: Array(setting.dropFirst()), environment: environment)))
+        }
         defer { Chats.delete(chat) }
         chat.browser = browser
 
@@ -107,6 +144,34 @@ final class ACPLiveTests: XCTestCase {
         }
         XCTAssertTrue(chat.items.contains { $0.kind == .assistant && !$0.text.isEmpty },
                       "no assistant text: \(chat.items.map(\.text))")
+    }
+
+    /// A JSON object deep-merged into another: dictionaries merge key by key,
+    /// anything else is replaced by the incoming value.
+    nonisolated static func merged(_ base: [String: Any], _ incoming: [String: Any]) -> [String: Any] {
+        var out = base
+        for (key, value) in incoming {
+            if let baseObject = out[key] as? [String: Any], let valueObject = value as? [String: Any] {
+                out[key] = merged(baseObject, valueObject)
+            } else {
+                out[key] = value
+            }
+        }
+        return out
+    }
+
+    /// The meta merge is plain code, so it is checked without a live agent.
+    func testTheLiveMetaMerge() {
+        let base: [String: Any] = [
+            "systemPrompt": "p",
+            "claudeCode": ["options": ["tools": [String](), "settingSources": [String]()]],
+        ]
+        let incoming: [String: Any] = ["claudeCode": ["options": ["persistSession": false]], "extra": 1]
+        XCTAssertEqual(ACPLiveTests.merged(base, incoming) as NSDictionary, [
+            "systemPrompt": "p",
+            "claudeCode": ["options": ["tools": [String](), "settingSources": [String](), "persistSession": false]],
+            "extra": 1,
+        ] as NSDictionary)
     }
 }
 

@@ -175,8 +175,10 @@ extension ChildProcess {
     /// stdin closed, stdout read to its end, the program waited for. At
     /// `deadline` it is sent SIGTERM, and SIGKILL two seconds later if still
     /// there. Throws when the deadline passed, or when the program failed
-    /// without printing anything: why, from the last line of its stderr.
-    func finish(deadline: TimeInterval, name: String) throws -> String {
+    /// without printing anything: why, from the last line of its stderr. With
+    /// `requireSuccess`, any non-zero exit throws — even one that printed to
+    /// stdout — so a caller that needs a real success can ask for it.
+    func finish(deadline: TimeInterval, name: String, requireSuccess: Bool = false) throws -> String {
         try? input.close()
         let queue = DispatchQueue.global(qos: .userInitiated)
         let terminate = DispatchSource.makeTimerSource(queue: queue)
@@ -201,12 +203,14 @@ extension ChildProcess {
             throw Failure(why: "\(name) took longer than \(Int(deadline)) seconds")
         }
         let text = String(decoding: data, as: UTF8.self)
-        if status != 0, text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            let lines = errorTail.split(separator: "\n")
-                .map { $0.trimmingCharacters(in: .whitespaces) }
-                .filter { !$0.isEmpty }
-            throw Failure(why: lines.last ?? "\(name) stopped")
+        if status != 0, requireSuccess || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            throw Failure(why: ChildProcess.lastLine(errorTail) ?? ChildProcess.lastLine(text) ?? "\(name) stopped")
         }
         return text
+    }
+
+    /// The last line of `text` that isn't blank; nil when all are.
+    private static func lastLine(_ text: String) -> String? {
+        text.split(separator: "\n").map { $0.trimmingCharacters(in: .whitespaces) }.last { !$0.isEmpty }
     }
 }

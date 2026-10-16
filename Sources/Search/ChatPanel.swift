@@ -158,6 +158,9 @@ private struct ChatBody: View {
             } else if chat.signIn != nil {
                 SignInCard(chat: chat, choice: agents.choice(chat.agentID))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+            } else if chat.setUp != nil {
+                SetUpCard(chat: chat)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             } else if chat.items.isEmpty, chat.status == nil, !chat.busy, !sendable {
                 // Only to start a conversation: once it's under way, the
                 // page's suggestions would be in the way of it.
@@ -339,7 +342,7 @@ private struct ChatBody: View {
         return chosen.name
     }
 
-    private var sendable: Bool { chat.signIn == nil && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var sendable: Bool { chat.signIn == nil && chat.setUp == nil && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
 
     /// A chat in the bar's list, with its agent when it isn't pi.
     private func chatLabel(_ other: Chat) -> String {
@@ -537,6 +540,44 @@ private struct SignInCard: View {
                 .help(description)
         } else {
             Quick(method.name) { chat.signIn(with: method.id) }
+        }
+    }
+}
+
+/// The agent's ACP adapter isn't set up: Search installs it with npm, and
+/// the box offers it — over the box, as the SignInCard is.
+private struct SetUpCard: View {
+    @ObservedObject var chat: Chat
+
+    var body: some View {
+        if let setUp = chat.setUp {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "shippingbox")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Palette.muted)
+                        .padding(.top, 1)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("\(setUp.agent) needs its ACP adapter.")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Palette.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text("Search installs \(setUp.adapter.package) \(setUp.adapter.version) with npm into its own folder. Nothing of it runs until you use \(setUp.agent).")
+                            .font(.system(size: 11))
+                            .foregroundStyle(Palette.muted)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
+                HStack(spacing: 6) {
+                    Quick("Set Up") { chat.setUpAdapter() }
+                    Spacer(minLength: 0)
+                    Quick("Not Now") { chat.dismissSetUp() }
+                }
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Palette.ground))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Palette.hairline, lineWidth: 1))
+            .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
         }
     }
 }

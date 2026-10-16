@@ -33,6 +33,8 @@ a tool asks for, with the agent run in an empty folder; "checked live" is a run 
 | Agent | Launched as | Its own tools |
 |---|---|---|
 | pi | its RPC mode, `Pi.confined` (no tools, MCP, skills, context files…) | off by its flags |
+| Claude Code | `node` running the adapter 0.91.0; `_meta.claudeCode.options`: `tools` `[]`, `settingSources` `[]`, `strictMcpConfig` true | off by its options; checked live — it lists only Search's twelve browser tools, and `browser_open` worked without asking |
+| Codex | `node` running the adapter 2.2.2; its own `CODEX_HOME` in Search's folder (the person's `auth.json` linked, Search's `config.toml`) | refused: shell off, read-only sandbox, start mode read-only; code mode stays, since its models reach tools through it; it calls Search's tools as kind `execute`, recognised by their structured server/tool |
 | opencode | `opencode acp` | off: `OPENCODE_PERMISSION` denies all but `search_*`; checked live — it lists only Search's twelve tools |
 | omp | `omp --no-tools --no-extensions --no-skills --no-rules acp` | off by its flags, not yet checked live — its providers here had no key or balance |
 | grok | `grok agent --no-leader stdio` | refused, empty folder |
@@ -45,6 +47,8 @@ a tool asks for, with the agent run in an empty folder; "checked live" is a run 
 - cursor-agent 2026.03.20 answers every model "AI Model Not Found" over ACP, and keeps a model chosen over ACP as its
 own default — so Search never chooses one for it (`KnownAgent.modelIsTheAgentsOwn`).
 - kimi and grok ask the person to sign in; grok wants an `authenticate` method id.
+- A Search chat on Claude Code keeps its session where Claude Code keeps every session, `~/.claude/projects`, under the
+chat's own folder's path — that folder is what `session/load` reopens. Codex's sessions are in Search's own Codex home.
 
 ## The seam: the chat talks to its agent as a conversation
 
@@ -73,7 +77,13 @@ As built (ChatAgent.swift):
 - `session/new`: `cwd` an empty folder of the chat's own (`Chats/Workspaces/<chat id>`), `mcpServers` Search's stdio server; per agent, the options that switch its own tools off and pre-allow Search's (Claude: `_meta.claudeCode.options.tools: []` and `_meta.systemPrompt`; grok: `--disallowed-tools`; opencode: a permission-deny config in `OPENCODE_CONFIG_CONTENT`, with `OPENCODE_CLIENT=acp`; the rest established per agent in phase 4 and noted in Settings).
 - `session/prompt`: the `<browser>` context then the person's words, as text. Its answer's `stopReason` settles the chat: `end_turn` finished; `cancelled` stopped; `refusal`, `max_tokens`, `max_turn_requests` a line saying so.
 - `session/update`: `user_message_chunk`, `agent_message_chunk`, `agent_thought_chunk`, `tool_call`, `tool_call_update`, `config_option_update`, `session_info_update` (a title) → `AgentSays`; `plan`, `available_commands_update`, `current_mode_update` ignored for now. A browser step's line ("Looked at 3 tabs") comes from Search's own answer to its MCP call, matched back to the step by the tool's name and its arguments, so two calls to one tool with different arguments keep their own lines.
-- `session/request_permission`: only an exact one of `AgentTools.names` — after at most one of the MCP server's prefixes (`mcp__search__`, `search_`, `search/`, `search.`) — of a kind that runs nothing of the Mac's (`other`, `read`, `fetch`, `search`, or none) is allowed, and only `allow_once` (the catalogue asks the person itself); anything else → `reject_once` then `reject_always`; no option of the wanted kind, or nothing matched exactly → `cancelled`.
+- `session/request_permission`: allowed, `allow_once` only (the catalogue asks the person itself), when the tool call is a
+structurally identified one of `AgentTools.names` — Codex's `rawInput.server == "search"` and `rawInput.tool`, or Claude's
+`_meta.claudeCode.toolName == "mcp__search__" + name` — whatever kind the agent gives it, since the kind is then its
+label for Search's own tool; or when it is an exact one of `AgentTools.names` after at most one of the MCP server's
+prefixes (`mcp__search__`, `mcp.search.`, `search_`, `search/`, `search.`) and its kind runs nothing of the Mac's
+(`other`, `read`, `fetch`, `search`, or none). Anything else → `reject_once` then `reject_always`; no option of the
+wanted kind, or nothing matched exactly → `cancelled`.
 - `fs/*`, `terminal/*`, anything unknown → "method not found".
 - `session/cancel` on Stop; `session/set_config_option` for the model menu; `authenticate` for sign-in.
 - One agent process per chat, stopped when the chat closes, as pi is: stdin closed, then SIGTERM, then SIGKILL, to its process group.
