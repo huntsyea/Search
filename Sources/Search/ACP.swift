@@ -113,32 +113,46 @@ final class ACPConnection: @unchecked Sendable {
     }
 
     /// A request, and its result; throws its ACPError, or a ChildProcess.Failure "\(name) stopped" when the agent
-    /// ended first. Past `timeout`, it fails as one that didn't answer.
+    /// ended first. Past `timeout`, it fails as one that didn't answer. A request whose task is cancelled is given
+    /// up on: the agent is told nothing, and the caller sees a CancellationError.
     func request(_ method: String, _ params: [String: Any], timeout: TimeInterval? = nil) async throws -> Any {
         let id = newID()
         let message: [String: Any] = ["jsonrpc": "2.0", "id": id, "method": method, "params": params]
         ACPConnection.recorder?("out", message)
         let name = name
-        return try await withCheckedThrowingContinuation { continuation in
-            lock.lock()
-            waiting[id] = { continuation.resume(with: $0) }
-            lock.unlock()
-            if let timeout {
-                DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { [weak self] in
-                    guard let self else { return }
-                    self.lock.lock()
-                    let done = self.waiting.removeValue(forKey: id)
-                    self.lock.unlock()
-                    done?(.failure(ChildProcess.Failure(why: "\(name) didn't answer \(method)")))
+        return try await withTaskCancellationHandler {
+            try await withCheckedThrowingContinuation { continuation in
+                lock.lock()
+                // Cancelled before it was registered: there is nothing to wait for.
+                if Task.isCancelled {
+                    lock.unlock()
+                    continuation.resume(throwing: CancellationError())
+                    return
+                }
+                waiting[id] = { continuation.resume(with: $0) }
+                lock.unlock()
+                if let timeout {
+                    DispatchQueue.global().asyncAfter(deadline: .now() + timeout) { [weak self] in
+                        guard let self else { return }
+                        self.lock.lock()
+                        let done = self.waiting.removeValue(forKey: id)
+                        self.lock.unlock()
+                        done?(.failure(ChildProcess.Failure(why: "\(name) didn't answer \(method)")))
+                    }
+                }
+                guard process.send(message) else {
+                    lock.lock()
+                    let done = waiting.removeValue(forKey: id)
+                    lock.unlock()
+                    done?(.failure(ChildProcess.Failure(why: "\(name) stopped")))
+                    return
                 }
             }
-            guard process.send(message) else {
-                lock.lock()
-                let done = waiting.removeValue(forKey: id)
-                lock.unlock()
-                done?(.failure(ChildProcess.Failure(why: "\(name) stopped")))
-                return
-            }
+        } onCancel: {
+            lock.lock()
+            let done = waiting.removeValue(forKey: id)
+            lock.unlock()
+            done?(.failure(CancellationError()))
         }
     }
 
@@ -894,6 +908,18 @@ private final class ACPAgent: AgentLink {
     private func asked(_ method: String, _ params: [String: Any], _ respond: @escaping (Result<Any, ACPError>) -> Void) {
         guard method == "session/request_permission" else {
             respond(.failure(ACPError(code: -32601, message: "Search doesn't offer \(method).", data: nil)))
+            return
+        }
+        // A one-shot is given no tools, so it approves nothing: reject
+        // before any browser-tool identity is considered.
+        if !spec.browserTools {
+            let options = params["options"] as? [[String: Any]] ?? []
+            let chosen = firstOption(options, kinds: ["reject_once", "reject_always"])
+            guard let chosen else {
+                respond(.success(["outcome": ["outcome": "cancelled"]]))
+                return
+            }
+            respond(.success(["outcome": ["outcome": "selected", "optionId": chosen]]))
             return
         }
         if cancelling {

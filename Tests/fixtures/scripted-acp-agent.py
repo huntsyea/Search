@@ -170,7 +170,10 @@ class Scripted:
         elif method == "session/prompt":
             self.handle_prompt(rid, params)
         elif method == "session/set_config_option":
-            self.answer(rid, self.scenario.get("setConfig", {"configOptions": []}))
+            spec = self.scenario.get("setConfig", {"configOptions": []})
+            if spec.get("hang"):
+                return
+            self.answer(rid, spec)
         elif method == "session/set_model":
             self.answer(rid, self.scenario.get("setModel", {}))
         else:

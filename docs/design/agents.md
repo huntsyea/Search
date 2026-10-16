@@ -1,6 +1,6 @@
 # Choosing the chat's agent: pi and every ACP agent, found as bb finds them
 
-Status: design, agreed 15 Oct 2026; building on branch `bb/agents-pi-and-every-acp-agent-discovered-thr_4ym88zxjvc`, merged into `sidebar-agent` a phase at a time. Follows [right-sidebar-and-agent.md](right-sidebar-and-agent.md), whose chat runs pi only.
+Status: agreed 15 Oct 2026 and built in six phases (PRs #13–#17 and the side prompts' agent), merged into `sidebar-agent`; off unless the sidebar's switch is on, and pi stays the default everywhere. Follows [right-sidebar-and-agent.md](right-sidebar-and-agent.md), whose chat runs pi only.
 
 ## What changes for the person
 

@@ -1562,6 +1562,8 @@ final class Bench {
             // tokens.
             guard Store.testing else { answer(["error": "aieval only works on a --test run"]); return }
             let model = (request["model"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+            // pi unless the request names another agent.
+            let agent = request["agent"] as? String ?? "pi"
             let started = Date()
             func done(_ fields: [String: Any]) {
                 answer(fields.merging(["seconds": Date().timeIntervalSince(started)]) { a, _ in a })
@@ -1575,7 +1577,7 @@ final class Bench {
                     (name: group["name"] as? String ?? "", titles: group["titles"] as? [String] ?? [])
                 }
                 Task {
-                    let result = await TabSorter.answer(items, existing: existing, model: model)
+                    let result = await TabSorter.answer(items, existing: existing, model: model, agent: agent)
                     // As the app would put them in place.
                     let groups = result.groups.map { TabSorter.resolved($0, items: items, existing: existing.map(\.name)) }
                     done(["answer": result.answer ?? NSNull(),
@@ -1585,7 +1587,7 @@ final class Bench {
             case "title":
                 Task {
                     let result = await PiOnce.titleAnswer(for: request["message"] as? String ?? "",
-                                                          on: request["page"] as? String, model: model)
+                                                          on: request["page"] as? String, model: model, agent: agent)
                     done(["answer": result.answer ?? NSNull(), "title": result.title ?? NSNull()])
                 }
             case "suggest":
@@ -1593,7 +1595,7 @@ final class Bench {
                                          url: (request["url"] as? String).flatMap(URL.init(string:)),
                                          text: request["text"] as? String ?? "", links: [])
                 Task {
-                    let result = await PageSuggestions.answer(about: read, model: model)
+                    let result = await PageSuggestions.answer(about: read, model: model, agent: agent)
                     done(["answer": result.answer ?? NSNull(), "pills": result.pills ?? NSNull()])
                 }
             default:

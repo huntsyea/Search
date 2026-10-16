@@ -16,13 +16,16 @@ enum PiOnce {
 
     /// pi's last answer to `prompt`, as text. Thirty seconds at most. When
     /// the person chose another agent for the side prompts, that agent is
-    /// asked over ACP instead, once and with no tools.
-    static func answer(system: String, prompt: String, model: String?) async throws -> String {
-        let side = Store.settings.string(forKey: Chats.sideAgentKey) ?? ""
-        if !side.isEmpty, side != "pi" {
+    /// asked over ACP instead, once and with no tools. `agent`: nil asks
+    /// whatever Settings says, "pi" asks pi, any other id asks that agent.
+    static func answer(system: String, prompt: String, model: String?, agent: String? = nil) async throws -> String {
+        let chosen = agent ?? (Store.settings.string(forKey: Chats.sideAgentKey) ?? "")
+        if !chosen.isEmpty, chosen != "pi" {
+            // The side agent's own model from Settings; a named agent is
+            // asked with the model the caller gave.
+            let side = agent == nil ? Store.settings.string(forKey: Chats.sideModelKey) : model
             do {
-                return try await AgentOnce.answer(agent: side, system: system, prompt: prompt,
-                                                  model: Store.settings.string(forKey: Chats.sideModelKey))
+                return try await AgentOnce.answer(agent: chosen, system: system, prompt: prompt, model: side)
             } catch {
                 throw Failure(why: error.localizedDescription)
             }
@@ -142,15 +145,18 @@ extension PiOnce {
     }
 
     /// Three to five words for a chat that began with `message`. Nil when
-    /// pi couldn't say.
-    static func title(for message: String, on page: String? = nil, model: String? = nil) async -> String? {
-        await titleAnswer(for: message, on: page, model: model).title
+    /// pi couldn't say. `agent`: nil asks Settings' side agent (see `answer`).
+    static func title(for message: String, on page: String? = nil, model: String? = nil,
+                      agent: String? = nil) async -> String? {
+        await titleAnswer(for: message, on: page, model: model, agent: agent).title
     }
 
     /// The same, with pi's whole answer, for the bench's checks.
-    static func titleAnswer(for message: String, on page: String?, model: String?) async -> (answer: String?, title: String?) {
+    static func titleAnswer(for message: String, on page: String?, model: String?,
+                            agent: String? = nil) async -> (answer: String?, title: String?) {
         let answer = try? await answer(system: titleSystem, prompt: titlePrompt(for: message, on: page),
-                                       model: model ?? Store.settings.string(forKey: Chats.titleModelKey))
+                                       model: model ?? Store.settings.string(forKey: Chats.titleModelKey),
+                                       agent: agent)
         return (answer, answer.flatMap(parseTitle))
     }
 
@@ -242,9 +248,11 @@ final class PageSuggestions: ObservableObject {
     }
 
     /// pi asked about the page, with its whole answer, for the bench's checks.
-    static func answer(about read: AIPage.Read, model: String?) async -> (answer: String?, pills: [String]?) {
+    static func answer(about read: AIPage.Read, model: String?,
+                       agent: String? = nil) async -> (answer: String?, pills: [String]?) {
         let answer = try? await PiOnce.answer(system: system, prompt: prompt(about: read),
-                                              model: model ?? Store.settings.string(forKey: Chats.suggestModelKey))
+                                              model: model ?? Store.settings.string(forKey: Chats.suggestModelKey),
+                                              agent: agent)
         return (answer, answer.flatMap(parseSuggestions))
     }
 

@@ -195,9 +195,11 @@ final class TabSorter: ObservableObject {
     }
 
     /// pi asked, with its whole answer, for the bench's checks.
-    static func answer(_ items: [Item], existing: [(name: String, titles: [String])], model: String?) async -> (answer: String?, groups: Groups?) {
+    static func answer(_ items: [Item], existing: [(name: String, titles: [String])], model: String?,
+                       agent: String? = nil) async -> (answer: String?, groups: Groups?) {
         let answer = try? await PiOnce.answer(system: system, prompt: prompt(items, existing: existing),
-                                              model: model ?? Store.settings.string(forKey: Chats.sortModelKey))
+                                              model: model ?? Store.settings.string(forKey: Chats.sortModelKey),
+                                              agent: agent)
         return (answer, answer.flatMap(parseGroups))
     }
 }

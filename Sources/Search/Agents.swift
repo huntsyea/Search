@@ -170,6 +170,8 @@ final class Agents: ObservableObject {
     func refresh() {
         LoginShell.forget()
         looked = false
+        // What the agents can list may have changed with them.
+        AgentOnce.forgetModels()
         look()
     }
 
@@ -248,6 +250,8 @@ final class Agents: ObservableObject {
     func add(name: String, command: String) -> Result<AgentChoice, AgentAddError> {
         guard let words = Agents.words(command) else { return .failure(.unclosedQuote) }
         guard let program = words.first, !program.isEmpty else { return .failure(.noProgram) }
+        // A newer agent may list other models.
+        AgentOnce.forgetModels()
         // A relative path would mean something else run from the chat's own
         // folder: only a full path, a "~/" path, or a name on the PATH.
         let relative = program.contains("/") && !program.hasPrefix("/") && !program.hasPrefix("~/")
@@ -266,6 +270,7 @@ final class Agents: ObservableObject {
     /// A custom one the person took away. Known agents and pi are not removed.
     func remove(_ id: String) {
         guard id.hasPrefix("custom.") else { return }
+        AgentOnce.forgetModels()
         var entries = Agents.customEntries()
         entries.removeAll { $0["id"] == id }
         Store.settings.set(entries, forKey: Agents.customKey)
