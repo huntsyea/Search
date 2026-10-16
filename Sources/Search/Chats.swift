@@ -358,13 +358,13 @@ final class Chat: ObservableObject, Identifiable {
         let link: AgentLink
         do {
             link = try await agent.start(session) { [weak self] said in
-                if case let .tool(call, reply) = said {
+                if case let .tool(call, givenUp, reply) = said {
                     // An agent let go of is told no; one the chat holds acts in its window.
                     guard let self, self.current == start else {
                         return reply(["content": [["type": "text", "text": "Stopped."]], "isError": true,
                                       "details": ["summary": "Stopped."]])
                     }
-                    return AgentTools.run(call, for: self, reply: reply)
+                    return AgentTools.run(call, for: self, givenUp: givenUp, reply: reply)
                 }
                 self?.hear(said, from: start)
             }

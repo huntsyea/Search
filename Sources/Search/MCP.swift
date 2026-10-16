@@ -18,22 +18,23 @@ final class MCPServer {
     /// The protocol versions it speaks, newest first.
     static let versions = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"]
 
-    private let call: ([String: Any], @escaping ([String: Any]) -> Void) -> Void
+    private let call: ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void
     private let cancel: () -> Void
     private let send: ([String: Any]) -> Void
 
-    /// Requests waiting on a tool call, by the key made from their id: the
-    /// original id is kept to echo, since it may be a number or a string.
+    /// Requests waiting on a tool call, by the key made from their id — kind
+    /// and all, so 7 and "7" are different: the original id is kept to echo.
     private var waiting: [String: Any] = [:]
     /// Calls the agent gave up on: their reply, when it comes, isn't sent.
     private var cancelled: Set<String> = []
 
     /// call: a tool call in the shape pi's extension sends — ["kind": "tool",
-    ///   "id": <String>, "name": ..., "args": [...]] — answered once with what
+    ///   "id": <String>, "name": ..., "args": [...]] — with a way to ask
+    ///   whether the agent has given it up, answered once with what
     ///   AgentTools.run answers (content, isError, details).
     /// cancel: a call given up on by the agent (the person's Stop), as pi's "cancel".
     /// send: a message to the agent.
-    init(call: @escaping ([String: Any], @escaping ([String: Any]) -> Void) -> Void,
+    init(call: @escaping ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void,
          cancel: @escaping () -> Void,
          send: @escaping ([String: Any]) -> Void) {
         self.call = call
@@ -42,16 +43,34 @@ final class MCPServer {
     }
 
     /// One message from the agent: a request is answered through `send`; a
-    /// notification isn't.
-    func receive(_ message: [String: Any]) {
+    /// notification isn't. What isn't a valid JSON-RPC message is answered
+    /// with the error it earns.
+    func receive(_ message: Any) {
+        guard let message = message as? [String: Any], message["jsonrpc"] as? String == "2.0" else {
+            return invalid()
+        }
         // A response to something we asked: we ask nothing, so there's
         // nothing to match it to.
         guard let method = message["method"] as? String else { return }
         // A notification carries no id, so nothing is owed for it.
-        guard message.keys.contains("id"), let id = message["id"] else {
-            return notification(method, message)
-        }
+        guard message.keys.contains("id") else { return notification(method, message) }
+        guard let id = message["id"] else { return invalid() }
+        guard MCPServer.allowedID(id) else { return invalid() }
         request(method, id: id, message)
+    }
+
+    /// A line that isn't JSON at all.
+    func unreadable() {
+        send(["jsonrpc": "2.0", "id": NSNull(), "error": ["code": -32700, "message": "Parse error"]])
+    }
+
+    /// The connection is gone: every call still waiting is given up on, and
+    /// the catalogue is told once, so nothing held by Pause acts later.
+    func close() {
+        guard !waiting.isEmpty else { return }
+        cancelled.formUnion(waiting.keys)
+        waiting.removeAll()
+        cancel()
     }
 
     // MARK: - requests
@@ -86,16 +105,27 @@ final class MCPServer {
     /// which answers once.
     private func callTool(_ id: Any, _ message: [String: Any]) {
         let params = message["params"] as? [String: Any] ?? [:]
-        let name = params["name"] as? String ?? ""
-        let args = params["arguments"] as? [String: Any] ?? [:]
+        guard let name = params["name"] as? String else {
+            return fail(id, code: -32602, message: "Invalid params: name must be a string")
+        }
+        // Absent arguments mean none; anything but an object is a mistake.
+        let args: [String: Any]
+        if let given = params["arguments"] {
+            guard let object = given as? [String: Any] else {
+                return fail(id, code: -32602, message: "Invalid params: arguments must be an object")
+            }
+            args = object
+        } else {
+            args = [:]
+        }
         guard AgentTools.names.contains(name) else {
             return fail(id, code: -32602, message: "Unknown tool: \(name)")
         }
-        let key = "\(id)"
+        let key = MCPServer.key(id)
         waiting[key] = id
-        call(["kind": "tool", "id": key, "name": name, "args": args]) { [weak self] reply in
-            self?.answered(key, reply)
-        }
+        call(["kind": "tool", "id": key, "name": name, "args": args],
+             { [weak self] in self?.cancelled.contains(key) ?? true },
+             { [weak self] reply in self?.answered(key, reply) })
     }
 
     /// What the catalogue answered, sent on unless the agent gave the call
@@ -116,10 +146,34 @@ final class MCPServer {
         guard method == "notifications/cancelled",
               let params = message["params"] as? [String: Any],
               let requestId = params["requestId"] else { return }
-        let key = "\(requestId)"
+        let key = MCPServer.key(requestId)
         guard waiting[key] != nil else { return }
         cancelled.insert(key)
         cancel()
+    }
+
+    // MARK: - ids and envelopes
+
+    /// Whether a request's id is one JSON-RPC allows: a string, or an
+    /// integer. A bool is an NSNumber too, and a float, null and an object
+    /// are none of them.
+    private static func allowedID(_ id: Any) -> Bool {
+        if id is String { return true }
+        guard let number = id as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID() else { return false }
+        return !CFNumberIsFloatType(number)
+    }
+
+    /// A request's id as a key: the integer 7 and the string "7" are
+    /// different requests, and are answered apart.
+    private static func key(_ id: Any) -> String {
+        if let text = id as? String { return "s:\(text)" }
+        if let number = id as? NSNumber { return "n:\(number.intValue)" }
+        return "x:\(id)"
+    }
+
+    /// A message that isn't JSON-RPC 2.0, or a request whose id isn't one.
+    private func invalid() {
+        send(["jsonrpc": "2.0", "id": NSNull(), "error": ["code": -32600, "message": "Invalid Request"]])
     }
 
     // MARK: - out
@@ -151,7 +205,7 @@ final class MCPDoor {
         return Bundle.main.executablePath ?? CommandLine.arguments[0]
     }
 
-    private let call: ([String: Any], @escaping ([String: Any]) -> Void) -> Void
+    private let call: ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void
     private let cancel: () -> Void
     private var listener: Int32 = -1
     private var accepting: DispatchSourceRead?
@@ -164,7 +218,8 @@ final class MCPDoor {
          "args": ["--mcp", path, token], "env": [String]()]
     }
 
-    init?(call: @escaping ([String: Any], @escaping ([String: Any]) -> Void) -> Void, cancel: @escaping () -> Void) {
+    init?(call: @escaping ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void,
+          cancel: @escaping () -> Void) {
         self.call = call
         self.cancel = cancel
         // A folder only this user can look in, and a socket named at random:
@@ -182,8 +237,15 @@ final class MCPDoor {
         }
         guard let listener = UnixSocket.listen(at: path) else { return nil }
         self.listener = listener
+        // Accepted sockets inherit this one flag, so even a peer that has
+        // already gone can't take Search down with a write — the accepted
+        // socket itself would refuse to be flagged by then.
+        _ = fcntl(listener, F_SETNOSIGPIPE, 1)
         let source = DispatchSource.makeReadSource(fileDescriptor: listener, queue: .main)
         source.setEventHandler { [weak self] in self?.accept() }
+        // A cancelled source finishes later, so the fd is closed here, once
+        // the dispatch system is done with it — never right after cancel().
+        source.setCancelHandler { Darwin.close(listener) }
         source.resume()
         accepting = source
     }
@@ -192,7 +254,7 @@ final class MCPDoor {
     func close() {
         accepting?.cancel()
         accepting = nil
-        if listener >= 0 { Darwin.close(listener) }
+        // Closed by the source's cancel handler, not here.
         listener = -1
         connections.values.forEach { $0.close() }
         connections = [:]
@@ -236,10 +298,13 @@ final class MCPDoor {
 private final class Connection {
     private let fd: Int32
     private let token: String
-    private let call: ([String: Any], @escaping ([String: Any]) -> Void) -> Void
+    private let call: ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void
     private let cancel: () -> Void
     private let gone: (Int32) -> Void
     private let source: DispatchSourceRead
+    /// The fd's sources: it is closed only once every one of them has
+    /// finished cancelling, which a dispatch source does late.
+    private let group: DispatchGroup
     private var bytes = Data()
     private var server: MCPServer?
     /// Lines for the agent that the socket hasn't taken yet, and a source
@@ -249,7 +314,7 @@ private final class Connection {
     private var open = true
 
     init(fd: Int32, token: String,
-         call: @escaping ([String: Any], @escaping ([String: Any]) -> Void) -> Void,
+         call: @escaping ([String: Any], @escaping @MainActor () -> Bool, @escaping ([String: Any]) -> Void) -> Void,
          cancel: @escaping () -> Void,
          gone: @escaping (Int32) -> Void) {
         self.fd = fd
@@ -258,8 +323,12 @@ private final class Connection {
         self.cancel = cancel
         self.gone = gone
         fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) | O_NONBLOCK)
+        let group = DispatchGroup()
+        self.group = group
+        group.enter()
         source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
         source.setEventHandler { [weak self] in self?.read() }
+        source.setCancelHandler { group.leave() }
         source.resume()
     }
 
@@ -288,8 +357,8 @@ private final class Connection {
             self.server = MCPServer(call: call, cancel: cancel) { [weak self] message in self?.say(message) }
             return
         }
-        guard let message = try? JSONSerialization.jsonObject(with: line) as? [String: Any] else { return }
-        server.receive(message)
+        guard let object = try? JSONSerialization.jsonObject(with: line) else { return server.unreadable() }
+        server.receive(object)
     }
 
     /// The token, compared without stopping early: a mismatch shouldn't say
@@ -328,8 +397,11 @@ private final class Connection {
             }
             if written < 0, errno == EAGAIN {
                 if writer == nil {
+                    let group = self.group
+                    group.enter()
                     let source = DispatchSource.makeWriteSource(fileDescriptor: fd, queue: .main)
                     source.setEventHandler { [weak self] in self?.flush() }
+                    source.setCancelHandler { group.leave() }
                     source.resume()
                     writer = source
                 }
@@ -345,10 +417,14 @@ private final class Connection {
     func close() {
         guard open else { return }
         open = false
+        // The catalogue first: a call held by Pause is told it was given up.
+        server?.close()
         writer?.cancel()
         writer = nil
         if !source.isCancelled { source.cancel() }
-        Darwin.close(fd)
+        // The fd waits for every source's cancellation to finish.
+        let socket = fd
+        group.notify(queue: .main) { Darwin.close(socket) }
         gone(fd)
     }
 }

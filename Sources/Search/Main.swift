@@ -7,7 +7,11 @@ import Foundation
 enum Main {
     static func main() {
         let arguments = CommandLine.arguments
-        if arguments.count == 4, arguments[1] == "--mcp" {
+        if arguments.count >= 2, arguments[1] == "--mcp" {
+            guard arguments.count == 4 else {
+                FileHandle.standardError.write(Data("usage: Search --mcp <socket> <token>\n".utf8))
+                exit(2)
+            }
             exit(MCPPipe.run(socket: arguments[2], token: arguments[3]))
         }
         SearchApp.main()

@@ -160,7 +160,7 @@ private final class PiAgent: AgentLink {
         case let .event(event):
             translate(event)
         case let .tool(call, reply):
-            hear(.tool(call, reply: reply))
+            hear(.tool(call, givenUp: { false }, reply: reply))
         case .cancel:
             hear(.cancel)
         case let .exit(why):

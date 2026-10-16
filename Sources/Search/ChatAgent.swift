@@ -39,8 +39,10 @@ enum AgentSays {
     /// What can be chosen for this chat — its model, how hard it thinks —
     /// and what is chosen now, whenever that changes.
     case options([AgentOption])
-    /// A call to one of the browser's tools, answered with `reply` exactly once.
-    case tool([String: Any], reply: ([String: Any]) -> Void)
+    /// A call to one of the browser's tools, answered with `reply` exactly
+    /// once. `givenUp` says whether the agent has since given the call up:
+    /// then it isn't done, whatever was answered meanwhile.
+    case tool([String: Any], givenUp: @MainActor () -> Bool, reply: ([String: Any]) -> Void)
     /// A tool call the agent gave up on (Stop) while Search was still on it.
     case cancel
     /// The agent ended, and why if it said. Nothing is heard after it, and

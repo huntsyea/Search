@@ -17,6 +17,7 @@ final class MCPTests: XCTestCase {
     private final class Recorder {
         var sent: [[String: Any]] = []
         var calls: [[String: Any]] = []
+        var givenUps: [@MainActor () -> Bool] = []
         var replies: [([String: Any]) -> Void] = []
         var cancels = 0
     }
@@ -24,8 +25,9 @@ final class MCPTests: XCTestCase {
     /// A server whose sends land in `sent`, whose calls are kept with the
     /// reply each waits on, and whose cancels are counted.
     private func server(_ recorder: Recorder) -> MCPServer {
-        MCPServer(call: { call, reply in
+        MCPServer(call: { call, givenUp, reply in
             recorder.calls.append(call)
+            recorder.givenUps.append(givenUp)
             recorder.replies.append(reply)
         }, cancel: {
             recorder.cancels += 1
@@ -129,23 +131,125 @@ final class MCPTests: XCTestCase {
         XCTAssertEqual(result?.isEmpty, true)
     }
 
+    func testAGivenUpCallKnowsIt() {
+        let recorder = Recorder()
+        let server = server(recorder)
+
+        ask(server, id: "a", "tools/call", ["name": "browser_tabs", "arguments": [:]])
+        // Answered before anything: it was not given up on.
+        XCTAssertEqual(recorder.givenUps.first?(), false)
+        recorder.replies.first?(["content": [], "isError": false])
+        XCTAssertEqual(recorder.givenUps.first?(), false)
+
+        ask(server, id: "b", "tools/call", ["name": "browser_tabs", "arguments": [:]])
+        XCTAssertEqual(recorder.givenUps.last?(), false)
+        server.receive(["jsonrpc": "2.0", "method": "notifications/cancelled", "params": ["requestId": "b"]])
+        XCTAssertEqual(recorder.givenUps.last?(), true)
+    }
+
+    func testClosingTheServerGivesUpWaitingCalls() {
+        let recorder = Recorder()
+        let server = server(recorder)
+        ask(server, id: 1, "tools/call", ["name": "browser_tabs", "arguments": [:]])
+        XCTAssertEqual(recorder.givenUps.first?(), false)
+
+        server.close()
+        XCTAssertEqual(recorder.cancels, 1)
+        XCTAssertEqual(recorder.givenUps.first?(), true)
+
+        // Nothing left waiting: a second close says nothing more.
+        server.close()
+        XCTAssertEqual(recorder.cancels, 1)
+    }
+
+    func testIntegerAndStringIDsAreDifferentRequests() {
+        let recorder = Recorder()
+        let server = server(recorder)
+        ask(server, id: 7, "tools/call", ["name": "browser_tabs", "arguments": [:]])
+        ask(server, id: "7", "tools/call", ["name": "browser_tabs", "arguments": [:]])
+        XCTAssertEqual(recorder.calls.count, 2)
+
+        // Answered in reverse: each answer still finds its own request.
+        recorder.replies[1](["content": [["type": "text", "text": "string"]], "isError": false])
+        recorder.replies[0](["content": [["type": "text", "text": "number"]], "isError": false])
+
+        func text(_ message: [String: Any]) -> String? {
+            ((message["result"] as? [String: Any])?["content"] as? [[String: Any]])?.first?["text"] as? String
+        }
+        let integer = recorder.sent.first { ($0["id"] as? Int) == 7 }
+        let string = recorder.sent.first { ($0["id"] as? String) == "7" }
+        XCTAssertEqual(text(integer ?? [:]), "number")
+        XCTAssertEqual(text(string ?? [:]), "string")
+    }
+
+    func testEnvelopesAreChecked() {
+        let recorder = Recorder()
+        let server = server(recorder)
+
+        // A line that isn't JSON at all.
+        server.unreadable()
+        XCTAssertEqual((recorder.sent.last?["error"] as? [String: Any])?["code"] as? Int, -32700)
+        XCTAssertNotNil(recorder.sent.last?["id"] as? NSNull)
+
+        // A JSON value that isn't an object.
+        server.receive("not an object")
+        XCTAssertEqual((recorder.sent.last?["error"] as? [String: Any])?["code"] as? Int, -32600)
+        XCTAssertNotNil(recorder.sent.last?["id"] as? NSNull)
+
+        // A message whose jsonrpc isn't 2.0.
+        server.receive(["jsonrpc": "1.0", "id": 1, "method": "ping"])
+        XCTAssertEqual((recorder.sent.last?["error"] as? [String: Any])?["code"] as? Int, -32600)
+
+        // A request whose id isn't a string or an integer.
+        for id in [true, 7.5, NSNull(), ["a": 1]] as [Any] {
+            server.receive(["jsonrpc": "2.0", "id": id, "method": "ping"])
+            XCTAssertEqual((recorder.sent.last?["error"] as? [String: Any])?["code"] as? Int, -32600, "\(id)")
+            XCTAssertNotNil(recorder.sent.last?["id"] as? NSNull)
+        }
+
+        // A tool call whose arguments aren't an object, and one without a name.
+        ask(server, id: 1, "tools/call", ["name": "browser_tabs", "arguments": "nope"])
+        XCTAssertEqual((recorder.sent.last?["error"] as? [String: Any])?["message"] as? String,
+                       "Invalid params: arguments must be an object")
+        ask(server, id: 2, "tools/call", ["arguments": [:]])
+        XCTAssertNotNil(recorder.sent.last?["error"])
+    }
+
     // MARK: - the door
 
-    /// The tool names a door's catalogue was asked for, and a lock so the
-    /// reading thread and the test can look without tripping over each other.
+    /// The tool names a door's catalogue was asked for, the call it is
+    /// holding, and a lock so the reading thread and the test can look
+    /// without tripping over each other.
     private final class DoorTools {
         private let lock = NSLock()
         private var names: [String] = []
+        private var held: (@MainActor () -> Bool)?
+        private var waiting = 0
+        private var cancelCount = 0
+
         func asked(_ name: String) { lock.lock(); names.append(name); lock.unlock() }
+        func hold(_ givenUp: @escaping @MainActor () -> Bool) { lock.lock(); held = givenUp; waiting += 1; lock.unlock() }
+        func cancelled() { lock.lock(); cancelCount += 1; lock.unlock() }
         var all: [String] { lock.lock(); defer { lock.unlock() }; return names }
+        var heldGivenUp: (@MainActor () -> Bool)? { lock.lock(); defer { lock.unlock() }; return held }
+        var waitingCount: Int { lock.lock(); defer { lock.unlock() }; return waiting }
+        var cancels: Int { lock.lock(); defer { lock.unlock() }; return cancelCount }
     }
 
     /// A door whose tools answer at once with `text`.
     private func makeDoor(_ tools: DoorTools, text: String = "tabs: none") -> MCPDoor? {
-        MCPDoor(call: { call, reply in
+        MCPDoor(call: { call, _, reply in
             tools.asked(call["name"] as? String ?? "")
             reply(["content": [["type": "text", "text": text]], "isError": false])
         }, cancel: {})
+    }
+
+    /// A door whose tools hold their reply, for a test to close under them.
+    private func makeHeldDoor(_ tools: DoorTools) -> MCPDoor? {
+        MCPDoor(call: { call, givenUp, _ in
+            tools.asked(call["name"] as? String ?? "")
+            tools.hold(givenUp)
+        }, cancel: { tools.cancelled() })
     }
 
     /// stdout's lines, parsed, taken on the reading thread.
@@ -182,12 +286,37 @@ final class MCPTests: XCTestCase {
         var got: Int? { lock.lock(); defer { lock.unlock() }; return code }
     }
 
-    func testTheDoorAnswersThroughTheHelper() async throws {
+    /// Where the built Search binary is, next to the test bundle; nil when
+    /// it isn't there (the test skips).
+    private func searchBinary() -> String? {
         let binary = Bundle(for: MCPTests.self).bundleURL
             .deletingLastPathComponent().appendingPathComponent("Search").path
-        guard FileManager.default.isExecutableFile(atPath: binary) else {
-            throw XCTSkip("the Search binary isn't built")
-        }
+        return FileManager.default.isExecutableFile(atPath: binary) ? binary : nil
+    }
+
+    /// Read `fd` off the main actor until a line has arrived.
+    private func readLine(_ fd: Int32, within seconds: TimeInterval = 5) async -> Bool {
+        await Task.detached { () -> Bool in
+            var seen = Data()
+            let deadline = Date().addingTimeInterval(seconds)
+            while Date() < deadline {
+                var watching = pollfd(fd: fd, events: Int16(POLLIN), revents: 0)
+                guard poll(&watching, 1, 200) > 0 else { continue }
+                var buffer = [UInt8](repeating: 0, count: 65536)
+                let n = Darwin.read(fd, &buffer, buffer.count)
+                if n > 0 {
+                    seen.append(contentsOf: buffer[0..<n])
+                    if seen.contains(0x0A) { return true }
+                } else if n == 0 {
+                    return false
+                }
+            }
+            return seen.contains(0x0A)
+        }.value
+    }
+
+    func testTheDoorAnswersThroughTheHelper() async throws {
+        guard let binary = searchBinary() else { throw XCTSkip("the Search binary isn't built") }
         MCPDoor.executableOverride = binary
         defer { MCPDoor.executableOverride = nil }
 
@@ -306,23 +435,72 @@ final class MCPTests: XCTestCase {
         await until(5) { tools.all.count == 20 }
 
         // And the output is still delivered, read off the main actor.
-        let delivered = await Task.detached { () -> Bool in
-            var seen = Data()
-            let deadline = Date().addingTimeInterval(5)
-            while Date() < deadline {
-                var watching = pollfd(fd: fd, events: Int16(POLLIN), revents: 0)
-                guard poll(&watching, 1, 200) > 0 else { continue }
-                var buffer = [UInt8](repeating: 0, count: 65536)
-                let n = Darwin.read(fd, &buffer, buffer.count)
-                if n > 0 {
-                    seen.append(contentsOf: buffer[0..<n])
-                    if seen.contains(0x0A) { return true }
-                } else if n == 0 {
-                    return false
-                }
-            }
-            return seen.contains(0x0A)
-        }.value
+        let delivered = await readLine(fd)
         XCTAssertTrue(delivered)
+    }
+
+    func testAClosedConnectionGivesUpWaitingCalls() async {
+        let tools = DoorTools()
+        guard let door = makeHeldDoor(tools) else { return XCTFail("the door couldn't be opened") }
+        defer { door.close() }
+
+        guard let fd = UnixSocket.connect(to: door.path) else { return XCTFail("couldn't reach the door") }
+        _ = fcntl(fd, F_SETNOSIGPIPE, 1)
+        for text in [door.token + "\n", "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"browser_tabs\"}}\n"] {
+            var line = Data(text.utf8)
+            line.withUnsafeBytes { _ = Darwin.write(fd, $0.baseAddress, $0.count) }
+        }
+
+        await until(5) { tools.waitingCount == 1 }
+        XCTAssertEqual(tools.heldGivenUp?(), false)
+
+        // The agent goes: the door sees EOF, closes the connection, and the
+        // call it was holding is given up on.
+        Darwin.close(fd)
+        await until(5) { tools.cancels == 1 }
+        XCTAssertEqual(tools.heldGivenUp?(), true)
+    }
+
+    func testManyConnectionsDoNotExhaustTheDoor() async {
+        let tools = DoorTools()
+        guard let door = makeDoor(tools) else { return XCTFail("the door couldn't be opened") }
+        defer { door.close() }
+
+        for _ in 0..<200 {
+            guard let fd = UnixSocket.connect(to: door.path) else { return XCTFail("connect failed") }
+            _ = fcntl(fd, F_SETNOSIGPIPE, 1)
+            for text in [door.token + "\n", "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}\n"] {
+                var line = Data(text.utf8)
+                line.withUnsafeBytes { _ = Darwin.write(fd, $0.baseAddress, $0.count) }
+            }
+            Darwin.close(fd)
+            // Let the door accept and finish closing each one: the test's
+            // own main thread is the door's.
+            await Task.yield()
+        }
+
+        // A fresh agent after all of them still gets its answer.
+        guard let fd = UnixSocket.connect(to: door.path) else { return XCTFail("couldn't reach the door") }
+        defer { Darwin.close(fd) }
+        _ = fcntl(fd, F_SETNOSIGPIPE, 1)
+        for text in [door.token + "\n", "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"initialize\",\"params\":{}}\n"] {
+            var line = Data(text.utf8)
+            line.withUnsafeBytes { _ = Darwin.write(fd, $0.baseAddress, $0.count) }
+        }
+        let answered = await readLine(fd)
+        XCTAssertTrue(answered)
+    }
+
+    func testTheHelperRefusesAMissingToken() async throws {
+        guard let binary = searchBinary() else { throw XCTSkip("the Search binary isn't built") }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: binary)
+        process.arguments = ["--mcp", "/tmp/nope.sock"]
+        process.standardInput = Pipe()
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+        try process.run()
+        await until(2) { !process.isRunning }
+        XCTAssertEqual(process.terminationStatus, 2)
     }
 }
