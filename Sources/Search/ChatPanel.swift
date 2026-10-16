@@ -29,6 +29,7 @@ struct ChatPanel: View {
 private struct ChatBody: View {
     @ObservedObject var browser: Browser
     @ObservedObject var chat: Chat
+    @ObservedObject private var agents = Agents.shared
     let onLeft: Bool
     @State private var draft = ""
     @FocusState private var writing: Bool
@@ -45,6 +46,7 @@ private struct ChatBody: View {
             chat.loadOptions()
             writing = true
         }
+        .onChange(of: chat.agentID) { _, _ in chat.loadOptions() }
     }
 
     // MARK: - the bar
@@ -54,7 +56,7 @@ private struct ChatBody: View {
             Menu {
                 Section("Chats") {
                     ForEach(Chats.all.prefix(30)) { other in
-                        Button(other.title) { browser.chat = other }
+                        Button(chatLabel(other)) { browser.chat = other }
                     }
                 }
                 if Chats.all.contains(where: { $0 === chat }) {
@@ -138,7 +140,7 @@ private struct ChatBody: View {
             Text("Ask about this page")
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Palette.ink)
-            Text("Or have it do things across your tabs: open pages, click, fill in forms. The agent is pi, on this Mac. It asks before it acts unless you let it act without asking.")
+            Text("Or have it do things across your tabs: open pages, click, fill in forms. The agent is \(chat.agentName), on this Mac. It asks before it acts unless you let it act without asking.")
                 .font(.system(size: 12))
                 .foregroundStyle(Palette.muted)
                 .fixedSize(horizontal: false, vertical: true)
@@ -151,7 +153,10 @@ private struct ChatBody: View {
     private var composer: some View {
         VStack(spacing: 6) {
             if let ask = chat.asking.first {
-                AskCard(ask: ask, waiting: chat.asking.count - 1) { chat.answer($0) }
+                AskCard(ask: ask, waiting: chat.asking.count - 1, agent: chat.agentName) { chat.answer($0) }
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            } else if chat.signIn != nil {
+                SignInCard(chat: chat, choice: agents.choice(chat.agentID))
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             } else if chat.items.isEmpty, chat.status == nil, !chat.busy, !sendable {
                 // Only to start a conversation: once it's under way, the
@@ -184,9 +189,10 @@ private struct ChatBody: View {
             .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Palette.hairline, lineWidth: 1))
             HStack(spacing: 6) {
                 modeMenu
+                if agents.visible.count > 1 { agentMenu }
                 if chat.busy {
                     Quick(chat.paused ? "Resume" : "Pause") { chat.paused ? chat.resume() : chat.pause() }
-                        .help(chat.paused ? "Let pi go on" : "Hold pi before its next step; the page is yours meanwhile")
+                        .help(chat.paused ? "Let \(chat.agentName) go on" : "Hold \(chat.agentName) before its next step; the page is yours meanwhile")
                 }
                 Spacer(minLength: 0)
                 modelMenu
@@ -224,6 +230,38 @@ private struct ChatBody: View {
         .menuIndicator(.hidden)
         .fixedSize()
         .padding(.leading, 4)
+    }
+
+    /// The agent this chat runs on: the ones found, until its first message.
+    /// After that it is fixed, and the menu says so rather than changing it.
+    private var agentMenu: some View {
+        let begun = chat.begun
+        return Menu {
+            ForEach(agents.visible) { choice in
+                Button {
+                    chat.use(choice.id)
+                } label: {
+                    if choice.id == chat.agentID { Label(choice.name, systemImage: "checkmark") } else { Text(choice.name) }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(chat.agentName)
+                    .font(.system(size: 11))
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                if !begun {
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 7, weight: .semibold))
+                }
+            }
+            .foregroundStyle(Palette.muted)
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .disabled(begun)
+        .help(begun ? "This chat runs on \(chat.agentName); a new chat can use another" : "Agent")
     }
 
     /// The model this chat's agent uses, and how hard it thinks.
@@ -265,6 +303,12 @@ private struct ChatBody: View {
                     }
                 }
             }
+            // A model chosen for this agent becomes its own default: say so.
+            if agents.modelIsTheAgentsOwn(chat.agentID) {
+                Divider()
+                Text("Also changes \(chat.agentName)'s own default")
+                    .foregroundStyle(Palette.muted)
+            }
         } label: {
             HStack(spacing: 4) {
                 Text(modelLabel)
@@ -295,7 +339,12 @@ private struct ChatBody: View {
         return chosen.name
     }
 
-    private var sendable: Bool { !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    private var sendable: Bool { chat.signIn == nil && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+    /// A chat in the bar's list, with its agent when it isn't pi.
+    private func chatLabel(_ other: Chat) -> String {
+        other.agentID == "pi" ? other.title : "\(other.title) · \(other.agentName)"
+    }
 
     private func send() {
         guard sendable, !chat.busy else { return }
@@ -384,6 +433,7 @@ private struct PagePills: View {
 private struct AskCard: View {
     let ask: Chat.Ask
     let waiting: Int
+    let agent: String
     let answer: (Chat.Choice) -> Void
 
     var body: some View {
@@ -393,7 +443,7 @@ private struct AskCard: View {
                     .font(.system(size: 11))
                     .foregroundStyle(Palette.unsafe)
                     .padding(.top, 1)
-                Text("pi wants to \(ask.action)")
+                Text("\(agent) wants to \(ask.action)")
                     .lineLimit(3)
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Palette.ink)
@@ -422,6 +472,75 @@ private struct AskCard: View {
     }
 }
 
+/// The agent asked the person to sign in: how it can be done, and the way
+/// back — over the box, as the AskCard is.
+private struct SignInCard: View {
+    @ObservedObject var chat: Chat
+    let choice: AgentChoice?
+
+    var body: some View {
+        if let signIn = chat.signIn {
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(alignment: .top, spacing: 6) {
+                    Image(systemName: "key.fill")
+                        .font(.system(size: 11))
+                        .foregroundStyle(Palette.muted)
+                        .padding(.top, 1)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("\(signIn.agent) needs you to sign in.")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Palette.ink)
+                            .fixedSize(horizontal: false, vertical: true)
+                        if chat.hasUnsent {
+                            Text("Your message is sent once you have.")
+                                .font(.system(size: 11))
+                                .foregroundStyle(Palette.muted)
+                        }
+                    }
+                }
+                HStack(spacing: 6) {
+                    ForEach(signIn.methods.filter { $0.terminal == nil }, id: \.id) { method in
+                        methodButton(method)
+                    }
+                    // The one the agent runs in a terminal: a method's own
+                    // command and variables, else the agent's login.
+                    if let terminal = terminal, let choice {
+                        Quick("Open in Terminal") {
+                            Agents.shared.openLogin(choice, command: terminal, environment: terminalEnvironment)
+                        }
+                    }
+                    Quick("Try Again") { chat.retry() }
+                    Spacer(minLength: 0)
+                    Quick("Not Now") { chat.dismissSignIn() }
+                }
+            }
+            .padding(10)
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Palette.ground))
+            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Palette.hairline, lineWidth: 1))
+            .shadow(color: .black.opacity(0.06), radius: 6, y: 2)
+        }
+    }
+
+    /// The command to run in a terminal, when there is one, and the
+    /// variables it needs.
+    private var terminalMethod: AgentSignIn.Method? {
+        chat.signIn?.methods.first { $0.terminal != nil }
+    }
+    private var terminal: [String]? { terminalMethod?.terminal ?? choice?.login }
+    private var terminalEnvironment: [String: String] { terminalMethod?.environment ?? [:] }
+
+    /// A method the agent runs itself, with its description as the tip.
+    @ViewBuilder
+    private func methodButton(_ method: AgentSignIn.Method) -> some View {
+        if let description = method.description, !description.isEmpty {
+            Quick(method.name) { chat.signIn(with: method.id) }
+                .help(description)
+        } else {
+            Quick(method.name) { chat.signIn(with: method.id) }
+        }
+    }
+}
+
 /// Over the page while the chat's agent is working in the browser: who,
 /// and Stop — as the recording pill says who records.
 struct AgentPill: View {
@@ -431,7 +550,7 @@ struct AgentPill: View {
         if chat.busy, chat.acting || !chat.asking.isEmpty {
             HStack(spacing: 8) {
                 Circle().fill(chat.paused ? Palette.muted : Palette.unsafe).frame(width: 7, height: 7)
-                Text(!chat.asking.isEmpty ? "pi is waiting for you in the chat" : chat.paused ? "pi is paused" : "pi is working in your tabs")
+                Text(!chat.asking.isEmpty ? "\(chat.agentName) is waiting for you in the chat" : chat.paused ? "\(chat.agentName) is paused" : "\(chat.agentName) is working in your tabs")
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(Palette.ink)
                 if chat.asking.isEmpty {

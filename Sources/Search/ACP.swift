@@ -8,9 +8,73 @@ struct ACPError: LocalizedError {
     let code: Int
     let message: String
     let data: Any?
-    var errorDescription: String? { message }
+    var errorDescription: String? {
+        // Some agents say only "Internal error" and put the real reason in
+        // data; show both, kept short.
+        var text = message
+        if let detail = ACPError.detail(data) { text += "\n" + detail }
+        return String(text.trimmingCharacters(in: .whitespacesAndNewlines).prefix(500))
+    }
     /// ACP's "auth_required": the agent wants the person to sign in first.
     static let authRequired = -32000
+
+    /// What `data` says of why, when it does.
+    private static func detail(_ data: Any?) -> String? {
+        if let text = data as? String, !text.isEmpty { return text }
+        guard let object = data as? [String: Any] else { return nil }
+        for key in ["details", "message"] {
+            if let text = object[key] as? String, !text.isEmpty { return text }
+        }
+        return nil
+    }
+}
+
+/// The agent wants the person to sign in first, and how it can be done.
+struct AgentSignIn: LocalizedError {
+    struct Method: Equatable {
+        let id: String
+        let name: String
+        let description: String?
+        /// The command to run in a terminal, when the method is one the
+        /// person runs themselves; nil when the agent does it itself.
+        let terminal: [String]?
+        /// Variables that command needs set, when it has any.
+        let environment: [String: String]
+    }
+    let agent: String
+    let methods: [Method]
+    /// True when the method Search tried was rejected: the agent's remembered
+    /// sign-in no longer works, and is forgotten.
+    var stale = false
+    var errorDescription: String? { "\(agent) needs you to sign in first." }
+}
+
+extension AgentSignIn {
+    /// How the agent says it can be signed in, from initialize's `authMethods`:
+    /// a method the agent runs itself (asked with `authenticate`), one run in
+    /// a terminal, or one that only needs a variable set.
+    static func methods(_ raw: Any?, path: String, arguments: [String]) -> [Method] {
+        (raw as? [[String: Any]] ?? []).compactMap { method in
+            guard let id = method["id"] as? String, let name = method["name"] as? String else { return nil }
+            // The client runs the agent's own program with the same launch
+            // settings it starts it with, plus the method's own args.
+            let terminal = method["type"] as? String == "terminal"
+                ? [path] + arguments + (method["args"] as? [String] ?? [])
+                : nil
+            return Method(id: id, name: name, description: method["description"] as? String,
+                          terminal: terminal, environment: AgentSignIn.environment(method["env"]))
+        }
+    }
+
+    /// A method's `env`: an object, or a list of `{name, value}`.
+    static func environment(_ raw: Any?) -> [String: String] {
+        if let object = raw as? [String: String] { return object }
+        var out: [String: String] = [:]
+        for pair in raw as? [[String: Any]] ?? [] {
+            if let name = pair["name"] as? String, let value = pair["value"] as? String { out[name] = value }
+        }
+        return out
+    }
 }
 
 /// One ACP agent's process, spoken to in JSON-RPC 2.0 a line at a time, on a LineProcess.
@@ -183,12 +247,26 @@ struct ACPSpec {
     /// What session/new and session/load carry as `_meta`, for agents that take settings there (Claude's adapter:
     /// its own tools off). Nil: none.
     var sessionMeta: [String: Any]? = nil
+    /// The method the person signed in with before, when there is one: after initialize, Search asks `authenticate`
+    /// with it before a new session.
+    var signIn: String? = nil
+}
+
+extension ACPSpec: Equatable {
+    /// The same launch and environment. `sessionMeta` isn't compared: it holds
+    /// agent-specific settings that aren't Equatable.
+    static func == (a: ACPSpec, b: ACPSpec) -> Bool {
+        a.id == b.id && a.name == b.name && a.path == b.path
+            && a.arguments == b.arguments && a.environment == b.environment
+    }
 }
 
 /// How long a start waits on the agent; the session one is short in tests.
 enum ACPTimeouts {
     nonisolated(unsafe) static var initialize: TimeInterval = 30
     nonisolated(unsafe) static var session: TimeInterval = 60
+    /// A sign-in may wait on the person in a browser: minutes, not seconds.
+    nonisolated(unsafe) static var authenticate: TimeInterval = 300
 }
 
 extension ChatAgent {
@@ -277,6 +355,11 @@ private final class ACPAgent: AgentLink {
         var environment = LoginShell.environment
         spec.environment.forEach { environment[$0] = $1 }
 
+        // How the agent can be signed in, from initialize: needed both to
+        // sign in again with the method the person used before and to say how
+        // when the agent asks for a sign-in.
+        var methods: [AgentSignIn.Method] = []
+
         do {
             try connection.start(spec.path, spec.arguments, in: folder, environment: environment)
 
@@ -286,8 +369,22 @@ private final class ACPAgent: AgentLink {
                 "clientCapabilities": ["fs": ["readTextFile": false, "writeTextFile": false], "terminal": false],
                 "clientInfo": ["name": "search", "title": "Search", "version": version],
             ], timeout: ACPTimeouts.initialize)
-            let capabilities = (initialized as? [String: Any])?["agentCapabilities"] as? [String: Any]
+            let answer = initialized as? [String: Any] ?? [:]
+            let capabilities = answer["agentCapabilities"] as? [String: Any]
             agent.loadSession = capabilities?["loadSession"] as? Bool ?? false
+            methods = AgentSignIn.methods(answer["authMethods"], path: spec.path, arguments: spec.arguments)
+
+            // The method the person used before, when the agent still lists
+            // it: signed in again, so this session opens without a card.
+            if let wanted = spec.signIn, methods.contains(where: { $0.id == wanted }) {
+                do {
+                    _ = try await connection.request("authenticate", ["methodId": wanted], timeout: ACPTimeouts.authenticate)
+                } catch {
+                    // The remembered method no longer works: forgot it, and
+                    // ask the person to sign in again.
+                    throw AgentSignIn(agent: spec.name, methods: methods, stale: true)
+                }
+            }
 
             var sessionParams: [String: Any] = ["cwd": folder.path, "mcpServers": [door.server]]
             if let meta = spec.sessionMeta { sessionParams["_meta"] = meta }
@@ -312,7 +409,7 @@ private final class ACPAgent: AgentLink {
             connection.stop()
             door.close()
             if let acp = error as? ACPError, acp.code == ACPError.authRequired {
-                throw ChildProcess.Failure(why: "\(spec.name) needs you to sign in first.")
+                throw AgentSignIn(agent: spec.name, methods: methods)
             }
             throw error
         }

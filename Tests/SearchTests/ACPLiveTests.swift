@@ -58,11 +58,21 @@ final class ACPLiveTests: XCTestCase {
         _ = NSApplication.shared
         let browser = Browser(record: WindowRecord())
         browsers.append(browser)
-        let chat = Chat(title: "Test", mode: .act,
+        // SEARCH_LIVE_ACP_ACT=1 tries the acting tools too: the chat asks
+        // before acting, and the test answers each ask once.
+        let acting = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_ACT"] == "1"
+        let chat = Chat(title: "Test", mode: acting ? .ask : .act,
                         agent: .acp(ACPSpec(id: program, name: program, path: path,
                                             arguments: Array(setting.dropFirst()), environment: environment)))
         defer { Chats.delete(chat) }
         chat.browser = browser
+
+        // A page to read and act on, so those tools have something of the
+        // person's to work with.
+        if let example = URL(string: "https://example.com") {
+            let page = browser.open(example, foreground: true, from: nil)
+            await until(20) { page.built != nil && page.pageAddress != nil }
+        }
 
         if let model = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_MODEL"], !model.isEmpty {
             chat.loadOptions()
@@ -72,8 +82,18 @@ final class ACPLiveTests: XCTestCase {
             try? await Task.sleep(for: .seconds(2))
         }
 
-        chat.send("Call the browser_tabs tool exactly once, then reply with just the word: done")
+        // A prompt of the person's own, when one was given, so a live run can
+        // try anything; the tool step is only expected of the default one.
+        let asked = ProcessInfo.processInfo.environment["SEARCH_LIVE_ACP_PROMPT"]
+            .flatMap { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : $0 }
+        chat.send(asked ?? "Call the browser_tabs tool exactly once, then reply with just the word: done")
         await until(30) { chat.busy }
+        if acting {
+            while chat.busy {
+                if !chat.asking.isEmpty { chat.answer(.once) }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+        }
         await until(120) { !chat.busy }
 
         for item in chat.items {
@@ -81,8 +101,10 @@ final class ACPLiveTests: XCTestCase {
         }
         print("live transcript: \(transcript.path)")
 
-        XCTAssertTrue(chat.items.contains { $0.kind == .tool && $0.text != "A tool of its own" && !$0.failed },
-                      "no browser tool step: \(chat.items.map(\.text))")
+        if asked == nil {
+            XCTAssertTrue(chat.items.contains { $0.kind == .tool && $0.text != "A tool of its own" && !$0.failed },
+                          "no browser tool step: \(chat.items.map(\.text))")
+        }
         XCTAssertTrue(chat.items.contains { $0.kind == .assistant && !$0.text.isEmpty },
                       "no assistant text: \(chat.items.map(\.text))")
     }

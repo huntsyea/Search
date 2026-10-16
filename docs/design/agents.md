@@ -25,6 +25,27 @@ Every agent CLI on their login PATH shows up beside pi. A new chat starts on the
 | Model and mode menus? | The footer's model menu shows what the chat's agent offers as ACP `configOptions` (model, thought level), set with `session/set_config_option`. Modes stay hidden: they exist to unlock the agent's own tools. An agent's last chosen model is remembered for its next chat; "Model for new chats" stays pi's. |
 | The side prompts? | Settings › AI: an agent for suggestions, titles and Sort Tabs (pi), and its model. Another agent there gets a one-shot run over ACP. |
 
+## Found on this Mac (15 Oct 2026)
+
+How each known agent is launched, and how its own tools are kept off. "Refused" is Search refusing every permission
+a tool asks for, with the agent run in an empty folder; "checked live" is a run here that saw only the browser's tools.
+
+| Agent | Launched as | Its own tools |
+|---|---|---|
+| pi | its RPC mode, `Pi.confined` (no tools, MCP, skills, context files…) | off by its flags |
+| opencode | `opencode acp` | off: `OPENCODE_PERMISSION` denies all but `search_*`; checked live — it lists only Search's twelve tools |
+| omp | `omp --no-tools --no-extensions --no-skills --no-rules acp` | off by its flags, not yet checked live — its providers here had no key or balance |
+| grok | `grok agent --no-leader stdio` | refused, empty folder |
+| hermes | `hermes acp` | refused, empty folder |
+| gemini | `gemini --acp` | refused, empty folder |
+| cursor | `cursor-agent acp` | refused, empty folder |
+| kimi | `kimi acp` | refused, empty folder |
+
+- gemini-cli refuses this account: Code Assist for individuals has moved to Antigravity.
+- cursor-agent 2026.03.20 answers every model "AI Model Not Found" over ACP, and keeps a model chosen over ACP as its
+own default — so Search never chooses one for it (`KnownAgent.modelIsTheAgentsOwn`).
+- kimi and grok ask the person to sign in; grok wants an `authenticate` method id.
+
 ## The seam: the chat talks to its agent as a conversation
 
 Today `Chat` reads pi's RPC messages itself (ChatPi.swift, PR #3: the seam at pi's messages, chosen while there was one adapter). With ACP there are two real adapters, so the seam moves up to the conversation, where both can meet it (Design A of three; B — the adapter owning the transcript — would write "settled" and "Stopped." twice; C — ACP as the chat's language — would make pi, the default, the translated one).

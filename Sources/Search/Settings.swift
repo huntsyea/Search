@@ -925,6 +925,108 @@ private struct NotificationSites: View {
     }
 }
 
+/// Settings › AI: the agents Search found and the ones the person added,
+/// what each can do, whether it shows in the chat's menu, and how its last
+/// start went.
+private struct AgentsCard: View {
+    @ObservedObject private var agents = Agents.shared
+    @State private var adding = false
+    @State private var name = ""
+    @State private var command = ""
+    @State private var addError: String?
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Card {
+                ForEach(Array(agents.all.enumerated()), id: \.element.id) { index, choice in
+                    if index > 0 { Rule() }
+                    Line(choice.name, detail(choice)) {
+                        HStack(spacing: 6) {
+                            if choice.custom {
+                                Quick("Remove") { agents.remove(choice.id) }
+                            }
+                            if choice.id != "pi" {
+                                Switch(on: shown(choice))
+                            }
+                        }
+                    }
+                }
+                Rule()
+                HStack(spacing: 6) {
+                    Quick(agents.looked ? "Refresh" : "Looking…") { agents.refresh() }
+                        .disabled(!agents.looked)
+                    Quick("Add Agent…") { addError = nil; adding = true }
+                    Spacer(minLength: 0)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 11)
+            }
+            Text("Search finds agents on your login shell's PATH. An agent you add is run as an ACP agent.")
+                .font(.system(size: 11))
+                .foregroundStyle(Palette.muted)
+                .padding(.leading, 2)
+        }
+        .sheet(isPresented: $adding) { addSheet }
+    }
+
+    /// What the row says under the name: where the program is, what happens
+    /// to its own tools, and how its last start went.
+    private func detail(_ choice: AgentChoice) -> String {
+        var parts = [choice.path ?? "Not found"]
+        parts.append(choice.ownTools == .off
+            ? "Its own tools are switched off"
+            : "Its own tools are refused when it asks, and it runs in an empty folder")
+        switch agents.state(choice.id) {
+        case .ready: parts.append("Signed in")
+        case .signIn: parts.append("Needs you to sign in")
+        case .unknown: break
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    private func shown(_ choice: AgentChoice) -> Binding<Bool> {
+        Binding(get: { !agents.isHidden(choice.id) }, set: { agents.hide(choice.id, !$0) })
+    }
+
+    private var addSheet: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Add Agent")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Palette.ink)
+            TextField("Name", text: $name)
+                .textFieldStyle(.roundedBorder)
+            TextField("my-agent --acp", text: $command)
+                .textFieldStyle(.roundedBorder)
+            if let addError {
+                Text(addError)
+                    .font(.system(size: 11))
+                    .foregroundStyle(Palette.unsafe)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            HStack {
+                Spacer()
+                Quick("Cancel") { close() }
+                Quick("Add") {
+                    switch agents.add(name: name, command: command) {
+                    case .success: close()
+                    case .failure(let error): addError = error.errorDescription ?? "That command line couldn't be used."
+                    }
+                }
+                .disabled(command.trimmingCharacters(in: .whitespaces).isEmpty)
+            }
+        }
+        .padding(20)
+        .frame(width: 360)
+    }
+
+    private func close() {
+        adding = false
+        name = ""
+        command = ""
+        addError = nil
+    }
+}
+
 /// Settings › AI: everything pi does here — the chat, where it lives, the
 /// models it uses, the suggestions over its box and the sites it may act on
 /// without asking; and Sort Tabs. (The page's case is still `.chat`, as
@@ -933,6 +1035,7 @@ private struct ChatSettings: View {
     @ObservedObject var browser: Browser
     @ObservedObject var prefs: Preferences
     @ObservedObject private var pi = PiModels.shared
+    @ObservedObject private var agents = Agents.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
@@ -942,7 +1045,13 @@ private struct ChatSettings: View {
                 }
             }
             Card {
-                Line("Model for new chats", "Each chat can change its own from the menu under its box. pi, on this Mac, with your providers") {
+                Line("Agent for new chats", "Each chat runs on the agent it was started with. Every agent gets only the browser's tools.") {
+                    agentPicker($prefs.chatAgent)
+                }
+            }
+            AgentsCard()
+            Card {
+                Line("Model for new chats", "pi's model for new chats. Other agents use their own default; each chat can change its model from the menu under its box.") {
                     picker($prefs.chatModel)
                 }
                 Rule()
@@ -973,6 +1082,27 @@ private struct ChatSettings: View {
             }
         }
         .onAppear { pi.load() }
+    }
+
+    /// The agent a new chat starts on: the ones found, or pi.
+    private func agentPicker(_ choice: Binding<String>) -> some View {
+        Menu {
+            ForEach(agents.visible) { pick in
+                Button {
+                    choice.wrappedValue = pick.id
+                } label: {
+                    if pick.id == choice.wrappedValue { Label(pick.name, systemImage: "checkmark") } else { Text(pick.name) }
+                }
+            }
+        } label: {
+            Text(agents.choice(choice.wrappedValue)?.name ?? choice.wrappedValue)
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.middle)
+        }
+        .menuStyle(.borderlessButton)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: 200, alignment: .trailing)
     }
 
     /// pi's models by provider, or pi's own default.

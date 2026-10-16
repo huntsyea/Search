@@ -152,6 +152,22 @@ final class ACPTests: XCTestCase {
         }
     }
 
+    /// The message often says little; the real reason is in data. Both are
+    /// shown, the data on its own line.
+    func testAnErrorShowsItsDataDetails() async throws {
+        let paths = try scenario(["new": ["error": ["code": -32603, "message": "Internal error",
+                                                   "data": ["details": "No API key found for cursor."]]]])
+        let connection = try started(paths.scenario, paths.log)
+        defer { connection.stop() }
+
+        do {
+            _ = try await connection.request("session/new", ["cwd": folder.path, "mcpServers": []])
+            XCTFail("expected an ACP error")
+        } catch let error as ACPError {
+            XCTAssertEqual(error.errorDescription, "Internal error\nNo API key found for cursor.")
+        }
+    }
+
     /// The agent goes while a prompt waits: the request fails, and onExit
     /// carries the last thing it said.
     func testAnAgentThatEndsFailsWhatWaits() async throws {
